@@ -105,7 +105,7 @@ export const initSearchkit = (): Thunk => {
       let state: State = getState();
 
       // Load similar results if viewing detail page and data exists.
-      if ((_.trim(state.routing.locationBeforeTransitions.pathname, '/') === 'detail' || _.trim(state.routing.locationBeforeTransitions.pathname, '/') === 'study/pid') &&
+      if ((_.trim(state.routing.locationBeforeTransitions.pathname, '/') === 'detail' || _.trim(state.routing.locationBeforeTransitions.pathname, '/') === 'pid') &&
           results.hits.hits.length > 0 &&
           results.hits.hits[0]._source) {
         dispatch(updateSimilars(results.hits.hits[0]._source));

@@ -49,10 +49,15 @@ export const detailQuery = (id: string) => {
 // Query used to retrieve a single record by its pid (for detail page).
 export const pidQuery = (pid: string) => {
   return {
-    bool: {
-      must: {
-        match: {
-          pidStudies: pid
+    nested:{
+      path: "pidStudies",
+      query: {
+        bool: {
+          must: {
+            match: {
+              "pidStudies.pid": pid
+            }
+          }
         }
       }
     }

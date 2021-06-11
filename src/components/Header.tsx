@@ -155,18 +155,18 @@ export class Header extends Component<Props> {
               </div>
               <section className="modal-card-body">
                 <Translate component="p" className="pb-10" content="advancedSearch.introduction" />
-                {this.generateTranslatedParagraph("advancedSearch.and")}
-                {this.generateTranslatedParagraph("advancedSearch.or")}
-                {this.generateTranslatedParagraph("advancedSearch.negates")}
-                {this.generateTranslatedParagraph("advancedSearch.phrase")}
-                {this.generateTranslatedParagraph("advancedSearch.prefix")}
-                {this.generateTranslatedParagraph("advancedSearch.precedence")}
-                {this.generateTranslatedParagraph("advancedSearch.distance")}
-                {this.generateTranslatedParagraph("advancedSearch.slop")}
+                {Header.generateTranslatedParagraph("advancedSearch.and")}
+                {Header.generateTranslatedParagraph("advancedSearch.or")}
+                {Header.generateTranslatedParagraph("advancedSearch.negates")}
+                {Header.generateTranslatedParagraph("advancedSearch.phrase")}
+                {Header.generateTranslatedParagraph("advancedSearch.prefix")}
+                {Header.generateTranslatedParagraph("advancedSearch.precedence")}
+                {Header.generateTranslatedParagraph("advancedSearch.distance")}
+                {Header.generateTranslatedParagraph("advancedSearch.slop")}
                 <p className="pt-15">
                   <Translate component="strong" content="advancedSearch.escaping.heading" unsafe />
                 </p>
-                {this.generateTranslatedParagraph("advancedSearch.escaping.content")}
+                {Header.generateTranslatedParagraph("advancedSearch.escaping.content")}
                 <p className="pt-15">
                   <Translate component="strong" content="advancedSearch.defaultOperator.heading" unsafe />
                 </p>
@@ -188,9 +188,9 @@ export class Header extends Component<Props> {
 
   /**
    * Returns a translatable \<p\> element with substitution enabled.
-   * @param {String} translationString the string to translate
+   * @param translationString the string to translate
    */
-  generateTranslatedParagraph(translationString: string) {
+  private static generateTranslatedParagraph(translationString: string) {
     return <Translate component="p" content={translationString}
       with={{ className: 'tag is-light has-text-weight-semibold' }}
       unsafe />;
