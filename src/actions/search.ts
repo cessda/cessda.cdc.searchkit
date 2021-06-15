@@ -18,18 +18,16 @@ import { Dispatch, GetState, State, Thunk } from "../types";
 import { CMMStudy } from "../utilities/metadata";
 import { getPaq } from "..";
 
-// Get a new Elasticsearch Client
-function elasticsearchClient() {
-  return new Client({
-    host: {
-      protocol: _.trim(window.location.protocol, ':'),
-      host: window.location.hostname,
-      port: window.location.port ||
-        (_.endsWith(_.trim(window.location.protocol, ':'), 's') ? 443 : 80),
-      path: '/api/sk'
-    }
-  });
-}
+// Elasticsearch Client
+const elasticsearchClient = new Client({
+  host: {
+    protocol: _.trim(window.location.protocol, ':'),
+    host: window.location.hostname,
+    port: window.location.port || (_.endsWith(_.trim(window.location.protocol, ':'), 's') ? 443 : 80),
+    path: '/api/sk'
+  }
+});
+
 
 //////////// Redux Action Creator : INIT_SEARCHKIT
 export const INIT_SEARCHKIT = "INIT_SEARCHKIT";
@@ -38,14 +36,14 @@ export type InitSearchkitAction = {
   type: typeof INIT_SEARCHKIT;
 };
 
-export const initSearchkit = (): Thunk => {
+export function initSearchkit(): Thunk {
   return (dispatch: Dispatch, getState: GetState): void => {
     let timer: NodeJS.Timeout;
 
     searchkit.setQueryProcessor((query: any) => {
       dispatch(toggleLoading(true));
 
-      const state: State = getState()
+      const state: State = getState();
       const init = timer === undefined;
 
       clearTimeout(timer);
@@ -102,12 +100,12 @@ export const initSearchkit = (): Thunk => {
     });
 
     searchkit.addResultsListener((results: SearchResponse<CMMStudy>): void => {
-      let state: State = getState();
+      const state: State = getState();
 
       // Load similar results if viewing detail page and data exists.
       if ((_.trim(state.routing.locationBeforeTransitions.pathname, '/') === 'detail' || _.trim(state.routing.locationBeforeTransitions.pathname, '/') === 'pid') &&
-          results.hits.hits.length > 0 &&
-          results.hits.hits[0]._source) {
+        results.hits.hits.length > 0 &&
+        results.hits.hits[0]._source) {
         dispatch(updateSimilars(results.hits.hits[0]._source));
       }
 
@@ -119,7 +117,7 @@ export const initSearchkit = (): Thunk => {
       type: INIT_SEARCHKIT
     });
   };
-};
+}
 
 //////////// Redux Action Creator : TOGGLE_LOADING
 export const TOGGLE_LOADING = "TOGGLE_LOADING";
@@ -129,12 +127,12 @@ export type ToggleLoadingAction = {
   loading: boolean;
 };
 
-export const toggleLoading = (loading: boolean): ToggleLoadingAction => {
+export function toggleLoading(loading: boolean): ToggleLoadingAction {
   return {
     type: TOGGLE_LOADING,
     loading
   };
-};
+}
 
 //////////// Redux Action Creator : TOGGLE_MOBILE_FILTERS
 export const TOGGLE_MOBILE_FILTERS = "TOGGLE_MOBILE_FILTERS";
@@ -143,11 +141,11 @@ export type ToggleMobileFiltersAction = {
   type: typeof TOGGLE_MOBILE_FILTERS;
 };
 
-export const toggleMobileFilters = (): ToggleMobileFiltersAction => {
+export function toggleMobileFilters(): ToggleMobileFiltersAction {
   return {
     type: TOGGLE_MOBILE_FILTERS
   };
-};
+}
 
 //////////// Redux Action Creator : TOGGLE_ADVANCED_SEARCH
 export const TOGGLE_ADVANCED_SEARCH = "TOGGLE_ADVANCED_SEARCH";
@@ -156,11 +154,11 @@ export type ToggleAdvancedSearchAction = {
   type: typeof TOGGLE_ADVANCED_SEARCH;
 };
 
-export const toggleAdvancedSearch = (): ToggleAdvancedSearchAction => {
+export function toggleAdvancedSearch(): ToggleAdvancedSearchAction {
   return {
     type: TOGGLE_ADVANCED_SEARCH
   };
-};
+}
 
 //////////// Redux Action Creator : TOGGLE_SUMMARY
 export const TOGGLE_SUMMARY = "TOGGLE_SUMMARY";
@@ -169,11 +167,11 @@ export type ToggleSummaryAction = {
   type: typeof TOGGLE_SUMMARY;
 };
 
-export const toggleSummary = (): ToggleSummaryAction => {
+export function toggleSummary(): ToggleSummaryAction {
   return {
     type: TOGGLE_SUMMARY
   };
-};
+}
 
 //////////// Redux Action Creator : TOGGLE_METADATA_PANELS
 export const TOGGLE_METADATA_PANELS = "TOGGLE_METADATA_PANELS";
@@ -182,11 +180,11 @@ export type ToggleMetadataPanelsAction = {
   type: typeof TOGGLE_METADATA_PANELS;
 };
 
-export const toggleMetadataPanels = (): ToggleMetadataPanelsAction => {
+export function toggleMetadataPanels(): ToggleMetadataPanelsAction {
   return {
     type: TOGGLE_METADATA_PANELS
   };
-};
+}
 
 //////////// Redux Action Creator : TOGGLE_LONG_DESCRIPTION
 export const TOGGLE_LONG_DESCRIPTION = "TOGGLE_LONG_DESCRIPTION";
@@ -196,7 +194,7 @@ export type ToggleLongAbstractAction = {
   index: number;
 };
 
-export const toggleLongAbstract = (title: string, index: number): Thunk => {
+export function toggleLongAbstract(title: string, index: number): Thunk {
   return (dispatch: Dispatch): void => {
     // Notify Matomo Analytics of toggling "Read more" for a study.
     const _paq = getPaq();
@@ -207,7 +205,7 @@ export const toggleLongAbstract = (title: string, index: number): Thunk => {
       index
     });
   };
-};
+}
 
 //////////// Redux Action Creator : UPDATE_DISPLAYED
 export const UPDATE_DISPLAYED = "UPDATE_DISPLAYED";
@@ -218,7 +216,7 @@ export type UpdateDisplayedAction = {
   language: string;
 };
 
-export const updateDisplayed = (displayed: SearchResponse<CMMStudy>): Thunk => {
+export function updateDisplayed(displayed: SearchResponse<CMMStudy>): Thunk {
   return (dispatch: Dispatch, getState: GetState): void => {
     dispatch({
       type: UPDATE_DISPLAYED,
@@ -226,7 +224,7 @@ export const updateDisplayed = (displayed: SearchResponse<CMMStudy>): Thunk => {
       language: getState().language.code
     });
   };
-};
+}
 
 //////////// Redux Action Creator : UPDATE_QUERY
 export const UPDATE_QUERY = "UPDATE_QUERY";
@@ -236,12 +234,12 @@ export type UpdateQueryAction = {
   query: Record<string, any>;
 };
 
-export const updateQuery = (query: Record<string, any>): UpdateQueryAction => {
+export function updateQuery(query: Record<string, any>): UpdateQueryAction {
   return {
     type: UPDATE_QUERY,
     query
   };
-};
+}
 
 //////////// Redux Action Creator : UPDATE_STATE
 export const UPDATE_STATE = "UPDATE_STATE";
@@ -255,12 +253,12 @@ export type UpdateStateAction = {
   state: SearchkitState;
 };
 
-export const updateState = (state: any): UpdateStateAction => {
+export function updateState(state: SearchkitState): UpdateStateAction {
   return {
     type: UPDATE_STATE,
     state
   };
-};
+}
 
 //////////// Redux Action Creator : UPDATE_SIMILARS
 export const UPDATE_SIMILARS = "UPDATE_SIMILARS";
@@ -270,12 +268,12 @@ export type UpdateSimilarsAction = {
   similars: CMMStudy[];
 };
 
-export const updateSimilars = (item: CMMStudy): Thunk => {
+export function updateSimilars(item: CMMStudy): Thunk {
   return async (dispatch: Dispatch, getState: GetState) => {
     const state: State = getState();
     const index = _.find(state.language.list, { 'code': state.language.code })?.index;
 
-    const response = await elasticsearchClient().search<CMMStudy>({
+    const response = await elasticsearchClient.search<CMMStudy>({
       size: 10,
       body: {
         index: index,
@@ -291,7 +289,7 @@ export const updateSimilars = (item: CMMStudy): Thunk => {
       ).map(hit => hit._source)
     });
   };
-};
+}
 
 //////////// Redux Action Creator : RESET_SEARCH
 export const RESET_SEARCH = "RESET_SEARCH";
@@ -300,7 +298,7 @@ export type ResetSearchAction = {
   type: typeof RESET_SEARCH;
 };
 
-export const resetSearch = (): Thunk => {
+export function resetSearch(): Thunk {
   return (dispatch: Dispatch): void => {
     // Use timeout to ensure searchkit is reset after pending router events.
     setTimeout(() => {
@@ -311,7 +309,7 @@ export const resetSearch = (): Thunk => {
       type: RESET_SEARCH
     });
   };
-};
+}
 
 //////////// Redux Action Creator : UPDATE_TOTAL_STUDIES
 export const UPDATE_TOTAL_STUDIES = "UPDATE_TOTAL_STUDIES";
@@ -321,10 +319,10 @@ export type UpdateTotalStudiesAction = {
   totalStudies: number;
 };
 
-export const updateTotalStudies = (): Thunk => {
+export function updateTotalStudies(): Thunk {
   return async (dispatch: Dispatch) => {
     try {
-      const response = await elasticsearchClient().search({
+      const response = await elasticsearchClient.search({
         size: 0,
         body: {
           index: "cmmstudy_*",
@@ -341,7 +339,7 @@ export const updateTotalStudies = (): Thunk => {
       console.error(e);
     }
   };
-};
+}
 
 ////////////
 

@@ -51,12 +51,12 @@ describe('Language component', () => {
     const { props, enzymeWrapper } = setup();
     expect(props.changeLanguage).not.toHaveBeenCalled();
 
-    props.list.forEach(language => {
+    for (const language of props.list) {
       enzymeWrapper.find('Select').simulate('change', {
         value: language
       });
       expect(props.changeLanguage).toHaveBeenCalledWith(language);
-    });
+    }
   });
 
   it('should map state to props', () => {

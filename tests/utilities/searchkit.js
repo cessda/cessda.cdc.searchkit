@@ -50,10 +50,15 @@ describe('Searchkit utilities', () => {
   describe('pidQuery()', () => {
     it('should return a Searchkit query used to retrieve a single study based on PID', () => {
       expect(pidQuery('UKDS__6358')).toEqual({
-        bool: {
-          must: {
-            match: {
-              pidStudies: 'UKDS__6358'
+        nested: {
+          path: 'pidStudies',
+          query: {
+            bool: {
+              must: {
+                match: {
+                  'pidStudies.pid': 'UKDS__6358'
+                }
+              }
             }
           }
         }

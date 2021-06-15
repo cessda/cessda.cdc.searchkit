@@ -11,12 +11,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { getLanguages } from '../../src/utilities/language';
+import { languages } from '../../src/utilities/language';
 
 describe('Language utilities', () => {
-  describe('getLanguages()', () => {
-    it('should return a list of languages', () => {
-      expect(getLanguages()).toEqual(
+  describe('language', () => {
+    it('should contain a list of languages', () => {
+      expect(languages).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             code: expect.any(String),
@@ -30,25 +30,24 @@ describe('Language utilities', () => {
 
   describe('Locales', () => {
     it('should handle pluralisation', () => {
-      const languages = getLanguages();
-      for (let i = 0; i < languages.length; i++) {
+      for (const language of languages) {
         if (
-          languages[i].locale &&
-          languages[i].locale.counterpart &&
-          languages[i].locale.counterpart.pluralize
+          language.locale &&
+          language.locale.counterpart &&
+          language.locale.counterpart.pluralize
         ) {
           const entry = {
             one: 'one',
             other: 'other',
             zero: 'zero'
           };
-          expect(languages[i].locale.counterpart.pluralize(entry, 0)).toBe(
+          expect(language.locale.counterpart.pluralize(entry, 0)).toBe(
             'zero'
           );
-          expect(languages[i].locale.counterpart.pluralize(entry, 1)).toBe(
+          expect(language.locale.counterpart.pluralize(entry, 1)).toBe(
             'one'
           );
-          expect(languages[i].locale.counterpart.pluralize(entry, 2)).toBe(
+          expect(language.locale.counterpart.pluralize(entry, 2)).toBe(
             'other'
           );
         }

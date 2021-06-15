@@ -29,9 +29,11 @@ export class App extends Component<Props> {
 
   constructor(props?: Props) {
     super(props);
-    this.props.initSearchkit();
-    this.props.initTranslations();
-    this.props.updateTotalStudies();
+    if (props) {
+      this.props.initSearchkit();
+      this.props.initTranslations();
+      this.props.updateTotalStudies();
+    }
   }
 
   render() {

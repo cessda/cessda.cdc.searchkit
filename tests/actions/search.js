@@ -39,20 +39,39 @@ import {
   UPDATE_SIMILARS,
   UPDATE_STATE
 } from '../../src/actions/search';
-import { getLanguages } from '../../src/utilities/language';
+import { languages } from '../../src/utilities/language';
 import _ from 'lodash';
-import { Client } from 'elasticsearch';
 
 const mockStore = configureMockStore([thunk]);
 
 // Mock Client() in elasticsearch module.
 jest.mock('elasticsearch', () => ({
-  Client: jest.fn()
+  // Mock elasticsearch Client() to prevent http request and resolve promise.
+  Client: jest.fn().mockImplementation(() => ({
+    search: () => Promise.resolve({
+      aggregations: {
+        unique_id: {
+          value: 1
+        }
+      },
+      hits: {
+        hits: [
+          {
+            _source: {
+              id: 2,
+              titleStudy: 'Similar Study Title'
+            }
+          }
+        ],
+        total: 1
+      },
+      timed_out: false,
+      took: 1
+    })
+  }))
 }));
 
 describe('Search actions', () => {
-  const languages = getLanguages();
-
   beforeEach(() => {
     // Reset environment variables.
     process.env.PASC_DEBUG_MODE = 'false';
@@ -69,34 +88,6 @@ describe('Search actions', () => {
 
     // Mock Matomo Analytics library (no metrics will actually be sent).
     global['_paq'] = [];
-
-    // Mock elasticsearch Client() to prevent http request and resolve promise.
-    Client.mockImplementation(() => {
-      return {
-        search: () => {
-          return Promise.resolve({
-            aggregations: {
-              unique_id: {
-                value: 1
-              }
-            },
-            hits: {
-              hits: [
-                {
-                  _source: {
-                    id: 2,
-                    titleStudy: 'Similar Study Title'
-                  }
-                }
-              ],
-              total: 1
-            },
-            timed_out: false,
-            took: 1
-          });
-        }
-      };
-    });
   });
 
   afterEach(() => {
@@ -123,9 +114,7 @@ describe('Search actions', () => {
         },
         language: {
           code: 'en',
-          list: _.map(languages, function(language) {
-            return _.pick(language, ['code', 'label', 'index']);
-          })
+          list: _.map(languages, (language) => _.pick(language, ['code', 'label', 'index']))
         }
       });
 
@@ -213,7 +202,7 @@ describe('Search actions', () => {
 
     it('is created when initialising searchkit on the detail page', () => {
       // Mock Redux store.
-      let store = mockStore({
+      const store = mockStore({
         routing: {
           locationBeforeTransitions: {
             pathname: '/detail',
@@ -224,9 +213,7 @@ describe('Search actions', () => {
         },
         language: {
           code: 'en',
-          list: _.map(languages, function(language) {
-            return _.pick(language, ['code', 'label', 'index']);
-          })
+          list: _.map(languages, (language) => _.pick(language, ['code', 'label', 'index']))
         }
       });
 
@@ -311,6 +298,69 @@ describe('Search actions', () => {
       ]);
     });
 
+    it('is created when initialising searchkit on the pid page', () => {
+      // Mock Redux store.
+      const store = mockStore({
+        routing: {
+          locationBeforeTransitions: {
+            pathname: '/pid',
+            query: {
+              q: ['search text']
+            }
+          }
+        },
+        language: {
+          code: 'en',
+          list: _.map(languages, (language) => _.pick(language, ['code', 'label', 'index']))
+        }
+      });
+
+      // Dispatch action.
+      store.dispatch(initSearchkit());
+
+      // Manually trigger search to execute query processor.
+      searchkit.search();
+
+      // Manually execute setTimeout() callback.
+      jest.runAllTimers();
+
+      // State should contain actions in sequence for pid page.
+      expect(store.getActions()).toEqual([
+        {
+          type: INIT_SEARCHKIT
+        },
+        {
+          type: TOGGLE_LOADING,
+          loading: true
+        },
+        {
+          type: UPDATE_QUERY,
+          query: {
+            index: 'cmmstudy_en',
+            query: {
+              nested:{
+                path: 'pidStudies',
+                query: {
+                  bool: {
+                    must: {
+                      match: {
+                        'pidStudies.pid': 'search text',
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            size: 20
+          }
+        },
+        {
+          type: UPDATE_STATE,
+          state: {}
+        }
+      ]);
+    });
+
     it('logs user metrics when analytics is enabled', () => {
       // Mock Redux store.
       let store = mockStore({
@@ -324,9 +374,7 @@ describe('Search actions', () => {
         },
         language: {
           code: 'en',
-          list: _.map(languages, function(language) {
-            return _.pick(language, ['code', 'label', 'index']);
-          })
+          list: _.map(languages, (language) => _.pick(language, ['code', 'label', 'index']))
         }
       });
 
@@ -516,9 +564,7 @@ describe('Search actions', () => {
       let store = mockStore({
         language: {
           code: 'en',
-          list: _.map(languages, function(language) {
-            return _.pick(language, ['code', 'label', 'index']);
-          })
+          list: _.map(languages, (language) => _.pick(language, ['code', 'label', 'index']))
         }
       });
 
@@ -546,12 +592,20 @@ describe('Search actions', () => {
   });
 
   describe('RESET_SEARCH action', () => {
+    beforeEach(() => {
+      // Action uses setTimeout() so use fake timers for these tests.
+      jest.useFakeTimers();
+    });
+
     it('is created when the list of similar studies is updated', () => {
       // Mock Redux store.
       let store = mockStore({});
 
       // Dispatch action.
       store.dispatch(resetSearch());
+
+      // Run the action
+      jest.runAllTimers();
 
       // Action should be returned.
       expect(store.getActions()).toEqual([

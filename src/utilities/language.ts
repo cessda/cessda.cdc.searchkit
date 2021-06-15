@@ -13,15 +13,16 @@
 // limitations under the License.
 
 
-export function getLanguages(): Language[] {
-  // Register translations stored in the "/translations" directory by adding them to the array below.
-  // To add a new language with an associated Elasticsearch index, use the following format:
-  // {
-  //   code   : The 2 letter ISO code for this language.
-  //   label  : The English label for this language.
-  //   index  : The Elasticsearch index containing data for this language.
-  // }
-  return [{
+// Register translations stored in the "/translations" directory by adding them to the array below.
+// To add a new language with an associated Elasticsearch index, use the following format:
+// {
+//   code   : The 2 letter ISO code for this language.
+//   label  : The English label for this language.
+//   index  : The Elasticsearch index containing data for this language.
+// }
+/** Registered languages. */
+export const languages: readonly Language[] = [
+  {
     code: 'da',
     label: 'Danish',
     index: 'cmmstudy_da'
@@ -62,7 +63,7 @@ export function getLanguages(): Language[] {
     label: 'Swedish',
     index: 'cmmstudy_sv'
   }];
-};
+
 
 export type Language = {
   /** The ISO code of the language */

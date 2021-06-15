@@ -34,13 +34,13 @@ export default class MultiSelect extends AbstractItemList {
   handleChange(selectedOptions: Option<OptionValues> | Options<OptionValues> | null) {
     if (_.isArray(selectedOptions)) {
       const items: string[] = [];
-      selectedOptions.forEach(el => {
+      for (const el of selectedOptions) {
         if (el.value) {
           items.push(el.value.toString());
         } else {
           items.push('');
         }
-      });
+      }
       this.props.setItems(items);
     } else if (selectedOptions?.value) {
       this.props.setItems([selectedOptions.value.toString()])

@@ -12,12 +12,10 @@
 // limitations under the License.
 
 import language from '../../src/reducers/language';
-import { getLanguages } from '../../src/utilities/language';
+import { languages } from '../../src/utilities/language';
 import _ from 'lodash';
 
 describe('Language reducer', () => {
-  const languages = getLanguages();
-
   it('should return the initial state', () => {
     expect(language(undefined, {})).toEqual({
       code: 'en',
@@ -27,9 +25,7 @@ describe('Language reducer', () => {
   });
 
   it('should handle INIT_TRANSLATIONS', () => {
-    const list = _.map(languages, function(language) {
-      return _.pick(language, ['code', 'label', 'index']);
-    });
+    const list = _.map(languages, (language) => _.pick(language, ['code', 'label', 'index']));
     expect(
       language(
         {},

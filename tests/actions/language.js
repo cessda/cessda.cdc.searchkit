@@ -16,13 +16,12 @@ import thunk from 'redux-thunk';
 import counterpart from 'counterpart';
 import searchkit from '../../src/utilities/searchkit';
 import { changeLanguage, initTranslations } from '../../src/actions/language';
-import { getLanguages } from '../../src/utilities/language';
+import { languages } from '../../src/utilities/language';
 import _ from 'lodash';
 
 const mockStore = configureMockStore([thunk]);
 
 describe('Language actions', () => {
-  const languages = getLanguages();
 
   beforeEach(() => {
     // Reset environment variables.
