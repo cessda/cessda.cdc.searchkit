@@ -29,7 +29,6 @@ import { CMMStudy, getJsonLd, getStudyModel } from '../common/metadata';
 import { Dataset, WithContext } from 'schema-dts';
 import { startMetricsListening, apiResponseTimeHandler, uiResponseTimeHandler } from './metrics';
 
-
 // Defaults to localhost if unspecified
 const elasticsearchUrl = process.env.PASC_ELASTICSEARCH_URL || "http://localhost:9200/";
 const elasticsearchUsername = process.env.SEARCHKIT_ELASTICSEARCH_USERNAME;
@@ -355,10 +354,6 @@ export function startListening(app: express.Express, handler: RequestHandler) {
   app.use('/api/sk', getSearchkitRouter());
   app.use('/api/json', jsonProxy());
   app.use('/api/DataSets/v1', externalApiV1());
-  app.use('/swagger/api/DataSets/v1', (req, res) => {
-    const externalAPISwagger = require("./swagger.json");
-    res.json(externalAPISwagger);
-  });
   app.use('/api/mt', startMetricsListening());
 
   app.get('*', handler);
