@@ -157,5 +157,8 @@
   "documentation": {
     "label": "User Guide"
   },
+  "api": {
+    "label": "REST API"
+  },
   "datacatalogue": "CESSDA Data Catalogue"
 }

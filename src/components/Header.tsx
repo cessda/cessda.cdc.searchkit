@@ -152,8 +152,9 @@ export class Header extends Component<Props> {
                 {pathname === "/" && <HitsStats className="hits-count" />}
               </div>
               <div className="column has-text-right-tablet has-text-left-mobile is-narrow-touch">
-                <Translate component="a" href="/documentation" className="sk-reset-filters link" content="documentation.label"/>
                 <Translate component={Link} to="/about" className="sk-reset-filters link is-hidden-mobile" content="about.label"/>
+                <Translate component="a" href="/documentation" className="sk-reset-filters link" content="documentation.label"/>
+                <Translate component={Link} to="https://api.tech.cessda.eu/" className="sk-reset-filters link" content="api.label"/>
               </div>
             </div>
           </div>

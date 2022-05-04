@@ -2,8 +2,7 @@ import Sitemapper from 'sitemapper';
 import axios from 'axios';
 import winston from 'winston';
 import fs from 'fs';
-import { URLSearchParams } from 'url';
-import url from 'url';
+import { URLSearchParams, URL } from 'url';
 
 const logLevel = process.env.SEARCHKIT_LOG_LEVEL || 'info';
 function loggerFormat() {
@@ -41,17 +40,13 @@ function fujiMetrics() {
             retries: 1,
         });
         try {
-            console.log("before fetch");
             const { sites } = await cdcLinks.fetch();
             sites.shift(); //remove 1st element - https://datacatalogue.cessda.eu/
-            console.log("after fetch");
             console.log(`Acessing: ${sites.length}`, 'sites');
-            //console.log(sites[1]);
-            //sites.forEach(await apiLoop(key));
+            logger.info(`Acessing: ${sites.length}`, 'sites');
             for (const site of sites) {
-                //console.log(typeof(site)); string
                 const contents = await apiLoop(site);
-                console.log(contents);
+                //console.log(contents);
             }
         } catch (error) {
             console.log(`Error at crawling indexer: ${error}`);
@@ -63,23 +58,22 @@ function fujiMetrics() {
     })();
 }
 
-async function apiLoop(key: string): Promise<string>{ 
+async function apiLoop(link: string): Promise<string>{
 
-    console.log(`site: ${key}`);
-    const urlParams = new URLSearchParams(key);
+    const urlLink = new URL(link); 
+    const urlParams = new URLSearchParams(link);
+    logger.info(`site: ${urlLink}`);
     //needs to be changed - sitemaps links
     const valueArr: Array<String> = [];
     urlParams.forEach(function(key, value) {
         valueArr.push(value)
-      });
-    console.log(`before: ${valueArr[1]}`);
+    });
+    //to create the file name with allowed chars
     const fileName = valueArr[1].replace(/quot;/g, "").replace(/:/g, ".").replace(/\//g, "-");
-    console.log(`after: ${fileName}`);
     await axios
     .post('http://localhost:1071/fuji/api/v1/evaluate', {
         "metadata_service_endpoint": "",
-        //"metadata_service_type": sites[1],
-        "metadata_service_type": key,
+        "metadata_service_type": urlLink,
         "object_identifier": "value",
         "test_debug": true,
         "use_datacite": true
@@ -90,20 +84,13 @@ async function apiLoop(key: string): Promise<string>{
         }
     })
     .then((res: { status: any; data: any; }) => {
-        console.log(`statusCode: ${res.status}`)
-        //console.log(res.data) !!!!!
+        logger.info(`statusCode: ${res.status}`);
         const output = res.data;
-        /*fs.writeFile(`fujiResults/${fileName}`, '.txt', JSON.stringify(output, null, 4).toString(), err =>{
-            if (err){
-                console.log("error at text write: "+err)
-                return;
-            }
-        })*/
         fs.writeFile(`fujiResults/${fileName}.txt`, JSON.stringify(output, null, 4).toString(), (err) => {
             if (err)
-              console.log(err);
+              logger.error(`Error writing to file: ${err}`);
             else {
-              console.log("File written successfully\n");
+              logger.info("File written successfully\n");
             }
           });
     })
@@ -113,13 +100,11 @@ async function apiLoop(key: string): Promise<string>{
     })
 
     return new Promise(function(resolve) {
-        resolve("completed");
-      });
-      /*return new Promise(resolve => {
         setTimeout(() => {
-          resolve
-        }, 2000);
-      });*/
+            resolve("completed")
+          }, 1000);
+    });
+
 }
 
 fujiMetrics();
