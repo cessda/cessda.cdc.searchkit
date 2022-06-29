@@ -9,7 +9,7 @@
       "content": "It may not exist or is not available in the selected language. Choose an alternative language or start a new search."
     }
   },
-  "search": "Select a language for optimal search results",
+  "search": "Enter search term in the selected language",
   "noHits": {
     "noResultsFound": "No results found for \"%(query)s\" in the selected language.",
     "searchWithoutFilters": "Search for \"%(query)s\" without filters",
@@ -45,7 +45,7 @@
     "publisher": {
       "label": "Publisher",
       "placeholder": "Search publishers",
-      "tooltip": "Name of the institution providing the information (metadata) on the study."
+      "tooltip": "Name of the institution providing the information on the study."
     },
     "summary": {
       "label": "Filter summary",
@@ -152,7 +152,7 @@
   },
   "about": {
     "label": "About",
-    "content": "<p>This is the CESSDA Data Catalogue (CDC) version 2.5.0, released on 2021-11-25. It contains descriptions (metadata) of the more than 30,000 data collections held by CESSDA’s Service Providers (SP), representing 20 European countries. It is a one-stop shop for searching and finding data, enabling effective access to European social science data. The data described are varied. They may be quantitative, qualitative or mixed-modes data, cross-sectional or longitudinal, recently collected or historical data.</p><p>The <a href=\"/documentation/\">User Guide</a> presents an overview of how to use the CDC for searching, including basic search and applying filters as well as advanced search.</p><p>The CDC is a portal for discovering data. Detailed dataset descriptions are provided. For information and procedures to access data, there is a link [“Access data”] from each study to the study information on the website of the data provider (Publisher). Check the information there to see what access conditions apply to data created in that particular study.</p><h3>Changes since the last version</h3><ul><li>Change the text in the browser page tab, depending on the current study or search query.</li><li>Add sorting options for filtering studies by date published.</li><li>Add Czech language support.</li><li>Sort by the collection end date, rather than the collection start date.</li><li>Only show the available date fields on the Detail page.</li><li>Filter out PID objects that are missing a persistent identifier, fixing cases where the Agency would be displayed on its own.</li><li>The User Guide has been updated to correspond to the current version of the Data Catalogue.</li></ul>"
+    "content": "<p>This is the CESSDA Data Catalogue (CDC) version 3.0.0, released on 2022-06-07. It contains descriptions of the more than 40,000 data collections held by CESSDA’s Service Providers (SPs). Datasets come from over 20 European countries. It is a one-stop shop for searching and finding European social science data. The data described may be quantitative, qualitative or mixed-modes data, cross-sectional or longitudinal, recently collected or historical data. The metadata (study descriptions) are in whatever language they were provided by the organisations producing the metadata. Some publishers provide study descriptions both in English and in the local language, some only in either English or in the local language. Currently, about 75%% of study descriptions are available in English.</p><p>The <a href=\"/documentation/\">User Guide</a> presents an overview of how to use the data catalogue for searching, including basic search and applying filters as well as advanced search.</p><p>The CDC is a portal for discovering data. Detailed dataset descriptions are provided. For information and procedures to access data, there is a link [“Access data”] from each study to the study information on the website of the data provider (Publisher). Check the information there to see what access conditions apply to data created in that particular study.</p><p>An <a href=\"https://www.openarchives.org/pmh/\">OAI-PMH compliant endpoint</a> has been added, so that data aggregators can easily harvest the entire contents of the data catalogue. Record identifiers are unified with those used in the User Interface. It is located at <a href=\"https://datacatalogue.cessda.eu/oai-pmh/v0/oai\"> https://datacatalogue.cessda.eu/oai-pmh/v0/oai</a>.</p><p>A search API has also been added. Documentation is available at the <a href=\"https://api.tech.cessda.eu/\">public REST APIs for CESSDA Services</a> page.</p><h3>Changes since the last version</h3><ul><li>Changed the order of the buttons on the right hand side of the menu bar.</li><li>Added a button to take the user to the Search API documentation.</li><li>Add the current language to the request URL in the User Interface.</li><li>Record identifiers used in the OAI-PMH compliant endpoint are unified with those in the User Interface.</li><li>Trimmed abstracts over a fixed number of characters on the search results page.</li><li>Many improvements to stability and performance have been made.</li><li>The User Guide has been updated to correspond to the current version of the Data Catalogue.</li></ul>" 
     },
   "documentation": {
     "label": "User Guide"

@@ -127,10 +127,10 @@ export class SearchPage extends Component<Props> {
 
               <RefinementListFilter id="publisher.publisher"
                                     title={counterpart.translate('filters.publisher.label')}
-                                    field={'publisher.publisher'}
+                                    field={'publisherFilter.publisher'}
                                     fieldOptions={{
                                       type: 'nested',
-                                      options: {path: 'publisher', min_doc_count: 1}
+                                      options: {path: 'publisherFilter', min_doc_count: 1}
                                     }}
                                     orderKey="_key"
                                     orderDirection="asc"

@@ -24,10 +24,10 @@ module.exports = {
 
   preset: 'ts-jest/presets/js-with-babel',
 
-  // Setup Enzyme, this removes the need for imports in the tests
+  // Setup Enzyme and fetch, this removes the need for imports in the tests
   setupFilesAfterEnv: ["<rootDir>setupTests.js"],
   testEnvironment: "jsdom",
 
-  testMatch: ["**/tests/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
-  testPathIgnorePatterns: ["/node_modules/", "/tests/mockdata.ts"]
+  testMatch: ["**/tests/**/*.[tj]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
+  testPathIgnorePatterns: ["/node_modules/", "/tests/common/mockdata.ts"]
 };

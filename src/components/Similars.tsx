@@ -25,22 +25,17 @@ export class Similars extends Component<Props> {
 
   render() {
     const {
-      item,
       similars    
     } = this.props;
 
     const links: JSX.Element[] = [];
 
-    if (item && similars) {
-      for (let i: number = 0; i < similars.length; i++) {
-        // Construct the similar URL
-        links.push(<Link key={i} to={{
-          pathname: '/detail',
-          query: {
-            q: similars[i].id
-          }
-        }}>{similars[i].title}</Link>);
-      }
+    for (let i: number = 0; i < similars.length; i++) {
+      // Construct the similar URL
+      links.push(<Link key={i} to={{
+        pathname: '/detail',
+        query: { q: similars[i].id }
+      }}>{similars[i].title}</Link>);
     }
 
     return (
@@ -54,11 +49,9 @@ export class Similars extends Component<Props> {
   }
 }
 
-export function mapStateToProps(state: State) {
+export function mapStateToProps(state: Pick<State, "detail">) {
   return {
-    item: state.search.displayed[0],
-    language: state.language.currentLanguage.code,
-    similars: state.search.similars
+    similars: state.detail.similars
   };
 }
 

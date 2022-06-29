@@ -19,7 +19,7 @@ The overall Software Maturity Level for this product and the individual scores f
 
 ## Prerequisites
 
-[Node.js](https://nodejs.org/) version 14 (LTS) is required to install and run this application.
+[Node.js](https://nodejs.org/) version 16 (LTS) is required to install and run this application.
 
 You will need an existing local or remote Elasticsearch instance setup and running.
 
@@ -200,7 +200,7 @@ As of *9 February 2021*
 
 * All languages are available for selection, however Slovenian and Swedish currently have no records associated with them.
 
-See [cessda.cdc.version2 README](https://bitbucket.org/cessda/cessda.cdc.version2/src/master/README.md) for more details regarding adding UI languages, indexes etc.
+See [cessda.cdc.versions README](https://bitbucket.org/cessda/cessda.cdc.versions/src/master/README.md) for more details regarding adding UI languages, indexes etc.
 
 ## Contributing
 

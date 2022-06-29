@@ -15,6 +15,8 @@ const path = require('path');
 const { merge } = require('webpack-merge');
 const webpack = require('webpack');
 
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 module.exports = merge(common, {
   mode: 'development',
   devtool: 'sourcemap',
@@ -30,6 +32,10 @@ module.exports = merge(common, {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
+    new HtmlWebpackPlugin({
+      template: '!!html-loader!server/views/index.ejs',
+      filename: 'index.dev.ejs'
+    }),
     new webpack.EnvironmentPlugin({
       PASC_DEBUG_MODE: false,
       PASC_PORT: 8088,

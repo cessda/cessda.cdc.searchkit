@@ -41,7 +41,8 @@ module.exports = merge(common, {
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin(),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'server/views/index.ejs'),
+      template: '!!html-loader!server/views/index.ejs',
+      filename: 'index.ejs',
       minify: {
         removeComments: true,
         collapseWhitespace: true

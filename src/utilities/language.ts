@@ -22,9 +22,9 @@
   // }
 export const languages: readonly Language[] = 
   [{
-    code: 'cz',
+    code: 'cs',
     label: 'Czech',
-    index: 'cmmstudy_cz'
+    index: 'cmmstudy_cs'
   },{
     code: 'da',
     label: 'Danish',

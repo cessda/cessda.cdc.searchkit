@@ -34,7 +34,7 @@ pipeline {
 		stage('Run Unit Tests') {
 			agent {
 				docker {
-					image 'node:14'
+					image 'node:16'
 					reuseNode true
 				}
 			}
@@ -50,7 +50,7 @@ pipeline {
 		}
 		stage('Run Sonar Scan') {
 			steps {
-				nodejs('node-12') {
+				nodejs('node-16') {
 					withSonarQubeEnv('cessda-sonar') {
 						sh "${scannerHome}/bin/sonar-scanner"
 					}
@@ -79,9 +79,7 @@ pipeline {
 		}
 		stage('Check Requirements and Deployments') {
 			steps {
-				dir('./infrastructure/gcp/') {
-					build job: 'cessda.cdc.deploy/master', parameters: [string(name: 'searchkit_image_tag', value: "${env.BRANCH_NAME}-${env.BUILD_NUMBER}")], wait: false
-				}
+				build job: 'cessda.cdc.deploy/master', parameters: [string(name: 'searchkit_image_tag', value: "${env.BRANCH_NAME}-${env.BUILD_NUMBER}")], wait: false
 			}
 			when { branch 'master' }
 		}

@@ -16,12 +16,12 @@ import { FaAngleDown, FaAngleUp, FaExternalLinkAlt, FaLanguage } from 'react-ico
 import Translate from 'react-translate-component';
 import { connect, Dispatch } from 'react-redux';
 import { AnyAction, bindActionCreators } from 'redux';
-import { toggleLongAbstract } from '../actions/search';
 import { Link } from 'react-router';
 import type { State } from '../types';
 import { changeLanguage } from '../actions/language';
 import { push } from 'react-router-redux';
 import { CMMStudy } from '../../common/metadata';
+import getPaq from '../utilities/getPaq';
 
 type Props = {
   bemBlocks: any;
@@ -29,6 +29,10 @@ type Props = {
   index: number;
   item: CMMStudy;
 } & ReturnType<typeof mapDispatchToProps>;
+
+interface ComponentState {
+  abstractExpanded: boolean;
+}
 
 function generateCreatorElements(item: CMMStudy) {
   let creators: JSX.Element[] = [];
@@ -49,7 +53,14 @@ function generateCreatorElements(item: CMMStudy) {
   return creators;
 }
 
-export class Result extends Component<Props> {
+export class Result extends Component<Props, ComponentState> {
+
+  constructor(props?: Props) {
+    super(props);
+    this.state = {
+      abstractExpanded: false
+    };
+  }
 
   render() {
     const {
@@ -98,8 +109,11 @@ export class Result extends Component<Props> {
           {creators}
         </div>
         <div className={bemBlocks.item().mix(bemBlocks.container('desc'))}>
-          {item.abstractExpanded && <span className="abstr" dangerouslySetInnerHTML={{__html: item.abstractHighlight || item.abstract}}/>} 
-          {!item.abstractExpanded && <span dangerouslySetInnerHTML={{__html: item.abstractHighlightShort || item.abstractShort}}/>}
+          {this.state.abstractExpanded ? 
+            <span className="abstr" dangerouslySetInnerHTML={{__html: item.abstractHighlight || item.abstract}}/>
+          :
+            <span dangerouslySetInnerHTML={{__html: item.abstractHighlightShort || item.abstractShort}}/>
+          }
         </div>
         <span className="level mt-10 result-actions">
           <span className="level-left is-hidden-touch">
@@ -107,9 +121,15 @@ export class Result extends Component<Props> {
               <div className="control">
                 {item.abstract.length > 500 &&
                  <a className={bemBlocks.item().mix('button is-small is-white')} onClick={() => {
-                   this.props.toggleLongAbstract(item.titleStudy, index);
+                  // Notify Matomo Analytics of toggling "Read more" for a study.
+                  const _paq = getPaq();
+                  _paq.push(['trackEvent', 'Search', 'Read more', item.titleStudy]);
+
+                  this.setState(state => ({
+                    abstractExpanded: !state.abstractExpanded
+                  }));
                  }}>
-                   {item.abstractExpanded ?
+                   {this.state.abstractExpanded ?
                     <>
                       <span className="icon is-small"><FaAngleUp/></span>
                       <Translate component="span" content="readLess"/>
@@ -168,8 +188,7 @@ export function mapStateToProps(state: State, props: Props) {
 export function mapDispatchToProps(dispatch: Dispatch<AnyAction>) {
   return {
     push: bindActionCreators(push, dispatch),
-    changeLanguage: bindActionCreators(changeLanguage, dispatch),
-    toggleLongAbstract: bindActionCreators(toggleLongAbstract, dispatch)
+    changeLanguage: bindActionCreators(changeLanguage, dispatch)
   };
 }
 

@@ -17,7 +17,7 @@ import express from 'express';
 // @ts-ignore
 import config from '../webpack.dev.config.js';
 import path from 'path';
-import { checkEnvironmentVariables, startListening } from './helper';
+import { checkEnvironmentVariables, renderResponse, startListening } from './helper';
 
 export function start() {
     checkEnvironmentVariables(false);
@@ -26,8 +26,9 @@ export function start() {
     const compiler = webpack(config);
 
     app.set('view engine', 'ejs');
-    app.set('views', path.join(__dirname, 'views'));
+    app.set('views', path.join(__dirname, '../dist'));
 
+  const indexRegex = new RegExp("index.dev.ejs");
     // @ts-expect-error - incorrect typings
     app.use(webpackMiddleware(compiler, {
       publicPath: config.output.publicPath,
@@ -39,13 +40,17 @@ export function start() {
         chunks: false,
         chunkModules: false,
         modules: false
-      }
+      },
+      // Write the index.ejs file to disk so that ejs can access it
+      writeToDisk: (filePath) => indexRegex.test(filePath)
     }));
 
+    // @ts-expect-error - incorrect typings
     app.use(webpackHotMiddleware(compiler));
 
-    startListening(app, (_req, res) => {
+    startListening(app, async (req, res) => {
+      const ejsTemplate = 'index.dev.ejs';
       res.setHeader('Cache-Control', 'no-store');
-      res.render('index');
+      await renderResponse(req, res, ejsTemplate);
     });
 };

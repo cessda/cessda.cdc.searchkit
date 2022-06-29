@@ -15,7 +15,7 @@
   },
   "servers": [
     {
-      "url": "https://datacatalogue.cessda.eu/api/DataSets/v1"
+      "url": "/api/DataSets/v1"
     }
   ],
   "tags": [
@@ -147,12 +147,12 @@
           {
             "name": "metadataLanguage",
             "in": "query",
-            "description": "Language to display:\n  * `cz` - Czech\n  * `da` - Danish\n  * `nl` - Dutch\n  * `en` - English\n  * `fi` - Finish\n  * `fr` - French\n  * `de` - German\n  * `el` - Greek\n  * `sk` - Slovakian\n  * `sl` - Slovenian\n  * `sv` - Swedish\n",
+            "description": "Language to display:\n  * `cs` - Czech\n  * `da` - Danish\n  * `nl` - Dutch\n  * `en` - English\n  * `fi` - Finish\n  * `fr` - French\n  * `de` - German\n  * `el` - Greek\n  * `sk` - Slovakian\n  * `sl` - Slovenian\n  * `sv` - Swedish\n",
             "required": true,
             "schema": {
               "type": "string",
               "enum": [
-                "cz",
+                "cs",
                 "da",
                 "nl",
                 "en",

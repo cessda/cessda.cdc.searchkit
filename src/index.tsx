@@ -83,7 +83,6 @@ if (root instanceof HTMLElement) {
   if (document.documentElement instanceof HTMLElement && detect()?.name === 'ie') {
     document.documentElement.classList.add('legacy-browser');
   }
-  history.listen(listner => console.log(`${listner.action}: ${listner.pathname}${listner.search}`));
   ReactDOM.render(
     <Provider store={store}>
       <Router history={history} onUpdate={() => window.scrollTo(0, 0)}>

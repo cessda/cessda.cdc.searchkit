@@ -27,23 +27,25 @@ import Similars from '../components/Similars';
 import { goBack } from 'react-router-redux';
 import type { State } from '../types';
 import counterpart from 'counterpart';
-import { updateStudy } from '../actions/search';
-import { CMMStudy } from '../../common/metadata';
 import _ from 'lodash';
+import { getJsonLd } from '../../common/metadata';
+import { updateStudy } from '../actions/detail';
 
 export type Props = ReturnType<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>;
 
 export class DetailPage extends Component<Props> {
 
-  componentDidMount() {
+  constructor(props: Props | undefined) {
+    super(props);
     const id = this.props.query;
-    if (id) {
+    if (id && id !== this.props.item?.id) {
       this.props.updateStudy(_.trim(id, "\""));
     }
     this.updateTitle();
   }
 
   componentDidUpdate() {
+    // Check if the query has changed, if it has ask for the store to be updated.
     const id = this.props.query;
     if (id && id !== this.props.item?.id) {
       this.props.updateStudy(_.trim(id, "\""));
@@ -61,9 +63,7 @@ export class DetailPage extends Component<Props> {
 
   render() {
     const {
-      loading,
       item,
-      jsonLd,
       currentLanguage,
 	    goBack
     } = this.props;
@@ -85,49 +85,52 @@ export class DetailPage extends Component<Props> {
               </Panel>
             </SideBar>
             <LayoutResults className="column is-8">
-              {item &&
-               <div className="panel">
-                 <a className="button is-small is-white is-pulled-right" onClick={goBack}>
-                   <FaAngleLeft/><Translate className="ml-5" content="back"/>
-                 </a>
-
-                 {item.studyUrl &&
+            {item ? 
+              <>
+                <div className="panel">
+                  <a className="button is-small is-white is-pulled-right" onClick={goBack}>
+                    <FaAngleLeft/><Translate className="ml-5" content="back"/>
+                  </a>
+        
+                  {item.studyUrl &&
                   <a className="button is-small is-white is-pulled-left"
-                     href={item.studyUrl}
-                     rel="noreferrer"
-                     target="_blank">
+                      href={item.studyUrl}
+                      rel="noreferrer"
+                      target="_blank">
                     <span className="icon is-small"><FaExternalLinkAlt/></span>
                     <Translate content="goToStudy"/>
                   </a>
-                 } 
-
-                 <a className="button is-small is-white is-pulled-left"
-                    href={'/api/json/' + index + '/' + encodeURIComponent(item.id)}
+                  } 
+        
+                  <a className="button is-small is-white is-pulled-left"
+                    href={`/api/json/${index}/${encodeURIComponent(item.id)}`}
                     rel="noreferrer"
                     target="_blank">
                   <span className="icon is-small"><FaCode/></span>
                   <Translate content="viewJson"/>
-                 </a>
-
-                 <div className="is-clearfix"/>
-               </div>
-              }
-              {item && <Detail item={item}/>}
-              {!loading && !item &&
-               <div className="panel pt-15">
-                  <p className="fs-14 mb-15">
-                    <Translate component="strong" content="language.notAvailable.heading"/>
-                  </p>
-                 <Translate component="p" className="fs-14 mb-15" content="language.notAvailable.content"/>
-                 <Language/>
-               </div>
-              }
+                  </a>
+        
+                  <div className="is-clearfix"/>
+                </div>
+                <Detail item={item}/>
+              </>
+            :
+              <div className="panel pt-15">
+                <p className="fs-14 mb-15">
+                  <Translate component="strong" content="language.notAvailable.heading"/>
+                </p>
+                <Translate component="p" className="fs-14 mb-15" content="language.notAvailable.content"/>
+                <Language/>
+              </div>
+            }
             </LayoutResults>
           </LayoutBody>
           </div>
-          <script type="application/ld+json">
-            {JSON.stringify(jsonLd)}
-          </script>
+          {item &&
+            <script type="application/ld+json">
+              {JSON.stringify(getJsonLd(item))}
+            </script>
+          }
           <Footer/>
         </Layout>
       </SearchkitProvider>
@@ -136,13 +139,9 @@ export class DetailPage extends Component<Props> {
 }
 
 export function mapStateToProps(state: State) {
-  // Item could be undefined if no results are present.
-  const item = state.search.displayed[0] as CMMStudy | undefined;
   const query = state.routing.locationBeforeTransitions.query.q;
   return {
-    loading: state.search.loading,
-    item: item,
-    jsonLd: state.search.jsonLd,
+    item: state.detail.study,
     currentLanguage: state.language.currentLanguage,
     query: Array.isArray(query) ? query.join() : query
   };

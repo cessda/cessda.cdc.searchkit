@@ -63,28 +63,6 @@ export function pidQuery(pid: string) {
 }
 
 /**
- * Query used to retrieve similar records for a specific title (for detail page).
- * @param id the document id, used to exclude the original document from the query.
- * @param title the title of the document to retrieve similar records for.
- */
-export function similarQuery(id: string, title: string) {
-  return {
-    bool: {
-      must: {
-        match: {
-          titleStudy: title
-        }
-      },
-      must_not: {
-        ids: {
-          values: [id]
-        }
-      }
-    }
-  };
-}
-
-/**
  * Match all query
  */ 
 export function matchAllQuery() {

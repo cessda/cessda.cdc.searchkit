@@ -15,9 +15,11 @@ import {combineReducers} from 'redux';
 import {routerReducer} from 'react-router-redux';
 import language from './language';
 import search from './search';
+import detail from './detail';
 
 const reducers = {
   routing: routerReducer,
+  detail: detail,
   language: language,
   search: search
 };

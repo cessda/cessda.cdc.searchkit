@@ -19,12 +19,37 @@ import Translate from "react-translate-component";
 import _ from "lodash";
 import { CMMStudy, DataCollectionFreeText } from "../../common/metadata";
 import { ChronoField, DateTimeFormatter, DateTimeFormatterBuilder } from "@js-joda/core";
+import { FaAngleDown, FaAngleUp } from "react-icons/fa";
+import striptags from "striptags";
 
 export interface Props {
   item: CMMStudy;
 }
 
-export default class Detail extends React.Component<Props> {
+export interface State {
+  abstractExpanded: boolean;
+}
+
+export default class Detail extends React.Component<Props, State> {
+
+  private static readonly truncatedAbstractLength = 2000;
+
+  constructor(props: Props) {
+    super(props);
+    // Set the abstract to the expanded state if shorter than Detail.truncatedAbstractLength
+    this.state = { 
+      abstractExpanded: !(props.item.abstract.length > Detail.truncatedAbstractLength)
+    };
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    // If the item has changed, reset the expanded state of the abstract
+    if (this.props.item.id !== prevProps.item.id) {
+      this.setState(() => ({
+        abstractExpanded: !(this.props.item.abstract.length > Detail.truncatedAbstractLength)
+      }));
+    }
+  }
 
   private static readonly formatter = new DateTimeFormatterBuilder()
     .appendValue(ChronoField.YEAR)
@@ -58,7 +83,7 @@ export default class Detail extends React.Component<Props> {
     }
 
     if (elements.length === 0) {
-      elements.push(<Translate key="0" content="language.notAvailable.field" />);
+      return <Translate content="language.notAvailable.field" />;
     }
 
     return elements;
@@ -121,10 +146,6 @@ export default class Detail extends React.Component<Props> {
   render() {
     const { item } = this.props;
 
-    if (item === undefined) {
-      return null;
-    }
-
     return (
       <article className="w-100">
       <div className="summary-header">
@@ -171,7 +192,30 @@ Summary information
             component="h2"
             content="metadata.abstract"
           />
-          <div className="data-abstract" dangerouslySetInnerHTML={{ __html: item.abstract }}/>
+          {this.state.abstractExpanded ?
+            <div className="data-abstract" dangerouslySetInnerHTML={{ __html: item.abstract }}/>
+          :
+            <div className="data-abstract">{_.truncate(striptags(item.abstract), { length: Detail.truncatedAbstractLength })}</div>
+          }
+          {item.abstract.length > Detail.truncatedAbstractLength &&
+            <a className="button is-small is-white" onClick={() => {
+              this.setState(state => ({
+                abstractExpanded: !state.abstractExpanded
+              }));
+            }}>
+              {this.state.abstractExpanded ?
+              <>
+                <span className="icon is-small"><FaAngleUp/></span>
+                <Translate component="span" content="readLess"/>
+              </>
+              :
+              <>
+                <span className="icon is-small"><FaAngleDown/></span>
+                <Translate component="span" content="readMore"/>
+              </>
+              }
+            </a>
+          }
         </section>
 
         <Panel

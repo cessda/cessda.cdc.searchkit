@@ -12,7 +12,7 @@
 // limitations under the License.
 import express from 'express';
 import path from 'path';
-import { checkBuildDirectory, checkEnvironmentVariables, startListening } from './helper';
+import { checkBuildDirectory, checkEnvironmentVariables, renderResponse, startListening } from './helper';
 
 export function start () {
     checkBuildDirectory();
@@ -20,9 +20,14 @@ export function start () {
 
     const app = express();
 
-    app.use('/static', express.static(path.join(__dirname, '../dist')));
+    // Disable X-Powered-By in production
+    app.disable('x-powered-by');
 
-    const indexPath = path.join(path.join(__dirname, '../dist'), 'index.html');
+    app.set('view engine', 'ejs');
+    app.use('/static', express.static(path.join(__dirname, '../dist'), { fallthrough: false }));
 
-    startListening(app, (_req, res) => res.sendFile(indexPath));
+    const indexPath = path.join(path.join(__dirname, '../dist'), 'index.ejs');
+
+    startListening(app, async (req, res) => await renderResponse(req, res, indexPath));
 };
+

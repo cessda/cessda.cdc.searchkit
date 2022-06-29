@@ -20,7 +20,7 @@ module.exports = {
     alias: {
       react: path.resolve('./node_modules/react')
     },
-    extensions: ['.js', '.jsx', '.webpack.js', '.web.js', '.json', '.ts', '.tsx']
+    extensions: ['.ts', '.tsx', '.json', '.js', '.jsx', '.webpack.js', '.web.js']
   },
   module: {
     rules: [{
