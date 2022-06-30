@@ -501,11 +501,16 @@ export function startListening(app: express.Express, handler: RequestHandler) {
   app.use('/api/sk', getSearchkitRouter());
   app.use('/api/json', jsonProxy());
 <<<<<<< HEAD
+<<<<<<< HEAD
   app.use('/api/DataSets/v1', externalApiV1());
 =======
   app.use('/api/DataSets/v1', cors(),  externalApiV1());
   app.use('/swagger/api/DataSets/v1', cors(), ((_req, res) => res.json(swagger)) as express.RequestHandler);
 >>>>>>> 5c9a54136831837fd19bd93491fe03e6e987a0d0
+=======
+  app.use('/api/DataSets/v1', cors(),  externalApiV1());
+  app.use('/swagger/api/DataSets/v1', cors(), ((_req, res) => res.json(swagger)) as express.RequestHandler);
+>>>>>>> 9b7d71cb69302f753cfd1828cea86be854ff66fb
   app.use('/api/mt', startMetricsListening());
 
   app.get('*', handler);

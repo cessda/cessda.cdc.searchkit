@@ -226,7 +226,7 @@ export function getJsonLd(data: CMMStudy, href?: string): WithContext<Dataset> {
     variableMeasured: data.unitTypes.map(u => u.term).join(', '),
     measurementTechnique: data.typeOfModeOfCollections.map(t => t.term).join(', '),
     license: data.dataAccessFreeTexts,
-    identifier: data.pidStudies.map(i => i.pid + ' (' + i.agency + ')').join(', '),
+    identifier: data.pidStudies.filter(i=> i.agency==='DOI').map(i => i.pid)[0],
     creator: creators,
     temporalCoverage: extractDataCollectionPeriod(data.dataCollectionPeriodStartdate, data.dataCollectionPeriodEnddate),
     spatialCoverage: data.studyAreaCountries.map(s => s.country).join(', '),
