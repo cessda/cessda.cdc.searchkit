@@ -105,7 +105,7 @@
     "redux-devtools-extension": "2.13.9",
     "redux-mock-store": "1.5.4",
     "rimraf": "3.0.2",
-    "sass-loader": "10.3.0",
+    "sass-loader": "10.3.1",
     "schema-dts": "1.1.0",
     "style-loader": "2.0.0",
     "ts-jest": "27.1.5",
