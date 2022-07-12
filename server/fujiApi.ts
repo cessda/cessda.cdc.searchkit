@@ -42,7 +42,6 @@ function fujiMetrics() {
         try {
             const { sites } = await cdcLinks.fetch();
             sites.shift(); //remove 1st element - https://datacatalogue.cessda.eu/
-            console.log(`Acessing: ${sites.length}`, 'sites');
             logger.info(`Acessing: ${sites.length}`, 'sites');
             for (const site of sites) {
                 const contents = await apiLoop(site);
@@ -61,20 +60,14 @@ function fujiMetrics() {
 async function apiLoop(link: string): Promise<string>{
 
     const urlLink = new URL(link); 
-    const urlParams = new URLSearchParams(link);
-    logger.info(`site: ${urlLink}`);
-    //needs to be changed - sitemaps links
-    const valueArr: Array<String> = [];
-    urlParams.forEach(function(key, value) {
-        valueArr.push(value)
-    });
-    //to create the file name with allowed chars
-    const fileName = valueArr[1].replace(/quot;/g, "").replace(/:/g, ".").replace(/\//g, "-");
+    const urlParams = urlLink.searchParams;
+    const fileName = urlParams.get('q')+"-"+urlParams.get('lang');
+    logger.info(fileName);
     await axios
     .post('http://localhost:1071/fuji/api/v1/evaluate', {
         "metadata_service_endpoint": "",
-        "metadata_service_type": urlLink,
-        "object_identifier": "value",
+        "metadata_service_type": "",
+        "object_identifier": link,
         "test_debug": true,
         "use_datacite": true
     }, {
@@ -102,7 +95,7 @@ async function apiLoop(link: string): Promise<string>{
     return new Promise(function(resolve) {
         setTimeout(() => {
             resolve("completed")
-          }, 1000);
+          }, 7000);
     });
 
 }
