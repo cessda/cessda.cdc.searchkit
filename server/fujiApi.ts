@@ -45,7 +45,6 @@ function fujiMetrics() {
             logger.info(`Acessing: ${sites.length}`, 'sites');
             for (const site of sites) {
                 const contents = await apiLoop(site);
-                //console.log(contents);
             }
         } catch (error) {
             console.log(`Error at crawling indexer: ${error}`);
@@ -79,7 +78,7 @@ async function apiLoop(link: string): Promise<string>{
     .then((res: { status: any; data: any; }) => {
         logger.info(`statusCode: ${res.status}`);
         const output = res.data;
-        fs.writeFile(`fujiResults/${fileName}.txt`, JSON.stringify(output, null, 4).toString(), (err) => {
+        fs.writeFile(`fujiResults/${fileName}.json`, JSON.stringify(output, null, 4).toString(), (err) => {
             if (err)
               logger.error(`Error writing to file: ${err}`);
             else {
@@ -95,7 +94,7 @@ async function apiLoop(link: string): Promise<string>{
     return new Promise(function(resolve) {
         setTimeout(() => {
             resolve("completed")
-          }, 7000);
+          }, 5000);
     });
 
 }
