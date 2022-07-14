@@ -94,7 +94,7 @@ async function apiLoop(link: string): Promise<string>{
     return new Promise(function(resolve) {
         setTimeout(() => {
             resolve("completed")
-          }, 5000);
+          }, 2000); //delay between API calls
     });
 
 }
