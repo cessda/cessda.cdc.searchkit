@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@elastic/elasticsearch": "7.17.0",
+    "@google-cloud/storage": "^6.2.3",
     "@js-joda/core": "5.2.0",
     "body-parser": "1.20.0",
     "bodybuilder": "2.5.0",

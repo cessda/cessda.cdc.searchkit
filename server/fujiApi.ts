@@ -2,7 +2,8 @@ import Sitemapper from 'sitemapper';
 import axios from 'axios';
 import winston from 'winston';
 import fs from 'fs';
-import { URLSearchParams, URL } from 'url';
+import { URL } from 'url';
+import { Storage } from '@google-cloud/storage';
 
 const logLevel = process.env.SEARCHKIT_LOG_LEVEL || 'info';
 function loggerFormat() {
@@ -30,6 +31,17 @@ const logger = winston.createLogger({
         new winston.transports.Console()
     ],
 });
+
+// Create a client with explicit credentials
+const storage = new Storage({
+    projectId: 'your-project-id',
+    keyFilename: '/path/to/keyfile.json'
+});
+
+const bucketName = 'your-bucket-name';
+//storage.getBuckets().then(x => console.log(x));
+// Get a reference to the bucket
+const storageBucket = storage.bucket(bucketName);
 
 function fujiMetrics() {
     (async () => {
@@ -60,7 +72,7 @@ async function apiLoop(link: string): Promise<string>{
 
     const urlLink = new URL(link); 
     const urlParams = urlLink.searchParams;
-    const fileName = urlParams.get('q')+"-"+urlParams.get('lang');
+    const fileName = urlParams.get('q')+"-"+urlParams.get('lang')+".json";
     logger.info(fileName);
     await axios
     .post('http://localhost:1071/fuji/api/v1/evaluate', {
@@ -78,13 +90,25 @@ async function apiLoop(link: string): Promise<string>{
     .then((res: { status: any; data: any; }) => {
         logger.info(`statusCode: ${res.status}`);
         const output = res.data;
-        fs.writeFile(`fujiResults/${fileName}.json`, JSON.stringify(output, null, 4).toString(), (err) => {
+        
+        async function uploadFromMemory() {
+            await storage.bucket(bucketName).file(fileName).save(output);
+        
+            console.log(
+              `${fileName} with contents ${output} uploaded to ${bucketName}.`
+            );
+          }
+        
+          uploadFromMemory().catch(console.error);
+        
+        //Write-to-file-Code
+        /*fs.writeFile(`fujiResults/${fileName}.json`, JSON.stringify(output, null, 4).toString(), (err) => {
             if (err)
               logger.error(`Error writing to file: ${err}`);
             else {
               logger.info("File written successfully\n");
             }
-          });
+          });*/
     })
     .catch((error: any) => {
         console.error(`Error at FuJI API: ${error}`)
