@@ -31,7 +31,6 @@ import { SearchResponse } from '@elastic/elasticsearch/api/types';
 import { ConnectionError, ResponseError } from '@elastic/elasticsearch/lib/errors';
 import { Response } from 'express-serve-static-core';
 import { logger } from './logger';
-import { Client } from '@elastic/elasticsearch';
 import cors from 'cors';
 import { WithContext, Dataset } from 'schema-dts';
 import swagger from './swagger.json';
@@ -306,7 +305,7 @@ function externalApiV1() {
 
     //Prepare the Client
     try {
-      const response = await elasticsearch.client.search<SearchResponse<CMMStudy>>({
+      const response = await elasticsearch.client.search<CMMStudy>({
         index: `cmmstudy_${metadataLanguage}`,
         body: bodyQuery.build(),
         track_total_hits: true
@@ -435,12 +434,15 @@ function jsonProxy() {
   });
 }
 
-export interface Metadata {
+interface Metadata {
+  creators: string;
+  description: string;
+  publisher: string;
   title: string;
   jsonLd: WithContext<Dataset>;
 }
 
-export async function getJsonLdString(q: string, lang: string | undefined): Promise<Metadata| undefined> {
+async function getMetadata(q: string, lang: string | undefined): Promise<Metadata | undefined> {
   // Default to English if the language is unspecified
   if (!lang) {
     lang = "en";
@@ -451,7 +453,10 @@ export async function getJsonLdString(q: string, lang: string | undefined): Prom
 
     if (study) {
       return {
+        creators: study.creators.join('; '),
+        description: study.abstractShort,
         title: study.titleStudy,
+        publisher: study.publisher.publisher,
         jsonLd: getJsonLd(getStudyModel({ _source: study }))
       };
     } else {
@@ -471,7 +476,7 @@ export async function renderResponse(req: express.Request, res: express.Response
 
   if (req.path === "/detail" && req.query.q) {
     // If we are on the detail page and a query is set, retrive the JSON-LD metadata
-    metadata = await getJsonLdString(req.query.q as string, req.query.lang as string | undefined);
+    metadata = await getMetadata(req.query.q as string, req.query.lang as string | undefined);
     if (!metadata) {
       // Set status to 404, a study was not found
       status = 404;

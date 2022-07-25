@@ -31,6 +31,9 @@ import { detect } from "detect-browser";
 import "./styles/design.scss";
 import getPaq from "./utilities/getPaq";
 
+// Import images used by Open Graph
+require('./img/cessda_logo_dc.png');
+
 // Initialise Matomo Analytics.
 const _paq = getPaq();
 const url = 'https://cessda.matomo.cloud/';

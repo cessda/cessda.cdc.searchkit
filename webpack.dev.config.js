@@ -1,3 +1,4 @@
+// @ts-check
 // Copyright CESSDA ERIC 2017-2021
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -17,9 +18,10 @@ const webpack = require('webpack');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+/** @type webpack.Configuration */
 module.exports = merge(common, {
   mode: 'development',
-  devtool: 'sourcemap',
+  devtool: 'source-map',
   entry: [
     'event-source-polyfill',
     'webpack-hot-middleware/client?reload=true',

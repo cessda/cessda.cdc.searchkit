@@ -28,6 +28,6 @@ module.exports = {
   setupFilesAfterEnv: ["<rootDir>setupTests.js"],
   testEnvironment: "jsdom",
 
-  testMatch: ["**/tests/**/*.[tj]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
+  testMatch: ["**/tests/**/*.[tj]s?(x)", "**/?(*.)+(spec|test).[tj]s?(x)"],
   testPathIgnorePatterns: ["/node_modules/", "/tests/common/mockdata.ts"]
 };

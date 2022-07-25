@@ -14,7 +14,6 @@ import webpack from 'webpack';
 import webpackMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import express from 'express';
-// @ts-ignore
 import config from '../webpack.dev.config.js';
 import path from 'path';
 import { checkEnvironmentVariables, renderResponse, startListening } from './helper';
@@ -29,9 +28,8 @@ export function start() {
     app.set('views', path.join(__dirname, '../dist'));
 
   const indexRegex = new RegExp("index.dev.ejs");
-    // @ts-expect-error - incorrect typings
     app.use(webpackMiddleware(compiler, {
-      publicPath: config.output.publicPath,
+      publicPath: config.output?.publicPath,
       index: 'src',
       stats: {
         colors: true,
@@ -45,7 +43,6 @@ export function start() {
       writeToDisk: (filePath) => indexRegex.test(filePath)
     }));
 
-    // @ts-expect-error - incorrect typings
     app.use(webpackHotMiddleware(compiler));
 
     startListening(app, async (req, res) => {

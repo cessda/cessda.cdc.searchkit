@@ -11,22 +11,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Client, ClientOptions } from "@elastic/elasticsearch";
-import { GetResponse, SearchResponse } from "@elastic/elasticsearch/api/types";
+import { Client } from '@elastic/elasticsearch'
+import { Client as NewTypes, ClientOptions } from '@elastic/elasticsearch/api/new'
+import { AggregationsCardinalityAggregate } from "@elastic/elasticsearch/api/types";
 import _ from "lodash";
 import { CMMStudy } from "../common/metadata";
 import { logger } from "./logger";
 
 
 export default class Elasticsearch {
-  public readonly client: Client;
+  public readonly client: NewTypes;
 
   constructor(url: string, authentication?: ClientOptions["auth"]) {
     //Create ElasticSearch Client
     this.client = new Client({
       node: url,
       auth: authentication
-    });
+    }) as unknown as NewTypes;
 
     logger.info('Elasticsearch client configured');
   }
@@ -38,7 +39,7 @@ export default class Elasticsearch {
    * @returns the source of the study.
    */
   public async getStudy(id: string, index: string) {
-    const response = await this.client.get<GetResponse<CMMStudy>>({
+    const response = await this.client.get<CMMStudy>({
       id: id,
       index: index
     });
@@ -53,7 +54,7 @@ export default class Elasticsearch {
    * @param index the index to retrieve the similars from.
    */
   async getSimilars(title: string, id: string, index: string) {
-    const response = await this.client.search<SearchResponse<CMMStudy>>({
+    const response = await this.client.search<CMMStudy>({
       size: 5,
       index: index,
       body: {
@@ -70,7 +71,7 @@ export default class Elasticsearch {
   }
 
   async getTotalStudies() {
-    const response = await this.client.search<SearchResponse<never>>({
+    const response = await this.client.search({
       size: 0,
       index: "cmmstudy_*",
       body: {
@@ -85,8 +86,8 @@ export default class Elasticsearch {
       }
     });
 
-    // @ts-ignore
-    return response.body.aggregations.unique_id.value as number;
+    // Assert the type as AggregationsCardinalityAggregate, then return the value
+    return (response.body.aggregations!.unique_id as AggregationsCardinalityAggregate).value;
   }
 
   /**

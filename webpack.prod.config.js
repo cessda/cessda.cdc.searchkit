@@ -1,3 +1,4 @@
+// @ts-check
 // Copyright CESSDA ERIC 2017-2021
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -19,6 +20,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+/** @type webpack.Configuration */
 module.exports = merge(common, {
   mode: 'production',
   entry: [
@@ -26,18 +28,19 @@ module.exports = merge(common, {
   ],
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: '[name].[hash].bundle.js',
-    publicPath: '/static/'
+    filename: '[name].[contenthash].bundle.js',
+    publicPath: '/static/',
+    assetModuleFilename: 'img/[name][ext]'
   },
   optimization: {
+    chunkIds: 'total-size',
+    moduleIds: 'size',
     splitChunks: {
       chunks: 'all',
     },
   },
   plugins: [
-    new webpack.IgnorePlugin(/^\.\/locale$/),
     new webpack.optimize.AggressiveMergingPlugin(),
-    new webpack.optimize.OccurrenceOrderPlugin(true),
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin(),
     new HtmlWebpackPlugin({
