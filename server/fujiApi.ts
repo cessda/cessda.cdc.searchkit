@@ -3,7 +3,7 @@ import axios from 'axios';
 import winston from 'winston';
 import { URL } from 'url';
 import { Storage } from '@google-cloud/storage';
-import fs from 'fs';
+//import fs from 'fs';
 
 const logLevel = process.env.SEARCHKIT_LOG_LEVEL || 'info';
 function loggerFormat() {
@@ -34,12 +34,13 @@ const logger = winston.createLogger({
 
 // Create a client with explicit credentials
 const storage = new Storage({
-    projectId: 'your-project-id',
+    projectId: 'cessda-dev',
     keyFilename: '/path/to/keyfile.json'
 });
 
-const bucketName = 'your-bucket-name';
+const bucketName = 'cessda-fuji-storage-dev';
 //storage.getBuckets().then(x => console.log(x));
+//throw new Error("controlled termination");
 // Get a reference to the bucket
 const storageBucket = storage.bucket(bucketName);
 
