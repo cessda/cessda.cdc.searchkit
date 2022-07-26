@@ -1,9 +1,9 @@
 import Sitemapper from 'sitemapper';
 import axios from 'axios';
 import winston from 'winston';
-import fs from 'fs';
 import { URL } from 'url';
 import { Storage } from '@google-cloud/storage';
+import fs from 'fs';
 
 const logLevel = process.env.SEARCHKIT_LOG_LEVEL || 'info';
 function loggerFormat() {
