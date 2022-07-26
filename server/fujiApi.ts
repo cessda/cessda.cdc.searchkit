@@ -96,7 +96,8 @@ async function apiLoop(link: string): Promise<string>{
             await storage.bucket(bucketName).file(fileName).save(output);
         
             console.log(
-              `${fileName} with contents ${output} uploaded to ${bucketName}.`
+              //`${fileName} with contents ${output} uploaded to ${bucketName}.`
+              `${fileName} with contents uploaded to ${bucketName}.`
             );
           }
         
