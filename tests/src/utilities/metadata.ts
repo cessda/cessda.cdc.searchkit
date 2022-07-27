@@ -359,7 +359,7 @@ describe('Metadata utilities', () => {
         dateModified: '2001-01-01',
         datePublished: '2001-01-01',
         description: 'Abstract',
-        identifier: undefined,
+        identifier: 'UKDS1234',
         keywords: ['Term'],
         license: ['Data Access Free Texts'],
         measurementTechnique: 'Term',

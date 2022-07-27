@@ -215,6 +215,13 @@ export function getJsonLd(data: CMMStudy, href?: string): WithContext<Dataset> {
     }
   });
 
+  //Prioritize identifier
+  const identifier = data.pidStudies.filter(i=> i.agency==='DOI').length !==0 ? data.pidStudies.filter(i=> i.agency==='DOI').map(i => i.pid)[0]
+                   : data.pidStudies.filter(i=> i.agency==='Handle').length !==0 ? data.pidStudies.filter(i=> i.agency==='Handle').map(i => i.pid)[0]
+                   : data.pidStudies.filter(i=> i.agency==='URN').length !==0 ? data.pidStudies.filter(i=> i.agency==='URN').map(i => i.pid)[0]
+                   : data.pidStudies.filter(i=> i.agency==='ARK').length !==0 ? data.pidStudies.filter(i=> i.agency==='ARK').map(i => i.pid)[0]
+                   : data.pidStudies.filter(i=> i.agency).map(i => i.pid)[0];
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
@@ -226,7 +233,7 @@ export function getJsonLd(data: CMMStudy, href?: string): WithContext<Dataset> {
     variableMeasured: data.unitTypes.map(u => u.term).join(', '),
     measurementTechnique: data.typeOfModeOfCollections.map(t => t.term).join(', '),
     license: data.dataAccessFreeTexts,
-    identifier: data.pidStudies.filter(i=> i.agency==='DOI').map(i => i.pid)[0],
+    identifier: identifier,
     creator: creators,
     temporalCoverage: extractDataCollectionPeriod(data.dataCollectionPeriodStartdate, data.dataCollectionPeriodEnddate),
     spatialCoverage: data.studyAreaCountries.map(s => s.country).join(', '),
