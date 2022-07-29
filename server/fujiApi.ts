@@ -3,7 +3,8 @@ import axios from 'axios';
 import winston from 'winston';
 import { URL } from 'url';
 import { Storage } from '@google-cloud/storage';
-//import fs from 'fs';
+import { Client, ApiResponse, RequestParams } from '@elastic/elasticsearch'
+import fs from 'fs';
 
 const logLevel = process.env.SEARCHKIT_LOG_LEVEL || 'info';
 function loggerFormat() {
@@ -32,41 +33,87 @@ const logger = winston.createLogger({
     ],
 });
 
-// Create a client with explicit credentials
-const storage = new Storage({
+// Elasticsearch Client - Defaults to localhost if unspecified
+const elasticsearchUrl = process.env.PASC_ELASTICSEARCH_URL || "http://localhost:9200/";
+const elasticsearchUsername = process.env.SEARCHKIT_ELASTICSEARCH_USERNAME;
+const elasticsearchPassword = process.env.SEARCHKIT_ELASTICSEARCH_PASSWORD;
+const debugEnabled = process.env.PASC_DEBUG_MODE === 'true';
+
+const client = elasticsearchUsername && elasticsearchPassword ? new Client({
+  node: elasticsearchUrl,
+  auth: {
+    username: elasticsearchUsername,
+    password: elasticsearchPassword
+  }})
+  : new Client({
+      node: elasticsearchUrl,
+  })
+
+// Create a google client with explicit credentials - jsonFile
+/*const storage = new Storage({
     projectId: 'cessda-dev',
     keyFilename: '/path/to/keyfile.json'
-});
+});*/
+// Create a google client with explicit credentials - ENV
+/*const storage = new Storage({
+  projectId: process.env.GOOGLE_STORAGE_PROJECT_ID,
+  scopes: 'https://www.googleapis.com/auth/cloud-platform',
+  credentials: {
+    client_email: process.env.GOOGLE_STORAGE_EMAIL,
+    private_key: process.env.GOOGLE_STORAGE_PRIVATE_KEY,
+  }
+});*/
 
+const storage = new Storage(); //localhost test auth
 const bucketName = 'cessda-fuji-storage-dev';
-//storage.getBuckets().then(x => console.log(x));
-//throw new Error("controlled termination");
-// Get a reference to the bucket
-const storageBucket = storage.bucket(bucketName);
 
 function fujiMetrics() {
-    (async () => {
-        const cdcLinks = new Sitemapper({
-            url: 'https://datacatalogue.cessda.eu/sitemap_index.xml',
-            timeout: 15000, // 15 seconds
-            debug: true,
-            retries: 1,
-        });
-        try {
-            const { sites } = await cdcLinks.fetch();
-            sites.shift(); //remove 1st element - https://datacatalogue.cessda.eu/
-            logger.info(`Acessing: ${sites.length}`, 'sites');
-            for (const site of sites) {
-                const contents = await apiLoop(site);
-            }
-        } catch (error) {
-            console.log(`Error at crawling indexer: ${error}`);
-            logger.error(`Error at crawling indexer: ${error}`);
-        } finally {
-            logger.info('Finished Request');
+
+  (async () => {
+      const cdcLinks = new Sitemapper({
+          url: 'https://datacatalogue.cessda.eu/sitemap_index.xml',
+          timeout: 15000, // 15 seconds
+          debug: true,
+          retries: 1,
+      });
+      try {
+          await elasticIndexRebuild();
+          const { sites } = await cdcLinks.fetch();
+          sites.shift(); //remove 1st element - https://datacatalogue.cessda.eu/
+          logger.info(`Links Collected: ${sites.length}`);
+          for (const site of sites) {
+              const contents = await apiLoop(site);
+          }
+      } catch (error) {
+          console.log(`Error at crawling indexer: ${error}`);
+          logger.error(`Error at crawling indexer: ${error}`);
+      } finally {
+          logger.info('Finished Request');
+      }
+      logger.info('End');
+  })();
+}
+
+async function elasticIndexRebuild(){
+
+   const {body: exists} = await client.indices.exists({index: 'fuji-results'})
+   if (exists){
+    await client.indices.delete({ index: 'fuji-results' });
+    logger.info('ES Index Deleted');
+   }
+   await client.indices.create({
+    index: 'fuji-results',
+    body: {
+      mappings: {
+        dynamic: 'runtime',
+        properties: {
+          id: {type: 'keyword'},
+          body: {type: 'object'}
         }
-        logger.info('End');
-    })();
+      }
+    }
+   })
+   logger.info('ES Index Created');
 }
 
 async function apiLoop(link: string): Promise<string>{
@@ -74,7 +121,8 @@ async function apiLoop(link: string): Promise<string>{
     const urlLink = new URL(link); 
     const urlParams = urlLink.searchParams;
     const fileName = urlParams.get('q')+"-"+urlParams.get('lang')+".json";
-    logger.info(fileName);
+    logger.info(`\n`);
+    logger.info(`Name: ${fileName}`);
     await axios
     .post('http://localhost:1071/fuji/api/v1/evaluate', {
         "metadata_service_endpoint": "",
@@ -90,27 +138,13 @@ async function apiLoop(link: string): Promise<string>{
     })
     .then((res: { status: any; data: any; }) => {
         logger.info(`statusCode: ${res.status}`);
-        const output = res.data;
-        
-        async function uploadFromMemory() {
-            await storage.bucket(bucketName).file(fileName).save(output);
-        
-            console.log(
-              //`${fileName} with contents ${output} uploaded to ${bucketName}.`
-              `${fileName} with contents uploaded to ${bucketName}.`
-            );
-          }
-        
-          uploadFromMemory().catch(console.error);
-        
-        //Write-to-file-Code
-        /*fs.writeFile(`fujiResults/${fileName}.json`, JSON.stringify(output, null, 4).toString(), (err) => {
-            if (err)
-              logger.error(`Error writing to file: ${err}`);
-            else {
-              logger.info("File written successfully\n");
-            }
-          });*/
+        const fujiResults = res.data;
+
+        resultsToElastic(fileName, fujiResults).then(()=>{
+          //resultsToHDD(fileName, fujiResults); //Write-to-HDD-localhost function
+          //uploadFromMemory(fileName, fujiResults).catch(console.error); //Write-to-Cloud-Bucket function
+        })
+
     })
     .catch((error: any) => {
         console.error(`Error at FuJI API: ${error}`)
@@ -118,11 +152,55 @@ async function apiLoop(link: string): Promise<string>{
     })
 
     return new Promise(function(resolve) {
-        setTimeout(() => {
-            resolve("completed")
-          }, 2000); //delay between API calls
-    });
+      setTimeout(() => {
+          resolve("completed")
+        }, 1000); //1sec delay between API calls
+  });
 
+}
+
+async function resultsToElastic (fileName: string, fujiResults: JSON) {
+
+  try{
+    const elasticdoc: RequestParams.Index = {
+      index: 'fuji-results',
+      id: fileName,
+      body: {
+        fujiResults
+      }
+    }
+    await client.index(elasticdoc)
+    await client.indices.refresh({ index: 'fuji-results' })
+    logger.info(`inserted in ES: ${fileName}`);
+  }
+  catch(error){
+    logger.error(`error in insert to ES: ${error}`);
+  }
+
+}
+
+async function uploadFromMemory(fileName: string, fujiResults: Buffer) {
+  /* DEBUG CODE
+  const storageBucket = storage.bucket(bucketName);
+  storage.getBuckets().then(x => console.log(x));
+  throw new Error("controlled termination");
+  */
+
+  await storage.bucket(bucketName).file(fileName).save(Buffer.from(JSON.stringify(fujiResults)));    
+  logger.info(
+    `${fileName} with contents uploaded to ${bucketName}.`
+  );
+}
+
+function resultsToHDD(fileName: string, fujiResults: JSON){
+  
+  fs.writeFile(`fujiResults/${fileName}`, JSON.stringify(fujiResults, null, 4).toString(), (err) => {
+    if (err)
+      logger.error(`Error writing to file: ${err}`);
+    else {
+      logger.info("File written successfully");
+    }
+  });
 }
 
 fujiMetrics();
