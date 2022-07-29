@@ -417,10 +417,12 @@ function jsonProxy() {
     userResDecorator: (_proxyRes, proxyResData, userReq) => {
       const json = JSON.parse(proxyResData.toString('utf8'));
       if (!_.isEmpty(json._source)) {
-        if (userReq.header('Accept')=="application/ld+json")
-          return getJsonLd(json._source)
-        else
+        // If the client requests JSON-LD, return it
+        if (userReq.accepts("application/ld+json")) {
+          return getJsonLd(json._source);
+        } else {
           return JSON.stringify(json._source);
+        }
       } else {
         // When running in debug mode, return the actual response from Elasticsearch
         if (debugEnabled) {
@@ -448,22 +450,17 @@ async function getMetadata(q: string, lang: string | undefined): Promise<Metadat
     lang = "en";
   }
 
-  try {
-    const study = await elasticsearch.getStudy(q, `cmmstudy_${lang}`);
+  const study = await elasticsearch.getStudy(q, `cmmstudy_${lang}`);
 
-    if (study) {
-      return {
-        creators: study.creators.join('; '),
-        description: study.abstractShort,
-        title: study.titleStudy,
-        publisher: study.publisher.publisher,
-        jsonLd: getJsonLd(getStudyModel({ _source: study }))
-      };
-    } else {
-      return undefined;
-    }
-  } catch (e) {
-    logger.debug(`${q}: ${e}`);
+  if (study) {
+    return {
+      creators: study.creators.join('; '),
+      description: study.abstractShort,
+      title: study.titleStudy,
+      publisher: study.publisher.publisher,
+      jsonLd: getJsonLd(getStudyModel({ _source: study }))
+    };
+  } else {
     return undefined;
   }
 }
@@ -474,16 +471,48 @@ export async function renderResponse(req: express.Request, res: express.Response
 
   let metadata: Metadata | undefined = undefined;
 
+  const contentType = req.accepts("html", "application/ld+json");
+
+  if (!contentType || (req.path !== "/detail" && contentType === "application/ld+json")) {
+    // If the content type is unsupported, or if a client is requesting JSON-LD on anything that isn't a detail page return 406
+    res.sendStatus(406);
+    return;
+  }
+
   if (req.path === "/detail" && req.query.q) {
     // If we are on the detail page and a query is set, retrive the JSON-LD metadata
-    metadata = await getMetadata(req.query.q as string, req.query.lang as string | undefined);
-    if (!metadata) {
-      // Set status to 404, a study was not found
-      status = 404;
+    try {
+      metadata = await getMetadata(req.query.q as string, req.query.lang as string | undefined);
+      if (!metadata) {
+        // Set status to 404, a study was not found
+        status = 404;
+      }
+    } catch (e) {
+      if (e instanceof ResponseError && e.statusCode === 404) {
+        status = e.statusCode;
+      } else {
+        logger.error(`Cannot communicate with Elasticsearch: ${e}`);
+        status = 503;
+      }
     }
   }
+
+  switch (contentType) {
+    case "html":
+      // Render the HTML template
+      res.status(status).render(ejsTemplate, { metadata: metadata || {} });
+      break;
+    
+    case "application/ld+json":
+      // Send a JSON-LD response
+      res.status(status).json(metadata?.jsonLd);
+      break;
   
-  res.status(status).render(ejsTemplate, { metadata: metadata || {} });
+    default:
+      // Unknown content type, return server error.
+      res.sendStatus(500);
+      break;
+  }
 }
 
 /**
