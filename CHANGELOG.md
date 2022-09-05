@@ -14,6 +14,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - *Fixed (for any bug fixes)*
 - *Security (in case of vulnerabilities)*
 
+## [3.0.2] - 2022-09-06
+
+### Fixed
+
+JSON-LD serialisation of identifiers is not working with F-UJI. ([#442](https://bitbucket.org/cessda/cessda.cdc.versions/issues/442))
+
+Search not functional if some words included. ([#453](https://bitbucket.org/cessda/cessda.cdc.versions/issues/453))
+
+Critical data set issues detected in Google Search console. ([#454](https://bitbucket.org/cessda/cessda.cdc.versions/issues/454))
+
+
 ## [3.0.0] - 2022-06-07
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6577730.svg)](https://doi.org/10.5281/zenodo.6577730)
