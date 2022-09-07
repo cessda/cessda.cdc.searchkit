@@ -16,7 +16,7 @@ import React from "react";
 import { Link } from "react-router";
 import Panel from "./Panel";
 import Translate from "react-translate-component";
-import _ from "lodash";
+import { truncate, upperFirst } from "lodash";
 import { CMMStudy, DataCollectionFreeText } from "../../common/metadata";
 import { ChronoField, DateTimeFormatter, DateTimeFormatterBuilder } from "@js-joda/core";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
@@ -195,7 +195,7 @@ Summary information
           {this.state.abstractExpanded ?
             <div className="data-abstract" dangerouslySetInnerHTML={{ __html: item.abstract }}/>
           :
-            <div className="data-abstract">{_.truncate(striptags(item.abstract), { length: Detail.truncatedAbstractLength })}</div>
+            <div className="data-abstract">{truncate(striptags(item.abstract), { length: Detail.truncatedAbstractLength, separator: ' ' })}</div>
           }
           {item.abstract.length > Detail.truncatedAbstractLength &&
             <a className="button is-small is-white" onClick={() => {
@@ -325,7 +325,7 @@ Summary information
             {Detail.generateElements(
               item.classifications,
               'tag',
-              classifications => <Link to={"/?classifications.term[0]=" + encodeURI(classifications.term)}>{_.upperFirst(classifications.term)}</Link>
+              classifications => <Link to={"/?classifications.term[0]=" + encodeURI(classifications.term)}>{upperFirst(classifications.term)}</Link>
             )}
           </div>
         </Panel>
@@ -338,7 +338,7 @@ Summary information
         >
           <div className="tags">
             {Detail.generateElements(item.keywords, 'tag', keywords => 
-              <Link to={`/?q="${encodeURI(keywords.term)}"`}>{_.upperFirst(keywords.term)}</Link>
+              <Link to={`/?q="${encodeURI(keywords.term)}"`}>{upperFirst(keywords.term)}</Link>
             )}
           </div>
         </Panel>

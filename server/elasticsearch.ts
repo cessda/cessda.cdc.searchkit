@@ -39,7 +39,7 @@ export default class Elasticsearch {
    * @returns the source of the study.
    */
   public async getStudy(id: string, index: string) {
-    const response = await this.client.get<CMMStudy>({
+    const response = await this.client.get<Partial<CMMStudy>>({
       id: id,
       index: index
     });

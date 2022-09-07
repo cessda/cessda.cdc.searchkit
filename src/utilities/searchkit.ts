@@ -11,24 +11,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { QueryDslQueryContainer } from '@elastic/elasticsearch/api/types';
 import {SearchkitManager} from 'searchkit';
 
 /** 
  * Query builder used to create the query going to Elasticsearch (for search page).
  */
-export function queryBuilder(query: string) {
+export function queryBuilder(query: string): QueryDslQueryContainer {
   return {
     simple_query_string: {
       query: query,
       lenient: true,
       default_operator: "AND",
 
+      // #453: Use only the operators that are documented, as other operators can result in unexpected behavior
+      flags: "AND|OR|NOT|PHRASE|PRECEDENCE|PREFIX",
+
       // Can limit to searching specific fields if required. Weightings can also be added.
       fields: [
         'titleStudy^4',
         'abstract^2',
         'creators^2',
-        'keywords.id^1.5',
+        'keywords.term^1.5',
         '*' // Include all other fields at the default weighting
       ]
     }
@@ -39,7 +43,7 @@ export function queryBuilder(query: string) {
  * Query used to retrieve a single record by its ID (for detail page).
  * @param id the document to retrieve.
  */
-export function detailQuery(id: string) {
+export function detailQuery(id: string): QueryDslQueryContainer {
   return {
     ids: {
       values: [id]
@@ -50,7 +54,7 @@ export function detailQuery(id: string) {
 /** 
  * Query used to retrieve a single record by its pid (for detail page).
  */
-export function pidQuery(pid: string) {
+export function pidQuery(pid: string): QueryDslQueryContainer {
   return {
     bool: {
       must: {
@@ -65,22 +69,9 @@ export function pidQuery(pid: string) {
 /**
  * Match all query
  */ 
-export function matchAllQuery() {
+export function matchAllQuery(): QueryDslQueryContainer {
   return {
     match_all: {}
-  };
-}
-
-/** 
- * Aggregation used to get the total number of unique records 
- */
-export function uniqueAggregation() {
-  return {
-    unique_id: {
-      cardinality: {
-        field: "id"
-      }
-    }
   };
 }
 

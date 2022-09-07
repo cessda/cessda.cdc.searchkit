@@ -13,7 +13,6 @@
 
 import fs from 'fs';
 import path from 'path';
-import url from 'url';
 import _ from 'lodash';
 import proxy from 'express-http-proxy';
 import express, { RequestHandler } from 'express';
@@ -157,7 +156,7 @@ function getSearchkitRouter() {
       //callback function to register metrics of zero results from elasticsearch
       if (body) {
         const hits = body.hits.total;
-        if (hits == 0) {
+        if (hits === 0) {
           const endTime = new Date();
           const timeDiff = endTime.getTime() - startTime.getTime(); //in ms
           uiResponseTimeZeroElasticResultsHistogram.observe({
@@ -397,7 +396,7 @@ function jsonProxy() {
       const arr = _.trim(req.url, '/').split('/');
       const index = arr[0];
       const id = arr[1];
-      return `${_.trimEnd(url.parse(elasticsearchUrl).pathname, '/')}/${index}/cmmstudy/${id}`;
+      return `${_.trimEnd(new URL(elasticsearchUrl).pathname, '/')}/${index}/_doc/${id}`;
     },
     // Add Elasticsearch authorisation if configured
     proxyReqOptDecorator: (proxyReqOpts) => {
@@ -414,14 +413,18 @@ function jsonProxy() {
       logger.error('Elasticsearch Request failed: %s', err?.message);
       res.sendStatus(502);
     },
-    userResDecorator: (_proxyRes, proxyResData, userReq) => {
+    userResDecorator: (_proxyRes, proxyResData, userReq, userRes) => {
       const json = JSON.parse(proxyResData.toString('utf8'));
       if (!_.isEmpty(json._source)) {
         // If the client requests JSON-LD, return it
-        if (userReq.accepts("application/ld+json")) {
-          return getJsonLd(json._source);
-        } else {
-          return JSON.stringify(json._source);
+        switch (userReq.accepts(["json", "application/ld+json"])) {
+          case "application/ld+json":
+            return getJsonLd(json._source);
+          case "json":
+            return json._source;
+          default:
+            userRes.sendStatus(406);
+            return;
         }
       } else {
         // When running in debug mode, return the actual response from Elasticsearch
@@ -436,7 +439,7 @@ function jsonProxy() {
   });
 }
 
-interface Metadata {
+export interface Metadata {
   creators: string;
   description: string;
   publisher: string;
@@ -450,15 +453,16 @@ async function getMetadata(q: string, lang: string | undefined): Promise<Metadat
     lang = "en";
   }
 
-  const study = await elasticsearch.getStudy(q, `cmmstudy_${lang}`);
+  const response = await elasticsearch.getStudy(q, `cmmstudy_${lang}`);
 
-  if (study) {
+  if (response) {
+    const study = getStudyModel({ _source: response });
     return {
       creators: study.creators.join('; '),
       description: study.abstractShort,
       title: study.titleStudy,
       publisher: study.publisher.publisher,
-      jsonLd: getJsonLd(getStudyModel({ _source: study }))
+      jsonLd: getJsonLd(study)
     };
   } else {
     return undefined;

@@ -14,37 +14,60 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - *Fixed (for any bug fixes)*
 - *Security (in case of vulnerabilities)*
 
+## [3.0.3] - 2022-09-07
+
+### Fixes
+
+- Ensure that all required fields are present before rendering the HTML ([#460](https://bitbucket.org/cessda/cessda.cdc.versions/issues/460))
+
+## [3.0.2] - 2022-09-06
+
+### Additions
+
+- Add OpenGraph and Twitter metadata for rich embedding in external applications ([#441](https://bitbucket.org/cessda/cessda.cdc.versions/issues/441))
+- Respond with JSON-LD if a client specifies `application/ld+json` in the HTTP `Accept` header ([#336](https://bitbucket.org/cessda/cessda.cdc.versions/issues/336))
+
+### Changes
+
+- Exclude internal Elasticsearch calls from Prometheus metrics ([#440](https://bitbucket.org/cessda/cessda.cdc.versions/issues/440))
+- Support Elasticsearch 7 ([#429](https://bitbucket.org/cessda/cessda.cdc.versions/issues/429))
+- Update Node.js to v16 ([#269](https://bitbucket.org/cessda/cessda.cdc.versions/issues/269))
+- Update Webpack to v5 ([#269](https://bitbucket.org/cessda/cessda.cdc.versions/issues/269))
+
+### Fixes
+
+- Use lenient queries for the search API ([#440](https://bitbucket.org/cessda/cessda.cdc.versions/issues/440))
+- Fix the identifier field not being a valid persistent identifier in the JSON-LD representation ([#442](https://bitbucket.org/cessda/cessda.cdc.versions/issues/442))
+- Respond with 404 if a study does not exist ([#444](https://bitbucket.org/cessda/cessda.cdc.versions/issues/444))
+- Fix the search not returning expected results by restricting the search operators that can be used ([#453](https://bitbucket.org/cessda/cessda.cdc.versions/issues/453))
+- Ensure the license field in the JSON-LD representation is a valid URL ([#454](https://bitbucket.org/cessda/cessda.cdc.versions/issues/454))
+- Ensure the length of the description field in the JSON-LD representation does not exceed 5000 characters ([#454](https://bitbucket.org/cessda/cessda.cdc.versions/issues/454))
+
+### Removals
+
+- Remove `image-webpack-loader` and replace it with Webpack 5 asset modules ([#269](https://bitbucket.org/cessda/cessda.cdc.versions/issues/269))
+
 ## [3.0.0] - 2022-06-07
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6577730.svg)](https://doi.org/10.5281/zenodo.6577730)
 
 ### Additions
 
-Cut-off of long abstracts in detailed view. ([#414](https://bitbucket.org/cessda/cessda.cdc.versions/issues/414))
-
-Add CORS support to the CDC external API and the Swagger documentation. ([#426](https://bitbucket.org/cessda/cessda.cdc.versions/issues/426))
-
-Added Czech translation, completed Danish translation. ([#422](https://bitbucket.org/cessda/cessda.cdc.versions/issues/422))
-
-Added link to API docs. ([#420](https://bitbucket.org/cessda/cessda.cdc.versions/issues/420))
-
-Add documentation for search API ([#402](https://bitbucket.org/cessda/cessda.cdc.versions/issues/402))
-
-Add metrics instrumentation for UI + API Search Queries. ([#393](https://bitbucket.org/cessda/cessda.cdc.versions/issues/393))
-
-Expose metadata as Linked Open Data ([#358](https://bitbucket.org/cessda/cessda.cdc.versions/issues/358))
-
-Add API for external search ([#357](https://bitbucket.org/cessda/cessda.cdc.versions/issues/357))
+- Cut-off of long abstracts in detailed view. ([#414](https://bitbucket.org/cessda/cessda.cdc.versions/issues/414))
+- Add CORS support to the CDC external API and the Swagger documentation. ([#426](https://bitbucket.org/cessda/cessda.cdc.versions/issues/426))
+- Added Czech translation, completed Danish translation. ([#422](https://bitbucket.org/cessda/cessda.cdc.versions/issues/422))
+- Added link to API docs. ([#420](https://bitbucket.org/cessda/cessda.cdc.versions/issues/420))
+- Add documentation for search API ([#402](https://bitbucket.org/cessda/cessda.cdc.versions/issues/402))
+- Add metrics instrumentation for UI + API Search Queries. ([#393](https://bitbucket.org/cessda/cessda.cdc.versions/issues/393))
+- Expose metadata as Linked Open Data ([#358](https://bitbucket.org/cessda/cessda.cdc.versions/issues/358))
+- Add API for external search ([#357](https://bitbucket.org/cessda/cessda.cdc.versions/issues/357))
 
 ### Changes
 
-Revised Danish translation. ([#422](https://bitbucket.org/cessda/cessda.cdc.versions/issues/422))
-
-Changed order of About and User Guide buttons ([#420](https://bitbucket.org/cessda/cessda.cdc.versions/issues/420))
-
-Add the current language to the request URL in User Interface and refine the update logic for the detail page. ([#394](https://bitbucket.org/cessda/cessda.cdc.versions/issues/394))
-
-Clarify the help text in the search box. ([#379](https://bitbucket.org/cessda/cessda.cdc.versions/issues/379))
+- Revised Danish translation. ([#422](https://bitbucket.org/cessda/cessda.cdc.versions/issues/422))
+- Changed order of About and User Guide buttons ([#420](https://bitbucket.org/cessda/cessda.cdc.versions/issues/420))
+- Add the current language to the request URL in User Interface and refine the update logic for the detail page. ([#394](https://bitbucket.org/cessda/cessda.cdc.versions/issues/394))
+- Clarify the help text in the search box. ([#379](https://bitbucket.org/cessda/cessda.cdc.versions/issues/379))
 
 ## [2.5.0] - 2021-11-25
 
