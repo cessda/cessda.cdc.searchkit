@@ -44,7 +44,7 @@
     "response-time": "2.3.2",
     "searchkit": "2.4.4",
     "striptags": "3.2.0",
-    "winston": "3.8.1"
+    "winston": "3.8.2"
   },
   "devDependencies": {
     "@babel/cli": "7.18.10",
@@ -67,7 +67,7 @@
     "@types/jquery": "3.5.14",
     "@types/method-override": "0.0.32",
     "@types/mini-css-extract-plugin": "2.5.0",
-    "@types/node": "16.11.57",
+    "@types/node": "16.11.58",
     "@types/prop-types": "15.7.5",
     "@types/react-dom": "16.9.16",
     "@types/react-icons": "2.2.7",
