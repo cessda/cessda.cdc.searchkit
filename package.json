@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@elastic/elasticsearch": "7.17.0",
+    "@google-cloud/storage": "^6.4.2",
     "@js-joda/core": "5.3.1",
     "body-parser": "1.20.0",
     "bodybuilder": "2.5.0",
@@ -43,6 +44,7 @@
     "redux-thunk": "2.4.1",
     "response-time": "2.3.2",
     "searchkit": "2.4.4",
+    "sitemapper": "^3.2.6",
     "striptags": "3.2.0",
     "winston": "3.8.2"
   },
