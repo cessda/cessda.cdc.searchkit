@@ -110,7 +110,8 @@ describe('helper utilities', () => {
           description: mockStudy.abstractShort,
           title: mockStudy.titleStudy,
           publisher: mockStudy.publisher.publisher,
-          jsonLd: getJsonLd(getStudyModel({ _source: mockStudy }))
+          jsonLd: getJsonLd(getStudyModel({ _source: mockStudy })),
+          id: mockStudy.id
         }
       });
     });

@@ -445,6 +445,7 @@ export interface Metadata {
   publisher: string;
   title: string;
   jsonLd: WithContext<Dataset>;
+  id: string;
 }
 
 async function getMetadata(q: string, lang: string | undefined): Promise<Metadata | undefined> {
@@ -462,7 +463,8 @@ async function getMetadata(q: string, lang: string | undefined): Promise<Metadat
       description: study.abstractShort,
       title: study.titleStudy,
       publisher: study.publisher.publisher,
-      jsonLd: getJsonLd(study)
+      jsonLd: getJsonLd(study),
+      id: study.id
     };
   } else {
     return undefined;
