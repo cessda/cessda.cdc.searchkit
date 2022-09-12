@@ -139,6 +139,7 @@ async function apiLoop(link: string): Promise<string>{
     .then((res: { status: any; data: any; }) => {
         logger.info(`statusCode: ${res.status}`);
         const fujiResults = res.data;
+        delete fujiResults['results'];
 
         resultsToElastic(fileName, fujiResults).then(()=>{
           //resultsToHDD(fileName, fujiResults); //Write-to-HDD-localhost function
