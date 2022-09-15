@@ -123,6 +123,17 @@ async function apiLoop(link: string): Promise<string>{
     const fileName = urlParams.get('q')+"-"+urlParams.get('lang')+".json";
     logger.info(`\n`);
     logger.info(`Name: ${fileName}`);
+    fetch('https://datacatalogue.cessda.eu/api/json/cmmstudy_'+urlParams.get('lang')+'/'+urlParams.get('q')).then((response) => 
+    {
+      if (!response.ok) {
+        throw new Error('Network response was not OK');
+      }
+      response.json()
+    })
+    .then((data) => logger.info(`Name: ${data}`))
+    .catch((error) => {
+      logger.error(`Error at CDC fetch operation: ${error}`);
+    });
     await axios
     .post('http://localhost:1071/fuji/api/v1/evaluate', {
         "metadata_service_endpoint": "",

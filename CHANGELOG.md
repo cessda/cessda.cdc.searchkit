@@ -16,9 +16,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [3.0.3] - 2022-09-07
 
+### Additions
+
+- Add signposting links to the OAI-PMH representation into the HTML `<head>` element ([#455](https://bitbucket.org/cessda/cessda.cdc.versions/issues/455))
+
 ### Fixes
 
 - Ensure that all required fields are present before rendering the HTML ([#460](https://bitbucket.org/cessda/cessda.cdc.versions/issues/460))
+- Return 404 if a client requests the detail page but does not specify a `q` parameter ([#467](https://bitbucket.org/cessda/cessda.cdc.versions/issues/467))
 
 ## [3.0.2] - 2022-09-06
 

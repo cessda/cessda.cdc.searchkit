@@ -172,7 +172,14 @@ describe('helper utilities', () => {
 
     it('should proceed if ../dist exists', () => {
       // Ensure that the directory exists
-      fs.mkdirSync(path.join(__dirname, '../../dist'));
+      try {
+        fs.mkdirSync(path.join(__dirname, '../../dist'));
+      } catch (e) {
+        // Rethrow if the error is not EEXIST
+        if ((e as NodeJS.ErrnoException).code !== "EEXIST") {
+          throw e;
+        }
+      }
 
       checkBuildDirectory();
 
