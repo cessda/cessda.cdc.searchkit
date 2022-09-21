@@ -5,6 +5,7 @@ import { URL } from 'url';
 import { Storage } from '@google-cloud/storage';
 import { Client, ApiResponse, RequestParams } from '@elastic/elasticsearch'
 import fs from 'fs';
+import fetch from 'node-fetch'
 
 const logLevel = process.env.SEARCHKIT_LOG_LEVEL || 'info';
 function loggerFormat() {
@@ -123,17 +124,10 @@ async function apiLoop(link: string): Promise<string>{
     const fileName = urlParams.get('q')+"-"+urlParams.get('lang')+".json";
     logger.info(`\n`);
     logger.info(`Name: ${fileName}`);
-    fetch('https://datacatalogue.cessda.eu/api/json/cmmstudy_'+urlParams.get('lang')+'/'+urlParams.get('q')).then((response) => 
-    {
-      if (!response.ok) {
-        throw new Error('Network response was not OK');
-      }
-      response.json()
-    })
-    .then((data) => logger.info(`Name: ${data}`))
-    .catch((error) => {
-      logger.error(`Error at CDC fetch operation: ${error}`);
-    });
+    const cdcApiUrl = 'https://datacatalogue.cessda.eu/api/json/cmmstudy_'+urlParams.get('lang')+'/'+urlParams.get('q');
+    const response = await fetch(cdcApiUrl);
+    const data = await response.json();
+    const publisher = data.publisherFilter.publisher;
     await axios
     .post('http://localhost:1071/fuji/api/v1/evaluate', {
         "metadata_service_endpoint": "",
@@ -151,6 +145,7 @@ async function apiLoop(link: string): Promise<string>{
         logger.info(`statusCode: ${res.status}`);
         const fujiResults = res.data;
         delete fujiResults['results'];
+        fujiResults['publisher'] = publisher;
 
         resultsToElastic(fileName, fujiResults).then(()=>{
           //resultsToHDD(fileName, fujiResults); //Write-to-HDD-localhost function
