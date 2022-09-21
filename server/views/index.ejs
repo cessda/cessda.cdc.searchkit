@@ -89,6 +89,62 @@
   <% if (metadata.jsonLd) { %>
     <script type="application/ld+json"><%- JSON.stringify(metadata.jsonLd) %></script>
   <% } %>  
-  <script src="https://cessda.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-wkh05n/b/48/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-UK&collectorId=9e75dc0b"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ 
+  <button id="zammad-feedback-form" style="position: fixed; right: 0; bottom: 0;" >Send feedback</button>
+  <script id="zammad_form_script" src="https://eosc-helpdesk.eosc-portal.eu/assets/form/form.js"></script>
+  <script>
+    $(function() {
+      $('#zammad-feedback-form').ZammadForm({
+    agreementMessage:'  Accept CESSDA <a target="_blank" href="https://www.cessda.eu/Privacy-policy">Data Privacy Policy</a> & <a target="_blank" href="https://www.cessda.eu/Acceptable-Use-Policy">Acceptable Use Policy</a>', 
+    messageTitle: 'CDC Feedback Form',
+    messageSubmit: 'Submit',
+    messageThankYou: 'Thank you for your inquiry (#%s)! We\'ll contact you as soon as possible.',
+    modal: true,
+    targetGroupID: 25,
+    attributes: [
+         {
+           display: 'Name',
+           name: 'name',
+           tag: 'input',
+           type: 'text',
+           id: 'zammad-form-name',
+           required: true,
+           placeholder: 'Your Name',
+           defaultValue: '',
+         },
+         {
+           display: 'Email',
+           name: 'email',
+           tag: 'input',
+           type: 'email',
+           id: 'zammad-form-email',
+           required: true,
+           placeholder: 'Your Email',
+           defaultValue: '',
+         },
+         {
+           display: 'Subject',
+           name: 'title',
+           tag: 'input',
+           id: 'zammad-form-subject',
+           required: false,
+           placeholder: 'My subject',
+           defaultValue: '',
+         },
+         {
+           display: 'Message',
+           name: 'body',
+           tag: 'textarea',
+           id: 'zammad-form-body',
+           required: true,
+           placeholder: 'Your Message...',
+           defaultValue: '',
+           rows: 7,
+         }
+       ]
+      });
+    });
+    </script>
 </body>
 </html>
