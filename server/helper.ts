@@ -485,27 +485,40 @@ export async function renderResponse(req: express.Request, res: express.Response
     return;
   }
 
-  if (req.path === "/detail") {
-    if (req.query.q) {
-      // If we are on the detail page and a query is set, retrive the JSON-LD metadata
-      try {
-        metadata = await getMetadata(req.query.q as string, req.query.lang as string | undefined);
-        if (!metadata) {
-          // Set status to 404, a study was not found
-          status = 404;
+  switch (req.path) {
+    // The root path and the about path always return 200
+    case "/":
+    case "/about":
+      status = 200;
+      break;
+
+    case "/detail":
+      if (req.query.q) {
+        // If we are on the detail page and a query is set, retrive the JSON-LD metadata
+        try {
+          metadata = await getMetadata(req.query.q as string, req.query.lang as string | undefined);
+          if (!metadata) {
+            // Set status to 404, a study was not found
+            status = 404;
+          }
+        } catch (e) {
+          if (e instanceof ResponseError && e.statusCode === 404) {
+            status = e.statusCode;
+          } else {
+            logger.error(`Cannot communicate with Elasticsearch: ${e}`);
+            status = 503;
+          }
         }
-      } catch (e) {
-        if (e instanceof ResponseError && e.statusCode === 404) {
-          status = e.statusCode;
-        } else {
-          logger.error(`Cannot communicate with Elasticsearch: ${e}`);
-          status = 503;
-        }
+      } else {
+        // No query parameter, return 404
+        status = 404;
       }
-    } else {
-      // No query parameter, return 404
+      break;
+
+    default:
+      // All other URLs should return 404
       status = 404;
-    }
+      break;
   }
 
   switch (contentType) {
@@ -520,7 +533,7 @@ export async function renderResponse(req: express.Request, res: express.Response
       break;
   
     default:
-      // Unknown content type, return server error.
+      // Unknown content type, return server error
       res.sendStatus(500);
       break;
   }

@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-
 import React from "react";
 import ReactDOM from "react-dom";
 import { applyMiddleware, createStore } from "redux";
 import { Provider } from "react-redux";
 import AboutPage from "./containers/AboutPage";
-import SearchPage from "./containers/SearchPage";
 import DetailPage from "./containers/DetailPage";
+import NotFoundPage from "./containers/NotFoundPage";
+import SearchPage from "./containers/SearchPage";
 import App from "./containers/App";
 import { browserHistory, IndexRoute, Redirect, Route, Router } from "react-router";
 import { routerMiddleware, syncHistoryWithStore } from "react-router-redux";
@@ -94,7 +93,7 @@ if (root instanceof HTMLElement) {
           <Route path="detail" component={DetailPage} />
           <Route path="study/pid/:pid" component={DetailPage} />
           <Route path="about" component={AboutPage} />
-          <Redirect from="*" to="/" />
+          <Route path='*' component={NotFoundPage}/>
         </Route>
       </Router>
     </Provider>, root

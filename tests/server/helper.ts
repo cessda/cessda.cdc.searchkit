@@ -50,7 +50,9 @@ beforeEach(() => mockedGetStudy.mockReset());
 describe('helper utilities', () => {
   describe('renderResponse()', () => {
     it('should return a rendered response', async () => {
-      const request = httpMocks.createRequest();
+      const request = httpMocks.createRequest({
+        path: "/"
+      });
       const response = httpMocks.createResponse();
 
       await renderResponse(request, response, ejsTemplate);
@@ -159,6 +161,19 @@ describe('helper utilities', () => {
       // Status code should be 404
       expect(response.statusCode).toBe(404);
       expect(mockedGetStudy).toBeCalledWith("test", "cmmstudy_en");
+      expect(response._getRenderData()).toEqual({ metadata: {}});
+    });
+
+    it('should return 404 if the requested path does not exist', async () => {
+      const request = httpMocks.createRequest({
+        path: "/non-existent-path"
+      });
+      const response = httpMocks.createResponse();
+
+      await renderResponse(request, response, ejsTemplate);
+
+      // Status code should be 404
+      expect(response.statusCode).toBe(404);
       expect(response._getRenderData()).toEqual({ metadata: {}});
     });
   });

@@ -340,14 +340,14 @@ padding: 6px 0;
   }
 }
 
-.data-label, .about-title {
+.data-label, .about-title, .not-found-title {
   font-weight: 600;
   font-size: 16px;
   margin-top: 15px;
   display: block;
 }
 
-.data-abstract, .about-container {
+.data-abstract, .about-container, .not-found-container {
   p {
     margin-bottom: 10px;
   }
@@ -359,6 +359,15 @@ padding: 6px 0;
     list-style-type: decimal;
     padding-left: 30px;
   }
+}
+
+.not-found-layout {
+  min-height: 100px;
+}
+
+.not-found-links {
+  padding: 15px 1.5rem;
+  text-align: center;
 }
 
 .tag a:hover{

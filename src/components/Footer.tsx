@@ -12,6 +12,7 @@
 // limitations under the License.
 
 import React from 'react';
+import { Link } from 'react-router';
 import Translate from 'react-translate-component';
 import { Organization, WithContext } from 'schema-dts';
 
@@ -46,7 +47,7 @@ export default () => (
             </div>
 
             <div className="column is-8 blinks">
-              <a href="./documentation/" target="_blank">User Guide</a> | <a href="./about/">About</a> | <a href="https://www.cessda.eu/Privacy-policy" target="_blank"><Translate content="footer.privacy" /></a> | <a href="https://www.cessda.eu/Acceptable-Use-Policy" target="_blank"><Translate content="footer.aup" /></a>
+              <a href="/documentation/" target="_blank">User Guide</a> | <Link to="/about/">About</Link> | <a href="https://www.cessda.eu/Privacy-policy" target="_blank"><Translate content="footer.privacy" /></a> | <a href="https://www.cessda.eu/Acceptable-Use-Policy" target="_blank"><Translate content="footer.aup" /></a>
             </div>
           </div>
         </div>

@@ -14,6 +14,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - *Fixed (for any bug fixes)*
 - *Security (in case of vulnerabilities)*
 
+## [3.1.0] - 2022-09-22
+
+### Changes
+
+- Uses EOSC helpdesk feedback form, instead of JIRA issue collector ([#459](https://bitbucket.org/cessda/cessda.cdc.versions/issues/459))
+
+### Fixes
+
+- Improve Google Datasearch results by fixing soft 404 errors ([#467](https://bitbucket.org/cessda/cessda.cdc.versions/issues/467))
+
 ## [3.0.3] - 2022-09-07
 
 ### Additions
