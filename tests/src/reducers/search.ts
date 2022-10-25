@@ -191,6 +191,7 @@ describe('Search reducer', () => {
           typeOfTimeMethods: [],
           typeOfSamplingProcedures: [],
           unitTypes: [],
+          universes: []
         }
       ]
     });
@@ -294,7 +295,8 @@ describe('Search reducer', () => {
                     studyUrl: 'http://example.com',
                     studyXmlSourceUrl: 'http://example.com/study',
                     titleStudyHighlight: '',
-                    typeOfSamplingProcedures: []
+                    typeOfSamplingProcedures: [],
+                    universes: []
                   }
                 }
               ]
@@ -390,7 +392,8 @@ describe('Search reducer', () => {
               vocab: 'Vocab',
               vocabUri: 'http://example.com'
             }
-          ]
+          ],
+          universes: []
         }
       ]
     });

@@ -65,7 +65,7 @@ export class DetailPage extends Component<Props> {
     const {
       item,
       currentLanguage,
-	    goBack
+      goBack
     } = this.props;
 
     // Get the Elasticsearch index for the current language. Used to pass index to View JSON link.

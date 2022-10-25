@@ -17,7 +17,7 @@ import { Link } from "react-router";
 import Panel from "./Panel";
 import Translate from "react-translate-component";
 import { truncate, upperFirst } from "lodash";
-import { CMMStudy, DataCollectionFreeText } from "../../common/metadata";
+import { CMMStudy, DataCollectionFreeText, Universe } from "../../common/metadata";
 import { ChronoField, DateTimeFormatter, DateTimeFormatterBuilder } from "@js-joda/core";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import striptags from "striptags";
@@ -67,7 +67,7 @@ export default class Detail extends React.Component<Props, State> {
   ) {
     const elements: JSX.Element[] = [];
 
-    for (let i: number = 0; i < field.length; i++) {
+    for (let i = 0; i < field.length; i++) {
       if (field[i]) {
         const value = callback?.(field[i]) ?? field[i];
         if (element === 'tag') {
@@ -141,6 +141,28 @@ export default class Detail extends React.Component<Props, State> {
       console.debug(e);
       return dateString;
     }
+  }
+
+  /**
+   * Formats the given universes into a <p> element. The resulting element will contain
+   * the text content "${Included universe} (excluding ${Excluded universe})"
+   * 
+   * @param universes the universes to format
+   * @returns the formatted <p> element, or "Not available" if no universes are present
+   */
+  private static formatUniverses(universes: Universe[]) {
+    if (!universes) {
+      return <Translate content="language.notAvailable.field" />;
+    }
+
+    let universeString = universes.filter(u => u.clusion === "I").map(u => u.content)[0];
+
+    const excludedUniverse = universes.filter(u => u.clusion === "E")[0];
+    if (excludedUniverse) {
+      universeString = `${universeString} (excluding ${excludedUniverse.content})`;
+    }
+
+    return <p>{universeString}</p>;
   }
 
   render() {
@@ -257,6 +279,13 @@ Summary information
             content="metadata.analysisUnit"
           />
           {Detail.generateElements(item.unitTypes, 'p', unit => unit.term)}
+
+          <Translate
+            className="data-label"
+            component="h3"
+            content="metadata.universes"
+          />
+          {Detail.formatUniverses(item.universes)}
 
           <Translate
             className="data-label"

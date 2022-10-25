@@ -30,7 +30,7 @@ export class Similars extends Component<Props> {
 
     const links: JSX.Element[] = [];
 
-    for (let i: number = 0; i < similars.length; i++) {
+    for (let i = 0; i < similars.length; i++) {
       // Construct the similar URL
       links.push(<Link key={i} to={{
         pathname: '/detail',

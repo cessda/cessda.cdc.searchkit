@@ -21,7 +21,7 @@ import type { State } from '../types';
 import { AnyAction, bindActionCreators } from 'redux';
 import { toggleMetadataPanels, ToggleMetadataPanelsAction } from '../actions/search';
 
-// @ts-ignore
+// @ts-expect-error - redefines types to include JSX elements
 export interface Props extends PanelProps {
   title? : JSX.Element | string;
   tooltip?: JSX.Element | string;
@@ -32,7 +32,7 @@ export interface Props extends PanelProps {
 
 // Extend the Searchkit Panel component to support tooltips and translations.
 export class Panel extends SearchkitPanel {
-  // @ts-ignore
+  // @ts-expect-error - redefines types to include JSX elements
   props: Props;
 
   static readonly defaultProps = {
@@ -46,7 +46,7 @@ export class Panel extends SearchkitPanel {
     this.props = props;
   }
 
-  // @ts-expect-error
+  // @ts-expect-error - redefines types to include JSX elements
   componentDidUpdate(prevProps: Props): void {
     if (this.props.linkCollapsedState &&
         this.props.expandMetadataPanels !== prevProps.expandMetadataPanels &&
@@ -98,5 +98,5 @@ export const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
   };
 };
 
-// @ts-expect-error
+// @ts-expect-error - redefines types to include JSX elements
 export default connect(mapStateToProps, mapDispatchToProps)(Panel);

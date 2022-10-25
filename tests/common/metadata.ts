@@ -194,7 +194,8 @@ describe('Metadata utilities', () => {
             vocab: 'Vocab',
             vocabUri: 'http://example.com'
           }
-        ]
+        ],
+        universes: []
       });
     });
 
@@ -232,7 +233,8 @@ describe('Metadata utilities', () => {
         typeOfModeOfCollections: [],
         typeOfSamplingProcedures: [],
         typeOfTimeMethods: [],
-        unitTypes: []
+        unitTypes: [],
+        universes: []
       });
     });
   });
@@ -324,7 +326,8 @@ describe('Metadata utilities', () => {
               vocab: 'Vocab',
               vocabUri: 'http://example.com'
             }
-          ]
+          ],
+          universes: []
         })
       ).toEqual({
         '@context': 'https://schema.org',
@@ -445,7 +448,8 @@ describe('Metadata utilities', () => {
               vocab: 'Vocab',
               vocabUri: 'http://example.com'
             }
-          ]
+          ],
+          universes: []
         })
       ).toEqual({
         '@context': 'https://schema.org',

@@ -106,8 +106,9 @@ function setup(item?: Partial<CMMStudy>) {
         }
       ],
       studyXmlSourceUrl: '',
+      universe: [],
       ...item
-    },
+    } as CMMStudy,
     expandMetadataPanels: true,
     toggleMetadataPanels: jest.fn()
   };

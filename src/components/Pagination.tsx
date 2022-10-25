@@ -22,7 +22,7 @@ export default class Pagination extends AbstractItemList {
     const {items, selectedItems, setItems} = this.props;
     const links = [];
 
-    for (let i: number = 0; i < items.length; i++) {
+    for (let i = 0; i < items.length; i++) {
       if (i === 0 || i === items.length - 1) {
         continue;
       }

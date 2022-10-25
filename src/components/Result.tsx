@@ -35,9 +35,9 @@ interface ComponentState {
 }
 
 function generateCreatorElements(item: CMMStudy) {
-  let creators: JSX.Element[] = [];
+  const creators: JSX.Element[] = [];
 
-  for (let i: number = 0; i < item.creators.length; i++) {
+  for (let i = 0; i < item.creators.length; i++) {
     creators.push(
       <span key={i}>
         {item.creators[i]}{i < item.creators.length - 1 ? '; ' : ''}
@@ -66,7 +66,6 @@ export class Result extends Component<Props, ComponentState> {
     const {
       bemBlocks,
       currentLanguage,
-      index,
       item,
     } = this.props;
 
@@ -74,8 +73,8 @@ export class Result extends Component<Props, ComponentState> {
       return null;
     }
 
-    let languages: JSX.Element[] = [];
-    for (let i: number = 0; i < item.langAvailableIn.length; i++) {
+    const languages: JSX.Element[] = [];
+    for (let i = 0; i < item.langAvailableIn.length; i++) {
       languages.push(
         <Link key={i}
               className="button is-small is-white" 

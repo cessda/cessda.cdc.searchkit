@@ -21,7 +21,7 @@ import DetailPage from "./containers/DetailPage";
 import NotFoundPage from "./containers/NotFoundPage";
 import SearchPage from "./containers/SearchPage";
 import App from "./containers/App";
-import { browserHistory, IndexRoute, Redirect, Route, Router } from "react-router";
+import { browserHistory, IndexRoute, Route, Router } from "react-router";
 import { routerMiddleware, syncHistoryWithStore } from "react-router-redux";
 import { rootReducer as reducers } from "./reducers";
 import thunk from "redux-thunk";

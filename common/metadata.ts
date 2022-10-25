@@ -70,6 +70,8 @@ export interface CMMStudy {
   lastModified: string;
   langAvailableIn: string[];
   studyXmlSourceUrl: string;
+  /** Universes */
+  universes: Universe[];
 }
 
 export interface Country {
@@ -106,6 +108,11 @@ export interface TermVocabAttributes extends VocabAttributes {
 export interface Similar {
   id: string;
   title: string;
+}
+
+export interface Universe {
+  content: string;
+  clusion: "I" | "E";
 }
 
 /** 
@@ -148,7 +155,8 @@ export function getStudyModel(data: Pick<SearchHit<Partial<CMMStudy>>, "_source"
     lastModified: data._source.lastModified || '',
     studyUrl: data._source.studyUrl,
     studyXmlSourceUrl: data._source.studyXmlSourceUrl as string,
-    langAvailableIn: (data._source.langAvailableIn || []).map(i => i.toUpperCase()).sort()
+    langAvailableIn: (data._source.langAvailableIn || []).map(i => i.toUpperCase()).sort(),
+    universes: data._source.universes || []
   });
 }
 
