@@ -78,7 +78,8 @@ function fujiMetrics() {
           retries: 1,
       });
       try {
-          await elasticIndexRebuild();
+          //await elasticIndexRebuild(); //drops and recreates index
+          await elasticIndexRefresh(); //creates index if it doesnt exist, skips if it does exist
           const { sites } = await cdcLinks.fetch();
           sites.shift(); //remove 1st element - https://datacatalogue.cessda.eu/
           logger.info(`Links Collected: ${sites.length}`);
@@ -117,11 +118,35 @@ async function elasticIndexRebuild(){
    logger.info('ES Index Created');
 }
 
+async function elasticIndexRefresh(){
+  const {body: exists} = await client.indices.exists({index: 'fuji-results'})
+  if (!exists){
+    await client.indices.create({
+      index: 'fuji-results',
+      body: {
+        mappings: {
+          dynamic: 'runtime',
+          properties: {
+            id: {type: 'keyword'},
+            body: {type: 'object'}
+          }
+        }
+      }
+     })
+     logger.info('ES Index Created');
+  }
+}
+
 async function apiLoop(link: string): Promise<string>{
 
+    const runDate = new Date();
+    const year = runDate.getFullYear();
+    const month = runDate.getMonth() + 1;
+    const day = runDate.getDate();
+    const fullDate = [year, month, day].join('-');
     const urlLink = new URL(link); 
     const urlParams = urlLink.searchParams;
-    const fileName = urlParams.get('q')+"-"+urlParams.get('lang')+".json";
+    const fileName = urlParams.get('q')+"-"+urlParams.get('lang')+"-"+fullDate+".json";
     logger.info(`\n`);
     logger.info(`Name: ${fileName}`);
     const cdcApiUrl = 'https://datacatalogue.cessda.eu/api/json/cmmstudy_'+urlParams.get('lang')+'/'+urlParams.get('q');
@@ -145,7 +170,13 @@ async function apiLoop(link: string): Promise<string>{
         logger.info(`statusCode: ${res.status}`);
         const fujiResults = res.data;
         delete fujiResults['results'];
+        delete fujiResults.summary.maturity;
+        delete fujiResults.summary.score_earned;
+        delete fujiResults.summary.score_total;
+        delete fujiResults.summary.status_passed
+        delete fujiResults.summary.status_total;
         fujiResults['publisher'] = publisher;
+        fujiResults['uid'] = urlParams.get('q')+"-"+urlParams.get('lang')+"-"+fullDate;
 
         resultsToElastic(fileName, fujiResults).then(()=>{
           //resultsToHDD(fileName, fujiResults); //Write-to-HDD-localhost function
