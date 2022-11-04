@@ -177,6 +177,7 @@ async function apiLoop(link: string): Promise<string>{
         delete fujiResults.summary.status_total;
         fujiResults['publisher'] = publisher;
         fujiResults['uid'] = urlParams.get('q')+"-"+urlParams.get('lang')+"-"+fullDate;
+        fujiResults['run'] = fullDate;
 
         resultsToElastic(fileName, fujiResults).then(()=>{
           //resultsToHDD(fileName, fujiResults); //Write-to-HDD-localhost function
