@@ -41,6 +41,8 @@ import _ from 'lodash';
 import { State } from '../../../src/types';
 import { AnyAction } from 'redux';
 import { enLanguage } from '../utilities/language';
+import { getStudyModel } from '../../../common/metadata';
+import { mockStudy } from '../../common/mockdata';
 
 const mockStore = configureMockStore<Partial<State>, ThunkDispatch<State, any, AnyAction>>([thunk]);
 
@@ -164,17 +166,7 @@ describe('Search actions', () => {
         },
         {
           type: UPDATE_DISPLAYED,
-          displayed: {
-            aggregations: {},
-            hits: {
-              hasChanged: true,
-              hits: [],
-              ids: "",
-              total: 0
-            },
-            timed_out: false,
-            took: 1
-          }
+          displayed: []
         },
         {
           type: TOGGLE_LOADING,
@@ -217,7 +209,7 @@ describe('Search actions', () => {
           hits: [
             {
               _source: {
-                id: 1
+                id: "1"
               }
             }
           ],
@@ -255,21 +247,7 @@ describe('Search actions', () => {
         },
         {
           type: UPDATE_DISPLAYED,
-          displayed: {
-            aggregations: {},
-            hits: {
-              hasChanged: true,
-              hits: [{
-                _source: {
-                  id: 1
-                }
-              }],
-              ids: "",
-              total: 1,
-            },
-            timed_out: false,
-            took: 1
-          }
+          displayed: [getStudyModel({_source: { id: "1" }})],
         },
         {
           type: TOGGLE_LOADING,
@@ -391,14 +369,22 @@ describe('Search actions', () => {
         }
       });
 
+      const minimalStudy = {
+        id: "1"
+      };
+
       // Dispatch action.
       store.dispatch(
-        // @ts-expect-error
-        updateDisplayed([
-          {
-            id: '1'
+        updateDisplayed({
+          hits: {
+            hits: [
+              // @ts-expect-error
+              {
+                _source: minimalStudy
+              }
+            ]
           }
-        ])
+        })
       );
 
       // State should contain displayed studies and language.
@@ -406,9 +392,7 @@ describe('Search actions', () => {
         {
           type: UPDATE_DISPLAYED,
           displayed: [
-            {
-              id: '1'
-            }
+            getStudyModel({ _source: minimalStudy })
           ]
         }
       ]);

@@ -157,6 +157,7 @@ describe('Metadata utilities', () => {
           abbr: 'UKDS',
           publisher: 'UK Data Service'
         },
+        relatedPublications: [],
         samplingProcedureFreeTexts: [
           'Sampling Procedure'
         ],
@@ -225,6 +226,7 @@ describe('Metadata utilities', () => {
         pidStudies: [],
         publicationYear: '',
         publisher: undefined,
+        relatedPublications: [],
         samplingProcedureFreeTexts: [],
         studyAreaCountries: [],
         studyNumber: '',
@@ -291,6 +293,7 @@ describe('Metadata utilities', () => {
             abbr: 'UKDS',
             publisher:'UK Data Service'
           },
+          relatedPublications: [],
           samplingProcedureFreeTexts: [],
           studyAreaCountries: [
             {
@@ -413,6 +416,7 @@ describe('Metadata utilities', () => {
             abbr: 'UKDS',
             publisher: 'UK Data Service',
           },
+          relatedPublications: [],
           samplingProcedureFreeTexts: [],
           studyAreaCountries: [
             {

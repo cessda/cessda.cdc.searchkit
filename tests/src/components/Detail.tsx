@@ -13,108 +13,18 @@
 
 import React from 'react';
 import { mount, shallow } from 'enzyme';
-import Detail from '../../../src/components/Detail';
+import Detail, { Props } from '../../../src/components/Detail';
 import { CMMStudy } from '../../../common/metadata';
+import { mockStudy } from '../../common/mockdata';
 
 // Mock props and shallow render component for test.
 function setup(item?: Partial<CMMStudy>) {
-  const props = {
-    index: 0,
+  const props: Props = {
     item: {
-      id: "1",
-      titleStudy: 'Study Title',
-      titleStudyHighlight: '',
-      abstract: 'Abstract',
-      abstractHighlight: '',
-      abstractHighlightShort: '',
-      abstractExpanded: false,
-      abstractShort: 'Abstract',
-      classifications: [
-        {
-          id: 'UKDS1234',
-          term: 'Term',
-          vocab: 'Vocab',
-          vocabUri: 'http://example.com'
-        }
-      ],
-      code: 'UKDS',
-      creators: [
-        'Jane Doe',
-        'University of Essex',
-        'John Smith (University of Essex)',
-        'Joe Bloggs, University of Essex'
-      ],
-      dataAccessFreeTexts: ['Data Access Free Texts'],
-      dataCollectionFreeTexts: [],
-      dataCollectionPeriodEnddate: '',
-      dataCollectionPeriodStartdate: '2001',
-      fileLanguages: ['en'],
-      keywords: [
-        {
-          id: 'UKDS1234',
-          term: 'Term',
-          vocab: 'Vocab',
-          vocabUri: 'http://example.com'
-        }
-      ],
-      langAvailableIn: ['EN'],
-      lastModified: '2001-01-01T12:00:00Z',
-      pidStudies: [
-        {
-          agency: 'UKDS',
-          pid: 'UKDS1234'
-        }
-      ],
-      publicationYear: '2001-01-01',
-      publisher: {
-        abbr: 'UKDS',
-        publisher: 'UK Data Service'
-      },
-      samplingProcedureFreeTexts: [],
-      studyAreaCountries: [
-        {
-          abbr: 'EN',
-          country: 'England',
-          searchField: 'England'
-        }
-      ],
-      studyNumber: 'UKDS1234',
-      studyUrl: 'http://example.com',
-      typeOfModeOfCollections: [
-        {
-          id: 'UKDS1234',
-          term: 'Term',
-          vocab: 'Vocab',
-          vocabUri: 'http://example.com'
-        }
-      ],
-      typeOfTimeMethods: [
-        {
-          id: 'UKDS1234',
-          term: 'Term',
-          vocab: 'Vocab',
-          vocabUri: 'http://example.com'
-        }
-      ],
-      typeOfSamplingProcedures: [],
-      unitTypes: [
-        {
-          id: 'UKDS1234',
-          term: 'Term',
-          vocab: 'Vocab',
-          vocabUri: 'http://example.com'
-        }
-      ],
-      studyXmlSourceUrl: '',
-      universe: [],
+      ...mockStudy,
       ...item
-    } as CMMStudy,
-    expandMetadataPanels: true,
-    toggleMetadataPanels: jest.fn()
+    }
   };
-
-  // Mock toggleMetadataPanels() to update state.
-  props.toggleMetadataPanels.mockImplementation(() => props.expandMetadataPanels = !props.expandMetadataPanels);
 
   const enzymeWrapper = shallow(<Detail {...props} />);
   return {
@@ -267,12 +177,16 @@ describe('Detail component', () => {
     ).toBe('01/02/2003 - Not a date');
   });
 
-  it('should not reset metadata panels state on unmount if not expanded', () => {
-    const { props, enzymeWrapper } = setup();
-    enzymeWrapper.setProps({
-      expandMetadataPanels: false
+  it('should handle a related publication with no holdings', () => {
+    const { enzymeWrapper } = setup({ 
+      relatedPublications: [
+        {
+          title: "Related publications title",
+          holdings: []
+        }
+      ]
     });
-    enzymeWrapper.unmount();
-    expect(props.toggleMetadataPanels).not.toHaveBeenCalled();
-  });
+    const detail = enzymeWrapper.find('article.w-100');
+    expect(detail.exists()).toBe(true);
+  })
 });

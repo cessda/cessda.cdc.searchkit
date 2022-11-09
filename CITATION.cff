@@ -1,0 +1,26 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: CESSDA Data Catalogue - Searchkit component
+message: >-
+  If you use this software, please cite it using https://doi.org/10.5281/zenodo.3786299
+type: software
+authors:
+  - given-names: Ashley
+    family-names: Fox
+    email: foxonlinesolutions@co.uk
+    affiliation: Fox online solutions
+  - given-names: John William
+    family-names: Shepherdson
+    email: john.shepherdson@cessda.eu
+    affiliation: CESSDA
+    orcid: 'https://orcid.org/0000-0002-4402-9644'
+  - given-names: Matthew
+    family-names: Morris
+    email: matthew.morris@cessda.eu
+    affiliation: CESSDA
+  - given-names: Daniel
+    family-names: Arnrup-Øien
+    email: daniel.oien@openconcept.no
+    affiliation: Open Concept

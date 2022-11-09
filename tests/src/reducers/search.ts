@@ -11,9 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { getStudyModel } from '../../../common/metadata';
 import { INIT_SEARCHKIT } from '../../../src/actions/search';
 import search from '../../../src/reducers/search';
 import { queryBuilder } from '../../../src/utilities/searchkit';
+import { mockStudy } from '../../common/mockdata';
 
 const initialState = search(undefined, { type: INIT_SEARCHKIT });
 
@@ -126,13 +128,7 @@ describe('Search reducer', () => {
         initialState,
         {
           type: 'UPDATE_DISPLAYED',
-          displayed: {
-            hits: {
-              hits: [],
-              total: 0,
-              max_score: 0
-            }
-          }
+          displayed: []
         }
       )
     ).toEqual({
@@ -141,59 +137,19 @@ describe('Search reducer', () => {
       jsonLd: undefined
     });
 
+    const emptyStudy = getStudyModel({ _source: {} });
+    
     expect(
       search(
         initialState,
         {
           type: 'UPDATE_DISPLAYED',
-          displayed: {
-            hits: {
-              hits: [{
-                //@ts-expect-error
-                _source: {}
-              }]
-            }
-          }
+          displayed: [emptyStudy]
         }
       )
     ).toEqual({
       ...initialState,
-      displayed: [
-        {
-          id: undefined,
-          titleStudy: undefined,
-          titleStudyHighlight: '',
-          abstract: '',
-          abstractShort: '',
-          abstractHighlight: '',
-          abstractHighlightShort: '',
-          classifications: [],
-          creators: [],
-          code: undefined,
-          dataAccessFreeTexts: [],
-          dataCollectionFreeTexts: [],
-          dataCollectionPeriodEnddate: '',
-          dataCollectionPeriodStartdate: '',
-          dataCollectionYear: undefined,
-          fileLanguages: [],
-          keywords: [],
-          langAvailableIn: [],
-          lastModified: '',
-          pidStudies: [],
-          publicationYear: '',
-          publisher: undefined,
-          samplingProcedureFreeTexts: [],
-          studyAreaCountries: [],
-          studyNumber: '',
-          studyUrl: undefined,
-          studyXmlSourceUrl: undefined,
-          typeOfModeOfCollections: [],
-          typeOfTimeMethods: [],
-          typeOfSamplingProcedures: [],
-          unitTypes: [],
-          universes: []
-        }
-      ]
+      displayed: [emptyStudy]
     });
 
     expect(
@@ -201,200 +157,15 @@ describe('Search reducer', () => {
         initialState,
         {
           type: 'UPDATE_DISPLAYED',
-          displayed: {
-            hits: {
-              total: 1,
-              max_score: 1,
-              hits: [
-                {
-                  _id: "1",
-                  _index: "cmmstudy_en",
-                  _type: "cmmstudy",
-                  _score: 1,
-                  _source: {
-                    id: "1",
-                    titleStudy: 'Study Title',
-                    studyNumber: 'UKDS1234',
-                    abstract: 'Abstract',
-                    abstractShort: '',
-                    abstractHighlight: '',
-                    abstractHighlightShort: '',
-                    code: 'UKDS',
-                    classifications: [
-                      {
-                        vocab: 'Vocab',
-                        vocabUri: 'http://example.com',
-                        id: 'UKDS1234',
-                        term: 'Term'
-                      }
-                    ],
-                    keywords: [
-                      {
-                        vocab: 'Vocab',
-                        vocabUri: 'http://example.com',
-                        id: 'UKDS1234',
-                        term: 'Term'
-                      }
-                    ],
-                    typeOfTimeMethods: [
-                      {
-                        vocab: 'Vocab',
-                        vocabUri: 'http://example.com',
-                        id: 'UKDS1234',
-                        term: 'Term'
-                      }
-                    ],
-                    studyAreaCountries: [
-                      {
-                        abbr: 'EN',
-                        country: 'England',
-                        searchField: 'England'
-                      }
-                    ],
-                    unitTypes: [
-                      {
-                        vocab: 'Vocab',
-                        vocabUri: 'http://example.com',
-                        id: 'UKDS1234',
-                        term: 'Term'
-                      }
-                    ],
-                    publisher: {
-                      abbr: 'UKDS',
-                      publisher: 'UK Data Service'
-                    },
-                    publicationYear: '2001-01-01',
-                    pidStudies: [
-                      {
-                        agency: 'UKDS',
-                        pid: 'UKDS1234'
-                      }
-                    ],
-                    fileLanguages: ['en'],
-                    creators: [
-                      'Jane Doe',
-                      'University of Essex',
-                      'John Smith (University of Essex)',
-                      'Joe Bloggs, University of Essex'
-                    ],
-                    typeOfModeOfCollections: [
-                      {
-                        vocab: 'Vocab',
-                        vocabUri: 'http://example.com',
-                        id: 'UKDS1234',
-                        term: 'Term'
-                      }
-                    ],
-                    dataCollectionPeriodStartdate: '2001',
-                    dataCollectionYear: 2001,
-                    dataAccessFreeTexts: ['Data Access Free Texts'],
-                    dataCollectionFreeTexts: [],
-                    lastModified: '2001-01-01T12:00:00Z',
-                    langAvailableIn: ['en'],
-                    samplingProcedureFreeTexts: [],
-                    studyUrl: 'http://example.com',
-                    studyXmlSourceUrl: 'http://example.com/study',
-                    titleStudyHighlight: '',
-                    typeOfSamplingProcedures: [],
-                    universes: []
-                  }
-                }
-              ]
-            }
-          }
+          displayed: [
+            mockStudy
+          ]
         }
       )
     ).toEqual({
       ...initialState,
       displayed: [
-        {
-          id: '1',
-          titleStudy: 'Study Title',
-          titleStudyHighlight: '',
-          abstract: 'Abstract',
-          abstractShort: 'Abstract',
-          abstractHighlight: '',
-          abstractHighlightShort: '',
-          classifications: [
-            {
-              id: 'UKDS1234',
-              term: 'Term',
-              vocab: 'Vocab',
-              vocabUri: 'http://example.com'
-            }
-          ],
-          code: "UKDS",
-          creators: [
-            'Jane Doe',
-            'University of Essex',
-            'John Smith (University of Essex)',
-            'Joe Bloggs, University of Essex'
-          ],
-          dataAccessFreeTexts: ['Data Access Free Texts'],
-          dataCollectionFreeTexts: [],
-          dataCollectionPeriodEnddate: '',
-          dataCollectionPeriodStartdate: '2001',
-          dataCollectionYear: 2001,
-          fileLanguages: ['en'],
-          keywords: [
-            {
-              id: 'UKDS1234',
-              term: 'Term',
-              vocab: 'Vocab',
-              vocabUri: 'http://example.com'
-            }
-          ],
-          langAvailableIn: ['EN'],
-          lastModified: '2001-01-01T12:00:00Z',
-          pidStudies: [
-            {
-              agency: 'UKDS',
-              pid: 'UKDS1234'
-            }
-          ],
-          publicationYear: '2001-01-01',
-          publisher: {
-            abbr: 'UKDS',
-            publisher: 'UK Data Service'
-          },
-          samplingProcedureFreeTexts: [],
-          studyAreaCountries: [
-            {
-              abbr: 'EN',
-              country: 'England',
-              searchField: 'England'
-            }
-          ],
-          studyNumber: 'UKDS1234',
-          studyUrl: 'http://example.com',
-          studyXmlSourceUrl: "http://example.com/study",
-          typeOfModeOfCollections: [
-            {
-              id: 'UKDS1234',
-              term: 'Term',
-              vocab: 'Vocab',
-              vocabUri: 'http://example.com'
-            }
-          ],
-          typeOfTimeMethods: [
-            {
-              id: 'UKDS1234',
-              term: 'Term',
-              vocab: 'Vocab',
-              vocabUri: 'http://example.com'
-            }
-          ],
-          typeOfSamplingProcedures: [],
-          unitTypes: [
-            {
-              id: 'UKDS1234',
-              term: 'Term',
-              vocab: 'Vocab',
-              vocabUri: 'http://example.com'
-            }
-          ],
-          universes: []
-        }
+        mockStudy
       ]
     });
   });

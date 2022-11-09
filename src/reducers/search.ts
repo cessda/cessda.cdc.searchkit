@@ -87,10 +87,8 @@ export default function search(state: SearchState = initialState, action: Action
       });
 
     case UPDATE_DISPLAYED: {
-      const displayed = action.displayed.hits.hits.map(hit => getStudyModel(hit));
-
       return Object.assign({}, state, {
-        displayed: displayed
+        displayed: action.displayed
       });
     }
 

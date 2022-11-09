@@ -23,22 +23,52 @@ export const mockStudy: CMMStudy = {
     'Joe Bloggs, University of Essex'
   ],
   code: 'UKDS',
-  dataAccessFreeTexts: [],
-  dataCollectionFreeTexts: [],
+  dataAccessFreeTexts: [
+    "Data access terms and conditions"
+  ],
+  dataCollectionFreeTexts: [
+    {
+      dataCollectionFreeText: "Data collection texts",
+      event: "Data collection event"
+    }
+  ],
   dataCollectionPeriodEnddate: '',
   dataCollectionPeriodStartdate: '2001',
   dataCollectionYear: 2001,
   fileLanguages: ['en'],
-  keywords: [],
+  keywords: [
+    {
+      id: '',
+      term: 'Term',
+      vocab: '',
+      vocabUri: ''
+    }
+  ],
   langAvailableIn: ['EN'],
   lastModified: '2001-01-01T12:00:00Z',
-  pidStudies: [],
+  pidStudies: [
+    {
+      agency: "Example Agency",
+      pid: "http://example.com",
+    }
+  ],
   publicationYear: '2001-01-01',
   publisher: {
     abbr: 'UKDS',
     publisher: 'UK Data Service',
   },
-  samplingProcedureFreeTexts: [],
+  relatedPublications: [
+    {
+      title: "Related Publication 1",
+      holdings: [
+        "First Holding"
+      ]
+    }
+  ],
+  samplingProcedureFreeTexts: [
+    "Sampling Procedure 1",
+    "Sampling Procedure 2"
+  ],
   studyAreaCountries: [
     {
       abbr: 'EN',
@@ -65,7 +95,13 @@ export const mockStudy: CMMStudy = {
       vocabUri: 'http://example.com'
     }
   ],
-  typeOfSamplingProcedures: [],
+  typeOfSamplingProcedures: [
+    {
+      id: 'UKDS1234',
+      vocab: 'Vocab',
+      vocabUri: 'http://example.com'
+    }
+  ],
   unitTypes: [
     {
       id: 'UKDS1234',

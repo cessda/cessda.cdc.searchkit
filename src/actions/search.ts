@@ -14,7 +14,7 @@
 import searchkit, { detailQuery, pidQuery } from "../utilities/searchkit";
 import _ from "lodash";
 import { Thunk } from "../types";
-import { CMMStudy } from "../../common/metadata";
+import { CMMStudy, getStudyModel } from "../../common/metadata";
 import getPaq from "../utilities/getPaq";
 import { SearchRequest, SearchResponse } from "@elastic/elasticsearch/api/types";
 
@@ -179,13 +179,13 @@ export const UPDATE_DISPLAYED = "UPDATE_DISPLAYED";
 
 export type UpdateDisplayedAction = {
   type: typeof UPDATE_DISPLAYED;
-  displayed: Pick<SearchResponse<CMMStudy>, "hits">;
+  displayed: CMMStudy[];
 };
 
-export function updateDisplayed(displayed: SearchResponse<CMMStudy>): UpdateDisplayedAction {
+export function updateDisplayed(displayed: SearchResponse<Partial<CMMStudy>>): UpdateDisplayedAction {
   return {
     type: UPDATE_DISPLAYED,
-    displayed
+    displayed: displayed.hits.hits.map(hit => getStudyModel(hit))
   };
 }
 
