@@ -72,6 +72,8 @@ export interface CMMStudy {
   studyXmlSourceUrl: string;
   /** Universes */
   universes: Universe[];
+  /** Related publications */
+  relatedPublications: RelatedPublication[];
 }
 
 export interface Country {
@@ -83,6 +85,11 @@ export interface Country {
 export interface DataCollectionFreeText {
   dataCollectionFreeText: string;
   event: string;
+}
+
+export interface RelatedPublication {
+  title: string;
+  holdings: string[];
 }
 
 export interface Pid {
@@ -156,7 +163,8 @@ export function getStudyModel(data: Pick<SearchHit<Partial<CMMStudy>>, "_source"
     studyUrl: data._source.studyUrl,
     studyXmlSourceUrl: data._source.studyXmlSourceUrl as string,
     langAvailableIn: (data._source.langAvailableIn || []).map(i => i.toUpperCase()).sort(),
-    universes: data._source.universes || []
+    universes: data._source.universes || [],
+    relatedPublications: data._source.relatedPublications || []
   });
 }
 

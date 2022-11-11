@@ -1,4 +1,6 @@
 
+[![SQA badge](https://api.eu.badgr.io/public/assertions/EpifO6QnSO22gjW0A1mFAg/image)](https://api.eu.badgr.io/public/badges/IDUsZJpNQPuiJpPwmJ8iJw)
+
 [![Build Status](https://jenkins.cessda.eu/buildStatus/icon?job=cessda.cdc.searchkit%2Fmaster)](https://jenkins.cessda.eu/job/cessda.cdc.searchkit/job/master/)
 [![Quality Gate Status](https://sonarqube.cessda.eu/api/project_badges/measure?project=eu.cessda.pasc%3Apasc-searchkit&metric=alert_status)](https://sonarqube.cessda.eu/dashboard?id=eu.cessda.pasc%3Apasc-searchkit)
 [![Coverage](https://sonarqube.cessda.eu/api/project_badges/measure?project=eu.cessda.pasc%3Apasc-searchkit&metric=coverage)](https://sonarqube.cessda.eu/dashboard?id=eu.cessda.pasc%3Apasc-searchkit)
@@ -134,20 +136,6 @@ For development, the following software tools are recommended and have full supp
 
 > Translations can be displayed in mark-up using `<Translate content="filters.topic.label"/>` where the `content` attribute is the JSON path to the specific string required.
 
-N.B. list of CESSDA languages (*as of Feb 2021*):
-
-* da (Danish)
-* de (German)
-* el (Greek)
-* en (English)
-* fi (Finnish)
-* fr (French)
-* nl (Dutch)
-* no (Norwegian)
-* sk (Slovak)
-* sl (Slovenian)
-* sv (Swedish)
-
 ### Add a new field
 
 1. Each study retrieved from Elasticsearch is first routed through the `getStudyModel()` method located in `/src/utilities/metadata.js`. This cleans the data and applies type restrictions. Add the new field to the object returned from this method. Like other fields, it should be provided from Elasticsearch as a child property of the `data._source` object.
@@ -194,17 +182,11 @@ All queries performed against Elasticsearch are defined in one file for easy mod
 
 > Google documentation on supported dataset JSON-LD properties can be found at <https://developers.google.com/search/docs/data-types/dataset>
 
-## Known Issues
-
-As of *9 February 2021*
-
-* All languages are available for selection, however Slovenian and Swedish currently have no records associated with them.
-
 See [cessda.cdc.versions README](https://bitbucket.org/cessda/cessda.cdc.versions/src/master/README.md) for more details regarding adding UI languages, indexes etc.
 
 ## Contributing
 
-Please read [CESSDA Guideline for developers](https://bitbucket.org/cessda/cessda.guidelines.cit/wiki/Developers) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Versioning
 
@@ -212,16 +194,8 @@ See [Semantic Versioning](https://semver.org/) for guidance.
 
 ## Contributors
 
-You can find the list of contributors in the `CONTRIBUTORS.md` file.
+You can find the list of contributors in the [CONTRIBUTORS](CONTRIBUTORS.md) file.
 
 ## License
 
-See the [LICENSE](LICENSE) file.
-
-## FAQs
-
-See the [FAQ](FAQ.md) file.
-
-## Acknowledgments
-
-None at present.
+See the [LICENSE](LICENSE.txt) file.

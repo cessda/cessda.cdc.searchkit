@@ -345,6 +345,20 @@ Summary information
         </Panel>
 
         <Panel
+            className="section-header"
+            title={<Translate component="h2" content="metadata.relatedPublications"/>}
+            collapsable={false}
+        >
+          {Detail.generateElements(item.relatedPublications, 'p', relatedPublication => {
+            if (relatedPublication.holdings?.length > 0) {
+              return <p><a href={relatedPublication.holdings[0]}>{relatedPublication.title}</a></p>;
+            } else {
+              return <p>{relatedPublication.title}</p>;
+            }
+          })}
+        </Panel>
+
+        <Panel
           className="section-header"
           title={<Translate component="h2" content='metadata.topics.label'/>}
           tooltip={<Translate content="metadata.topics.tooltip" unsafe/>}
