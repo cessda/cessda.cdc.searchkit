@@ -80,11 +80,12 @@ function fujiMetrics() {
       try {
           //await elasticIndexRebuild(); //drops and recreates index
           await elasticIndexRefresh(); //creates index if it doesnt exist, skips if it does exist
+          const dateID = getDateID();
           const { sites } = await cdcLinks.fetch();
           sites.shift(); //remove 1st element - https://datacatalogue.cessda.eu/
           logger.info(`Links Collected: ${sites.length}`);
           for (const site of sites) {
-              const contents = await apiLoop(site);
+              const contents = await apiLoop(site, dateID); //run the api loop for every study in the CDC
           }
       } catch (error) {
           console.log(`Error at crawling indexer: ${error}`);
@@ -96,54 +97,7 @@ function fujiMetrics() {
   })();
 }
 
-async function elasticIndexRebuild(){
-
-   const {body: exists} = await client.indices.exists({index: 'fuji-results'})
-   if (exists){
-    await client.indices.delete({ index: 'fuji-results' });
-    logger.info('ES Index Deleted');
-   }
-   await client.indices.create({
-    index: 'fuji-results',
-    body: {
-      mappings: {
-        dynamic: 'runtime',
-        properties: {
-          id: {type: 'keyword'},
-          body: {type: 'object'}
-        }
-      }
-    }
-   })
-   logger.info('ES Index Created');
-}
-
-async function elasticIndexRefresh(){
-  const {body: exists} = await client.indices.exists({index: 'fuji-results'})
-  if (!exists){
-    await client.indices.create({
-      index: 'fuji-results',
-      body: {
-        mappings: {
-          dynamic: 'runtime',
-          properties: {
-            id: {type: 'keyword'},
-            body: {type: 'object'}
-          }
-        }
-      }
-     })
-     logger.info('ES Index Created');
-  }
-}
-
-async function apiLoop(link: string): Promise<string>{
-
-    const runDate = new Date();
-    const year = runDate.getFullYear();
-    const month = runDate.getMonth() + 1;
-    const day = runDate.getDate();
-    const fullDate = [year, month, day].join('-');
+async function apiLoop(link: string, fullDate:string): Promise<string>{
     const urlLink = new URL(link); 
     const urlParams = urlLink.searchParams;
     const fileName = urlParams.get('q')+"-"+urlParams.get('lang')+"-"+fullDate+".json";
@@ -154,7 +108,7 @@ async function apiLoop(link: string): Promise<string>{
     const data = await response.json();
     const publisher = data.publisherFilter.publisher;
     await axios
-    .post('http://localhost:1071/fuji/api/v1/evaluate', {
+    .post('http://34.107.135.203/fuji/api/v1/evaluate', {
         "metadata_service_endpoint": "",
         "metadata_service_type": "",
         "object_identifier": link,
@@ -162,8 +116,8 @@ async function apiLoop(link: string): Promise<string>{
         "use_datacite": true
     }, {
         auth: {
-            username: "marvel",
-            password: "wonderwoman"
+            username: "wallice",
+            password: "grommit"
         }
     })
     .then((res: { status: any; data: any; }) => {
@@ -177,6 +131,7 @@ async function apiLoop(link: string): Promise<string>{
         delete fujiResults.summary.status_total;
         fujiResults['publisher'] = publisher;
         fujiResults['uid'] = urlParams.get('q')+"-"+urlParams.get('lang')+"-"+fullDate;
+        fujiResults['dateID'] = fullDate;
 
         resultsToElastic(fileName, fujiResults).then(()=>{
           //resultsToHDD(fileName, fujiResults); //Write-to-HDD-localhost function
@@ -195,6 +150,47 @@ async function apiLoop(link: string): Promise<string>{
         }, 1000); //1sec delay between API calls
   });
 
+}
+
+async function elasticIndexRebuild(){
+
+  const {body: exists} = await client.indices.exists({index: 'fuji-results'})
+  if (exists){
+   await client.indices.delete({ index: 'fuji-results' });
+   logger.info('ES Index Deleted');
+  }
+  await client.indices.create({
+   index: 'fuji-results',
+   body: {
+     mappings: {
+       dynamic: 'runtime',
+       properties: {
+         id: {type: 'keyword'},
+         body: {type: 'object'}
+       }
+     }
+   }
+  })
+  logger.info('ES Index Created');
+}
+
+async function elasticIndexRefresh(){
+ const {body: exists} = await client.indices.exists({index: 'fuji-results'})
+ if (!exists){
+   await client.indices.create({
+     index: 'fuji-results',
+     body: {
+       mappings: {
+         dynamic: 'runtime',
+         properties: {
+           id: {type: 'keyword'},
+           body: {type: 'object'}
+         }
+       }
+     }
+    })
+    logger.info('ES Index Created');
+ }
 }
 
 async function resultsToElastic (fileName: string, fujiResults: JSON) {
@@ -239,6 +235,19 @@ function resultsToHDD(fileName: string, fujiResults: JSON){
       logger.info("File written successfully");
     }
   });
+}
+
+function getDateID(){
+  const runDate = new Date();
+  /*const year = runDate.getFullYear();
+  const month = runDate.getMonth()+1;
+  const date = runDate.getDate();
+  const hours = runDate.getHours();
+  const minutes = runDate.getMinutes();
+  const seconds = runDate.getSeconds();*/
+  const fullDate = [runDate.getFullYear(), runDate.getMonth()+1, runDate.getDate(), runDate.getHours(), runDate.getMinutes(), runDate.getSeconds()].join('-');
+
+  return fullDate;
 }
 
 fujiMetrics();
