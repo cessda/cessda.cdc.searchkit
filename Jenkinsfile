@@ -21,7 +21,7 @@ pipeline {
 
 	environment {
 		product_name = "cdc"
-		module_name = "searchkit"
+		module_name = "searchkit-fuji"
 		image_tag = "${docker_repo}/${product_name}-${module_name}:${env.BRANCH_NAME.toLowerCase().replaceAll('[^a-z0-9\\.\\_\\-]', '-')}-${env.BUILD_NUMBER}"
 		scannerHome = tool 'sonar-scanner'
 	}
@@ -48,22 +48,7 @@ pipeline {
 				}
 			}
 		}
-		stage('Run Sonar Scan') {
-			steps {
-				nodejs('node-16') {
-					withSonarQubeEnv('cessda-sonar') {
-						sh "${scannerHome}/bin/sonar-scanner"
-					}
-				}
-			}
-			when { branch 'master' }
-		}
-		stage('Get Quality Gate Status') {
-			steps {
-				waitForQualityGate abortPipeline: true
-			}
-			when { branch 'master' }
-		}
+		
 		stage('Build Docker image') {
 			 steps {
 				sh("docker build -t ${image_tag} .")
@@ -74,22 +59,6 @@ pipeline {
 				sh("gcloud auth configure-docker")
 				sh("docker push ${image_tag}")
 				sh("gcloud container images add-tag ${image_tag} ${docker_repo}/${product_name}-${module_name}:${env.BRANCH_NAME}-latest")
-			}
-			when { branch 'master' }
-		}
-		stage('Check Requirements and Deployments') {
-			steps {
-				build job: 'cessda.cdc.deploy/master', parameters: [string(name: 'searchkit_image_tag', value: "${env.BRANCH_NAME}-${env.BUILD_NUMBER}")], wait: false
-			}
-			when { branch 'master' }
-		}
-	}
-	post {
-		failure {
-			script {
-				if (env.BRANCH_NAME == 'master') {
-					emailext body: '${DEFAULT_CONTENT}', subject: '${DEFAULT_SUBJECT}', to: 'support@cessda.eu'
-				}
 			}
 		}
 	}

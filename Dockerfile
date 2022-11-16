@@ -26,5 +26,5 @@ RUN npm run build
 
 # Configure application startup
 USER node
-EXPOSE 8088
-CMD [ "node", "startprod.js" ]
+# EXPOSE 8088
+CMD [ "node", "./server/fujiApi.js" ]
