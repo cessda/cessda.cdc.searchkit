@@ -79,7 +79,7 @@ function fujiMetrics() {
       });
       try {
           //await elasticIndexRebuild(); //drops and recreates index
-          await elasticIndexRefresh(); //creates index if it doesnt exist, skips if it does exist
+          await elasticIndexCheck(); //creates index if it doesnt exist, skips if it does exist
           const dateID = getDateID();
           const { sites } = await cdcLinks.fetch();
           sites.shift(); //remove 1st element - https://datacatalogue.cessda.eu/
@@ -152,7 +152,7 @@ async function apiLoop(link: string, fullDate:string): Promise<string>{
 
 }
 
-async function elasticIndexRebuild(){
+async function elasticIndexCheck(){
 
   const {body: exists} = await client.indices.exists({index: 'fuji-results'})
   if (exists){
@@ -239,12 +239,6 @@ function resultsToHDD(fileName: string, fujiResults: JSON){
 
 function getDateID(){
   const runDate = new Date();
-  /*const year = runDate.getFullYear();
-  const month = runDate.getMonth()+1;
-  const date = runDate.getDate();
-  const hours = runDate.getHours();
-  const minutes = runDate.getMinutes();
-  const seconds = runDate.getSeconds();*/
   const fullDate = [runDate.getFullYear(), runDate.getMonth()+1, runDate.getDate(), runDate.getHours(), runDate.getMinutes(), runDate.getSeconds()].join('-');
 
   return fullDate;

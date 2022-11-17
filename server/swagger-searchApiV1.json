@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "External API CESSDA",
-    "description": "This is an external API for CESSDA Data Catalogue",
+    "description": "This is an external API version 1 for CESSDA Data Catalogue (CDC). The external API v1 for CDC is deprecated and will be withdrawn on or after 1 February 2023",
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"

@@ -44,7 +44,7 @@ export class SearchPage extends Component<Props> {
     // Auto expand filters if they contain selected values.
     this.autoExpandFilter('classifications.term');
     this.autoExpandFilter('dataCollectionYear');
-    this.autoExpandFilter('studyAreaCountries.country');
+    this.autoExpandFilter('studyAreaCountries.searchField');
     this.autoExpandFilter('publisher.publisher');
 
     // Set the page title
@@ -77,85 +77,73 @@ export class SearchPage extends Component<Props> {
           <div className="container">
           <LayoutBody className="columns">
             <SideBar className="column is-4">
-              <RefinementListFilter id="classifications.term"
-                                    title={counterpart.translate('filters.topic.label')}
-                                    field={'classifications.term'}
-                                    fieldOptions={{
-                                      type: 'nested',
-                                      options: {path: 'classifications', min_doc_count: 1}
-                                    }}
-                                    orderKey="_key"
-                                    orderDirection="asc"
-                                    operator="OR"
-                                    containerComponent={<Panel title={<Translate content='filters.topic.label'/>}
-                                                               tooltip={<Translate content="filters.topic.tooltip" unsafe/>}
-                                                               className="classifications"
-                                                               collapsable={true}
-                                                               defaultCollapsed={true}/>}
-                                    listComponent={<MultiSelect placeholder={<Translate content='filters.topic.placeholder'/>}/>}
-                                    size={2700}/>
+              <div className="float">
+                <RefinementListFilter id="classifications.term"
+                                      title={counterpart.translate('filters.topic.label')}
+                                      field={'classifications.term'}
+                                      fieldOptions={{
+                                        type: 'nested',
+                                        options: {path: 'classifications', min_doc_count: 1}
+                                      }}
+                                      orderKey="_key"
+                                      orderDirection="asc"
+                                      operator="OR"
+                                      containerComponent={<Panel title={<Translate content='filters.topic.label'/>}
+                                                                tooltip={<Translate content="filters.topic.tooltip" unsafe/>}
+                                                                className="classifications"
+                                                                collapsable={true}
+                                                                defaultCollapsed={true}/>}
+                                      listComponent={<MultiSelect placeholder={<Translate content='filters.topic.placeholder'/>}/>}
+                                      size={2700}/>
 
-              <RangeFilter min={1900}
-                           max={new Date().getFullYear()}
-                           field="dataCollectionYear"
-                           id="dataCollectionYear"
-                           title={counterpart.translate('filters.collectionDates.label')}
-                           rangeComponent={RangeSliderInput}
-                           containerComponent={<Panel title={<Translate content='filters.collectionDates.label'/>}
-                                                      tooltip={<Translate content='filters.collectionDates.tooltip'/>}
-                                                      className="dataCollectionYear"
-                                                      collapsable={true}
-                                                      defaultCollapsed={true}/>}/>
+                <RangeFilter min={1900}
+                            max={new Date().getFullYear()}
+                            field="dataCollectionYear"
+                            id="dataCollectionYear"
+                            title={counterpart.translate('filters.collectionDates.label')}
+                            rangeComponent={RangeSliderInput}
+                            containerComponent={<Panel title={<Translate content='filters.collectionDates.label'/>}
+                                                        tooltip={<Translate content='filters.collectionDates.tooltip'/>}
+                                                        className="dataCollectionYear"
+                                                        collapsable={true}
+                                                        defaultCollapsed={true}/>}/>
 
-              <RefinementListFilter id="studyAreaCountries.searchField"
-                                    title={counterpart.translate('filters.country.label')}
-                                    field={'studyAreaCountries.searchField'}
-                                    fieldOptions={{
-                                      type: 'nested',
-                                      options: {path: 'studyAreaCountries', min_doc_count: 1}
-                                    }}
-                                    orderKey="_key"
-                                    orderDirection="asc"
-                                    operator="OR"
-                                    containerComponent={<Panel title={<Translate content='filters.country.label'/>}
-                                                               tooltip={<Translate content='filters.country.tooltip'/>}
-                                                               className="studyAreaCountries"
-                                                               collapsable={true}
-                                                               defaultCollapsed={true}/>}
-                                    listComponent={<MultiSelect placeholder={<Translate content='filters.country.placeholder'/>}/>}
-                                    size={500}/>
+                <RefinementListFilter id="studyAreaCountries.searchField"
+                                      title={counterpart.translate('filters.country.label')}
+                                      field={'studyAreaCountries.searchField'}
+                                      fieldOptions={{
+                                        type: 'nested',
+                                        options: {path: 'studyAreaCountries', min_doc_count: 1}
+                                      }}
+                                      orderKey="_key"
+                                      orderDirection="asc"
+                                      operator="OR"
+                                      containerComponent={<Panel title={<Translate content='filters.country.label'/>}
+                                                                tooltip={<Translate content='filters.country.tooltip'/>}
+                                                                className="studyAreaCountries"
+                                                                collapsable={true}
+                                                                defaultCollapsed={true}/>}
+                                      listComponent={<MultiSelect placeholder={<Translate content='filters.country.placeholder'/>}/>}
+                                      size={500}/>
 
-              <RefinementListFilter id="publisher.publisher"
-                                    title={counterpart.translate('filters.publisher.label')}
-                                    field={'publisherFilter.publisher'}
-                                    fieldOptions={{
-                                      type: 'nested',
-                                      options: {path: 'publisherFilter', min_doc_count: 1}
-                                    }}
-                                    orderKey="_key"
-                                    orderDirection="asc"
-                                    operator="OR"
-                                    containerComponent={<Panel title={<Translate content='filters.publisher.label'/>}
-                                                               tooltip={<Translate content='filters.publisher.tooltip'/>}
-                                                               className="publisher"
-                                                               collapsable={true}
-                                                               defaultCollapsed={true}/>}
-                                    listComponent={<MultiSelect placeholder={<Translate content='filters.publisher.placeholder'/>}/>}
-                                    size={500}/>
-
-              {/* <RefinementListFilter id="fileLanguages"
-                                    title={<Translate content='filters.languageOfDataFiles.label'/>}
-                                    field={'fileLanguages'}
-                                    orderKey="_key"
-                                    orderDirection="asc"
-                                    operator="OR"
-                                    containerComponent={<Panel title={<Translate content='filters.languageOfDataFiles.label'/>}
-                                                               tooltip={<Translate content='filters.languageOfDataFiles.tooltip'/>}
-                                                               className="language"
-                                                               collapsable={true}
-                                                               defaultCollapsed={true}/>}
-                                    listComponent={<MultiSelect placeholder={<Translate content='filters.languageOfDataFiles.placeholder'/>}/>}
-                                    size={500}/> */}
+                <RefinementListFilter id="publisher.publisher"
+                                      title={counterpart.translate('filters.publisher.label')}
+                                      field={'publisherFilter.publisher'}
+                                      fieldOptions={{
+                                        type: 'nested',
+                                        options: {path: 'publisherFilter', min_doc_count: 1}
+                                      }}
+                                      orderKey="_key"
+                                      orderDirection="asc"
+                                      operator="OR"
+                                      containerComponent={<Panel title={<Translate content='filters.publisher.label'/>}
+                                                                tooltip={<Translate content='filters.publisher.tooltip'/>}
+                                                                className="publisher"
+                                                                collapsable={true}
+                                                                defaultCollapsed={true}/>}
+                                      listComponent={<MultiSelect placeholder={<Translate content='filters.publisher.placeholder'/>}/>}
+                                      size={500}/>
+              </div>
             </SideBar>
             <LayoutResults className="column is-8">
               <TopBar/>
@@ -196,8 +184,7 @@ export class SearchPage extends Component<Props> {
 export function mapStateToProps(state: State) {
   return {
     showMobileFilters: state.search.showMobileFilters,
-    filters: state.search.state,
-    results: state.search.displayed.length
+    filters: state.search.state
   };
 }
 

@@ -151,7 +151,7 @@ export default class Detail extends React.Component<Props, State> {
    * @returns the formatted <p> element, or "Not available" if no universes are present
    */
   private static formatUniverses(universes: Universe[]) {
-    if (!universes) {
+    if (universes.length === 0) {
       return <Translate content="language.notAvailable.field" />;
     }
 

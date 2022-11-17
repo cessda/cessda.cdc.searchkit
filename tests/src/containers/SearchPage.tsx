@@ -21,8 +21,7 @@ function setup(partialProps?: Partial<Props>) {
   const props = _.extend(
     {
       showMobileFilters: false,
-      filters: {},
-      results: 0
+      filters: {}
     },
     partialProps || {}
   );
@@ -65,14 +64,12 @@ describe('SearchPage container', () => {
         //@ts-ignore
         search: {
           showMobileFilters: props.showMobileFilters,
-          state: props.filters,
-          displayed: []
+          state: props.filters
         }
       })
     ).toEqual({
       showMobileFilters: props.showMobileFilters,
-      filters: props.filters,
-      results: props.results
+      filters: props.filters
     });
   });
 });

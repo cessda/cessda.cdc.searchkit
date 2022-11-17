@@ -32,7 +32,8 @@ import { Response } from 'express-serve-static-core';
 import { logger } from './logger';
 import cors from 'cors';
 import { WithContext, Dataset } from 'schema-dts';
-import swagger from './swagger.json';
+import swaggerSearchApiV1 from './swagger-searchApiV1.json';
+import swaggerSearchApiV2 from './swagger-searchApiV2.json';
 
 
 // Defaults to localhost if unspecified
@@ -310,6 +311,168 @@ function externalApiV1() {
         track_total_hits: true
       });
 
+      // Calculate the total hits
+      let totalHits: number;
+      switch (typeof response.body.hits.total) {
+        case "object":
+          // If SearchTotalHits object, extract from the value field
+          totalHits = response.body.hits.total.value;
+          break;
+        case "number":
+          // If number, extract directly
+          totalHits = response.body.hits.total;
+          break;
+        default:
+          // Total hits not present, set to 0
+          totalHits = 0;
+          break;
+      }
+
+      const resultsCount = apiResultsCount(offset, limit, response.body.hits.hits.length, totalHits);
+
+      /* 
+       * Send the Response.
+       *
+       * We default to sending the CMMStudy model, only sending JSON-LD if specifically requested.
+       */
+      switch (accepts) {
+        case "json": 
+          res.json({
+            SearchTerms: searchTerms,
+            ResultsCount: resultsCount,
+            Results: response.body.hits.hits.map(obj => obj._source)
+          });
+          break;
+        case "application/ld+json":
+          const studyModels: CMMStudy[] = response.body.hits.hits.map(hit => getStudyModel(hit));
+          const jsonLdArray: WithContext<Dataset>[] = studyModels.map((value) => getJsonLd(value));
+          res.contentType("application/ld+json").json({
+            SearchTerms: searchTerms,
+            ResultsCount: resultsCount,
+            Results: jsonLdArray
+          });
+          break;
+        default:
+          // We shouldn't end up here, but just in case respond with something.
+          res.sendStatus(500);
+          break;
+      }
+    } catch (e) {
+      logger.error('Elasticsearch API Request failed: %s', (e as Error));
+      res.status(502).send({ message: (e as Error).message });
+    } finally {
+      logger.debug('Finished API Elasticsearch Request');
+    }
+  });
+  
+  return router;
+}
+
+function externalApiV2() {
+
+  const router = express.Router();
+
+  router.get('/search', async (req, res) => {
+
+    const accepts = req.accepts(["json", "application/ld+json"]);
+
+    // Skip performing work if the client won't accept the response.
+    if (!accepts) {
+      res.sendStatus(406);
+      return;
+    }
+
+    const { metadataLanguage, q } = req.query;
+
+    if (!metadataLanguage) {
+      res.status(400).send({ message: 'Please provide a search language'});
+      return;
+    }
+
+    //Prepare body for ElasticSearch
+    const bodyQuery = bodybuilder();
+
+    // Validate the limit parameter
+    let limit: number;
+    if (req.query.limit !== undefined) {
+      limit = Number(req.query.limit);
+      if (!Number.isInteger(limit) || limit <= 0) {
+        res.status(400).send({ message: 'limit must be a positive integer'});
+        return;
+      } else if (limit > maxApiLimit) {
+        res.status(400).send({ message: `limit must be maximum ${maxApiLimit}`});
+        return;
+      } else {
+        bodyQuery.size(limit);
+      }
+    } else {
+      limit = 10;
+    }
+
+    bodyQuery.size(limit);
+
+    // Validate the offset parameter
+    let offset: number = 0;
+    if (req.query.offset !== undefined) {
+      offset = Number(req.query.offset);
+      if (req.query.offset === '' || !Number.isInteger(offset) || offset < 0) {
+        res.status(400).send({ message: 'offset must be a positive integer'});
+        return;
+      } else {
+        bodyQuery.from(offset);
+      }
+    }
+
+    //create json body for ElasticSearchClient - search query
+    if (_.isString(q)) {
+      bodyQuery.query('query_string', {
+        query: q,
+        lenient: true,
+        default_operator: "AND"
+      });
+    }
+
+    //Create json body for ElasticSearchClient - nested post-filters
+    buildNestedFilters(bodyQuery, req.query.classifications, 'classifications', 'classifications.term');
+    buildNestedFilters(bodyQuery, req.query.studyAreaCountries, 'studyAreaCountries', 'studyAreaCountries.searchField');
+    buildNestedFilters(bodyQuery, req.query.publishers, 'publisherFilter', 'publisherFilter.publisher');
+    buildNestedFilters(bodyQuery, req.query.keywords, 'keywords', 'keywords.term');
+
+    //Create json body for ElasticSearchClient - date-filters
+    let dataCollectionYearMin = req.query.dataCollectionYearMin ? Number(req.query.dataCollectionYearMin) : undefined;
+    let dataCollectionYearMax = req.query.dataCollectionYearMax ? Number(req.query.dataCollectionYearMax) : undefined;
+    if (dataCollectionYearMin || dataCollectionYearMax) {
+      if (!Number.isInteger(dataCollectionYearMin)) {
+        dataCollectionYearMin = undefined;
+      }
+      if (!Number.isInteger(dataCollectionYearMax)) {
+        dataCollectionYearMax = undefined;
+      }
+      bodyQuery.filter('range', 'dataCollectionYear', { gte: dataCollectionYearMin, lte: dataCollectionYearMax });
+    }
+
+    //Meta-Info to send with response
+    const searchTerms = {
+      metadataLanguage: metadataLanguage,
+      queryTerm: q,
+      limit: req.query.limit,
+      offset: req.query.offset,
+      classifications: req.query.classifications,
+      studyAreaCountries: req.query.studyAreaCountries,
+      publishers: req.query.publishers,
+      dataCollectionYearMin: req.query.dataCollectionYearMin,
+      dataCollectionYearMax: req.query.dataCollectionYearMax,
+      keywords: req.query.keywords
+   }
+
+    //Prepare the Client
+    try {
+      const response = await elasticsearch.client.search<CMMStudy>({
+        index: `cmmstudy_${metadataLanguage}`,
+        body: bodyQuery.build(),
+        track_total_hits: true
+      });
+
       /* 
        * Send the Response.
        *
@@ -380,13 +543,12 @@ function buildNestedFilters(bodyQuery: Bodybuilder, query: string | string[] | P
   if (to > total) {
     to = total;
   }
-  const resultsCount = {
+  return {
     from: offset,
     to: to,
     retrieved: retrieved,
     available: total
   };
-  return resultsCount;
 }
 
 function jsonProxy() {
@@ -561,7 +723,9 @@ export function startListening(app: express.Express, handler: RequestHandler) {
   app.use('/api/sk', getSearchkitRouter());
   app.use('/api/json', jsonProxy());
   app.use('/api/DataSets/v1', cors(),  externalApiV1());
-  app.use('/swagger/api/DataSets/v1', cors(), ((_req, res) => res.json(swagger)) as express.RequestHandler);
+  app.use('/api/DataSets/v2', cors(),  externalApiV2());
+  app.use('/swagger/api/DataSets/v1', cors(), ((_req, res) => res.json(swaggerSearchApiV1)) as express.RequestHandler);
+  app.use('/swagger/api/DataSets/v2', cors(), ((_req, res) => res.json(swaggerSearchApiV2)) as express.RequestHandler);
   app.use('/api/mt', startMetricsListening());
 
   app.get('*', handler);
