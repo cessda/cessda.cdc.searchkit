@@ -4,37 +4,40 @@ import winston from 'winston';
 import { URL } from 'url';
 import { Storage } from '@google-cloud/storage';
 import { Client, ApiResponse, RequestParams } from '@elastic/elasticsearch'
-import fs from 'fs';
+import fs, { createWriteStream } from 'fs';
 import fetch from 'node-fetch'
+import { Transform } from "json2csv";
+import { Readable } from 'stream';
+import { parseAsync } from "json2csv";
 
 const logLevel = process.env.SEARCHKIT_LOG_LEVEL || 'info';
 function loggerFormat() {
-    if (process.env.SEARCHKIT_USE_JSON_LOGGING === 'true') {
-        return winston.format.json();
-    } else {
-        return winston.format.printf(
-            ({ level, message, timestamp }) => `[${timestamp}][${level}] ${message}`
-        );
-    }
+  if (process.env.SEARCHKIT_USE_JSON_LOGGING === 'true') {
+    return winston.format.json();
+  } else {
+    return winston.format.printf(
+      ({ level, message, timestamp }) => `[${timestamp}][${level}] ${message}`
+    );
+  }
 }
 
 // Logger
 const logger = winston.createLogger({
-    level: logLevel,
-    format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.splat(),
-        loggerFormat()
-    ),
-    transports: [
-        new winston.transports.Console()
-    ],
-    exceptionHandlers: [
-        new winston.transports.Console()
-    ],
+  level: logLevel,
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.splat(),
+    loggerFormat()
+  ),
+  transports: [
+    new winston.transports.Console()
+  ],
+  exceptionHandlers: [
+    new winston.transports.Console()
+  ],
 });
 
-// Elasticsearch Client - Defaults to localhost if unspecified
+// Elasticsearch Client - Defaults to localhost if true and unspecified
 const elasticsearchUrl = process.env.PASC_ELASTICSEARCH_URL || "http://localhost:9200/";
 const elasticsearchUsername = process.env.SEARCHKIT_ELASTICSEARCH_USERNAME;
 const elasticsearchPassword = process.env.SEARCHKIT_ELASTICSEARCH_PASSWORD;
@@ -45,9 +48,10 @@ const client = elasticsearchUsername && elasticsearchPassword ? new Client({
   auth: {
     username: elasticsearchUsername,
     password: elasticsearchPassword
-  }})
+  }
+})
   : new Client({
-      node: elasticsearchUrl,
+    node: elasticsearchUrl,
   })
 
 // Create a google client with explicit credentials - jsonFile
@@ -71,56 +75,92 @@ const bucketName = 'cessda-fuji-storage-dev';
 function fujiMetrics() {
 
   (async () => {
-      const cdcLinks = new Sitemapper({
-          url: 'https://datacatalogue.cessda.eu/sitemap_index.xml',
-          timeout: 15000, // 15 seconds
-          debug: true,
-          retries: 1,
-      });
-      try {
-          //await elasticIndexRebuild(); //drops and recreates index
-          await elasticIndexCheck(); //creates index if it doesnt exist, skips if it does exist
-          const dateID = getDateID();
-          const { sites } = await cdcLinks.fetch();
-          sites.shift(); //remove 1st element - https://datacatalogue.cessda.eu/
-          logger.info(`Links Collected: ${sites.length}`);
-          for (const site of sites) {
-              const contents = await apiLoop(site, dateID); //run the api loop for every study in the CDC
-          }
-      } catch (error) {
-          console.log(`Error at crawling indexer: ${error}`);
-          logger.error(`Error at crawling indexer: ${error}`);
-      } finally {
-          logger.info('Finished Request');
+    const cdcLinks = new Sitemapper({
+      url: 'https://datacatalogue.cessda.eu/sitemap_index.xml',
+      timeout: 15000, // 15 seconds
+      debug: true,
+      retries: 1,
+    });
+    try {
+      await elasticIndexCheck(); //creates index if it doesnt exist, skips creating if it does exist
+      const runDate = new Date();
+      //const fullDate =  runDate.toISOString();
+      const fullDate = [runDate.getFullYear(), runDate.getMonth()+1, runDate.getDate(), runDate.getHours(), runDate.getMinutes(), runDate.getSeconds()].join('-');
+      const { sites } = await cdcLinks.fetch();
+      sites.shift(); //remove 1st element - https://datacatalogue.cessda.eu/
+      logger.info(`Links Collected: ${sites.length}`);
+      const input = new Readable({ objectMode: true }); //initiating CSV writer
+      input._read = () => {};
+      //const arrayTests = sites.slice(0, 5); //DEBUG CODE FOR TESTS - REDUCE ARRAY TO 5 STUDIES!!!!!!!!!!!!!!!!!!
+      for (const site of sites) {
+        await apiLoop(site, fullDate).then(data => 
+          input.push(data)
+        );
       }
-      logger.info('End');
+      input.push(null);
+      const outputLocal = createWriteStream(`fujiResults/CSV_DATA_${fullDate}.csv`, { encoding: 'utf8' });
+      const fields = [
+        'request.object_identifier', 
+        'summary.score_percent.A',
+        'summary.score_percent.A1',
+        'summary.score_percent.F',
+        'summary.score_percent.F1',
+        'summary.score_percent.F2',
+        'summary.score_percent.F3',
+        'summary.score_percent.F4',
+        'summary.score_percent.FAIR',
+        'summary.score_percent.I',
+        'summary.score_percent.I1',
+        'summary.score_percent.I2',
+        'summary.score_percent.I3',
+        'summary.score_percent.R',
+        "summary.score_percent.R1",
+        'summary.score_percent.R1_1',
+        'summary.score_percent.R1_2',
+        'summary.score_percent.R1_3', 
+        'timestamp', 
+        'publisher'
+      ];
+      const opts = { fields };
+      const transformOpts = { objectMode: true };
+      const json2csv = new Transform(opts, transformOpts);
+      const processor = input.pipe(json2csv).pipe(outputLocal);
+      parseAsync(processor, opts).then(csv => logger.info('CSV file created succesfully')).catch(err => logger.error(`Error at CSV writer: ${err}`));
+    } catch (error) {
+      console.log(`Error at crawling indexer: ${error}`);
+      logger.error(`Error at crawling indexer: ${error}`);
+    } finally {
+      logger.info('Finished apiLoop function');
+    }
+    logger.info('Script Ended');
   })();
 }
 
-async function apiLoop(link: string, fullDate:string): Promise<string>{
-    const urlLink = new URL(link); 
-    const urlParams = urlLink.searchParams;
-    const fileName = urlParams.get('q')+"-"+urlParams.get('lang')+"-"+fullDate+".json";
-    logger.info(`\n`);
-    logger.info(`Name: ${fileName}`);
-    const cdcApiUrl = 'https://datacatalogue.cessda.eu/api/json/cmmstudy_'+urlParams.get('lang')+'/'+urlParams.get('q');
-    const response = await fetch(cdcApiUrl);
-    const data = await response.json();
-    const publisher = data.publisherFilter.publisher;
-    await axios
-    .post('http://34.107.135.203/fuji/api/v1/evaluate', {
+async function apiLoop(link: string, fullDate: string): Promise<JSON> {
+  const urlLink = new URL(link);
+  const urlParams = urlLink.searchParams;
+  const fileName = urlParams.get('q') + "-" + urlParams.get('lang') + "-" + fullDate + ".json";
+  logger.info(`\n`);
+  logger.info(`Name: ${fileName}`);
+  const cdcApiUrl = 'https://datacatalogue.cessda.eu/api/json/cmmstudy_' + urlParams.get('lang') + '/' + urlParams.get('q');
+  const response = await fetch(cdcApiUrl);
+  const data = await response.json();
+  const publisher = data.publisherFilter.publisher;
+  return new Promise(function (resolve) {
+    axios
+      .post('http://34.107.135.203/fuji/api/v1/evaluate', {
         "metadata_service_endpoint": "",
         "metadata_service_type": "",
         "object_identifier": link,
         "test_debug": true,
         "use_datacite": true
-    }, {
+      }, {
         auth: {
-            username: "wallice",
-            password: "grommit"
+          username: "wallice",
+          password: "grommit"
         }
-    })
-    .then((res: { status: any; data: any; }) => {
+      })
+      .then(async (res: { status: any; data: any; }) => {
         logger.info(`statusCode: ${res.status}`);
         const fujiResults = res.data;
         delete fujiResults['results'];
@@ -129,73 +169,52 @@ async function apiLoop(link: string, fullDate:string): Promise<string>{
         delete fujiResults.summary.score_total;
         delete fujiResults.summary.status_passed
         delete fujiResults.summary.status_total;
+        fujiResults['summary']['score_percent']['R1_1'] = fujiResults['summary']['score_percent']['R1.1'];
+        delete fujiResults['summary']['score_percent']['R1.1'];
+        fujiResults['summary']['score_percent']['R1_2'] = fujiResults['summary']['score_percent']['R1.2'];
+        delete fujiResults['summary']['score_percent']['R1.2'];
+        fujiResults['summary']['score_percent']['R1_3'] = fujiResults['summary']['score_percent']['R1.3'];
+        delete fujiResults['summary']['score_percent']['R1.3'];
         fujiResults['publisher'] = publisher;
-        fujiResults['uid'] = urlParams.get('q')+"-"+urlParams.get('lang')+"-"+fullDate;
-        fujiResults['dateID'] = fullDate;
+        fujiResults['uid'] = urlParams.get('q') + "-" + urlParams.get('lang') + "-" + fullDate;
+        fujiResults['dateID'] = "FujiRun-" + fullDate;
 
         resultsToElastic(fileName, fujiResults).then(()=>{
-          //resultsToHDD(fileName, fujiResults); //Write-to-HDD-localhost function
-          //uploadFromMemory(fileName, fujiResults).catch(console.error); //Write-to-Cloud-Bucket function
+          resultsToHDD(fileName, fujiResults); //Write-to-HDD-localhost function
+        //uploadFromMemory(fileName, fujiResults).catch(console.error); //Write-to-Cloud-Bucket function
         })
 
-    })
-    .catch((error: any) => {
+        resolve(fujiResults);
+
+      })
+      .catch((error: any) => {
         console.error(`Error at FuJI API: ${error}`)
         logger.error(`Error at FuJI API: ${error}`);
-    })
-
-    return new Promise(function(resolve) {
-      setTimeout(() => {
-          resolve("completed")
-        }, 1000); //1sec delay between API calls
+      })
   });
+} //END apiLoop function
 
-}
-
-async function elasticIndexCheck(){
-
-  const {body: exists} = await client.indices.exists({index: 'fuji-results'})
-  if (exists){
-   await client.indices.delete({ index: 'fuji-results' });
-   logger.info('ES Index Deleted');
-  }
-  await client.indices.create({
-   index: 'fuji-results',
-   body: {
-     mappings: {
-       dynamic: 'runtime',
-       properties: {
-         id: {type: 'keyword'},
-         body: {type: 'object'}
-       }
-     }
-   }
-  })
-  logger.info('ES Index Created');
-}
-
-async function elasticIndexRefresh(){
- const {body: exists} = await client.indices.exists({index: 'fuji-results'})
- if (!exists){
-   await client.indices.create({
-     index: 'fuji-results',
-     body: {
-       mappings: {
-         dynamic: 'runtime',
-         properties: {
-           id: {type: 'keyword'},
-           body: {type: 'object'}
-         }
-       }
-     }
+async function elasticIndexCheck() {
+  const { body: exists } = await client.indices.exists({ index: 'fuji-results' })
+  if (!exists) {
+    await client.indices.create({
+      index: 'fuji-results',
+      body: {
+        mappings: {
+          dynamic: 'runtime',
+          properties: {
+            id: { type: 'keyword' },
+            body: { type: 'object' }
+          }
+        }
+      }
     })
     logger.info('ES Index Created');
- }
+  }
 }
 
-async function resultsToElastic (fileName: string, fujiResults: JSON) {
-
-  try{
+async function resultsToElastic(fileName: string, fujiResults: JSON) {
+  try {
     const elasticdoc: RequestParams.Index = {
       index: 'fuji-results',
       id: fileName,
@@ -207,10 +226,9 @@ async function resultsToElastic (fileName: string, fujiResults: JSON) {
     await client.indices.refresh({ index: 'fuji-results' })
     logger.info(`inserted in ES: ${fileName}`);
   }
-  catch(error){
+  catch (error) {
     logger.error(`error in insert to ES: ${error}`);
   }
-
 }
 
 async function uploadFromMemory(fileName: string, fujiResults: Buffer) {
@@ -219,15 +237,13 @@ async function uploadFromMemory(fileName: string, fujiResults: Buffer) {
   storage.getBuckets().then(x => console.log(x));
   throw new Error("controlled termination");
   */
-
-  await storage.bucket(bucketName).file(fileName).save(Buffer.from(JSON.stringify(fujiResults)));    
+  await storage.bucket(bucketName).file(fileName).save(Buffer.from(JSON.stringify(fujiResults)));
   logger.info(
     `${fileName} with contents uploaded to ${bucketName}.`
   );
 }
 
-function resultsToHDD(fileName: string, fujiResults: JSON){
-  
+function resultsToHDD(fileName: string, fujiResults: JSON) {
   fs.writeFile(`fujiResults/${fileName}`, JSON.stringify(fujiResults, null, 4).toString(), (err) => {
     if (err)
       logger.error(`Error writing to file: ${err}`);
@@ -235,13 +251,6 @@ function resultsToHDD(fileName: string, fujiResults: JSON){
       logger.info("File written successfully");
     }
   });
-}
-
-function getDateID(){
-  const runDate = new Date();
-  const fullDate = [runDate.getFullYear(), runDate.getMonth()+1, runDate.getDate(), runDate.getHours(), runDate.getMinutes(), runDate.getSeconds()].join('-');
-
-  return fullDate;
 }
 
 fujiMetrics();
