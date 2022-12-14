@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@elastic/elasticsearch": "7.17.0",
-    "@google-cloud/storage": "^6.4.2",
     "@js-joda/core": "5.4.2",
     "body-parser": "1.20.1",
     "bodybuilder": "2.5.0",
@@ -27,7 +26,6 @@
     "express": "4.18.2",
     "express-http-proxy": "1.6.3",
     "jquery": "3.6.1",
-    "json2csv": "^5.0.7",
     "lodash": "4.17.21",
     "method-override": "3.0.0",
     "node-fetch": "^2.6.7",
@@ -47,7 +45,6 @@
     "request": "2.88.2",
     "response-time": "2.3.2",
     "searchkit": "2.4.4",
-    "sitemapper": "^3.2.6",
     "striptags": "3.2.0",
     "winston": "3.8.2"
   },
