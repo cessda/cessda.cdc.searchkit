@@ -110,14 +110,8 @@ export const mockStudy: CMMStudy = {
       vocabUri: 'http://example.com'
     }
   ],
-  universes: [
-    {
-      content: "Exampled studied cohort",
-      clusion: "I"
-    },
-    {
-      content: "Excluded cohort",
-      clusion: "E"
-    }
-  ]
+  universe: { 
+    inclusion: "Exampled studied cohort",
+    exclusion: "Excluded cohort",
+  }
 };

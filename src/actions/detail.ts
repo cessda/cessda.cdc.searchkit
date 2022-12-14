@@ -29,7 +29,7 @@ export function updateStudy(id: string): Thunk<Promise<void>> {
 
     const response = await fetch(`${window.location.origin}/api/sk/_get/${state.language.currentLanguage.index}/${encodeURIComponent(id)}`);
 
-    if (response.status < 400) {
+    if (response.ok) {
 
       // Get the study model from the hit.
       const study = getStudyModel({ _source: (await response.json() as CMMStudy)});
@@ -74,7 +74,7 @@ export function updateSimilars(item: CMMStudy): Thunk<Promise<void>> {
 
     const response = await fetch(`${window.location.origin}/api/sk/_similars/${state.language.currentLanguage.index}/?id=${encodeURIComponent(item.id)}&title=${encodeURIComponent(item.titleStudy)}`);
 
-    if (response.status < 400) {
+    if (response.ok) {
       // Update similars
       dispatch({
         type: UPDATE_SIMILARS,

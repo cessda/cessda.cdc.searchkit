@@ -253,12 +253,13 @@ export function updateTotalStudies(): Thunk<Promise<void>> {
     try {
       const response = await fetch(`${window.location.origin}/api/sk/_total_studies`);
 
-      const source = await response.json();
-
-      dispatch({
-        type: UPDATE_TOTAL_STUDIES,
-        totalStudies: source.totalStudies
-      });
+      if (response.ok) {
+        const source = await response.json();
+        dispatch({
+          type: UPDATE_TOTAL_STUDIES,
+          totalStudies: source.totalStudies
+        });
+      }
     } catch (e) {
       console.error(e);
     }

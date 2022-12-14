@@ -523,7 +523,7 @@ function externalApiV2() {
 function buildNestedFilters(bodyQuery: Bodybuilder, query: string | string[] | ParsedQs | ParsedQs[] | undefined, path: string, nestedPath: string) {
   if (Array.isArray(query)) {
     bodyQuery.query('nested', { path: path }, (q: Bodybuilder) => {
-      query.forEach(value => q.orQuery('term', nestedPath, value));
+      query.forEach(value => q.andQuery('term', nestedPath, value));
       return q;
     });
   } else if (_.isString(query)) {

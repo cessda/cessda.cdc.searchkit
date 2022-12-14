@@ -196,7 +196,7 @@ describe('Metadata utilities', () => {
             vocabUri: 'http://example.com'
           }
         ],
-        universes: []
+        universe: undefined
       });
     });
 
@@ -236,7 +236,7 @@ describe('Metadata utilities', () => {
         typeOfSamplingProcedures: [],
         typeOfTimeMethods: [],
         unitTypes: [],
-        universes: []
+        universe: undefined
       });
     });
   });
@@ -330,7 +330,9 @@ describe('Metadata utilities', () => {
               vocabUri: 'http://example.com'
             }
           ],
-          universes: []
+          universe: {
+            inclusion: "Included cohort"
+          }
         })
       ).toEqual({
         '@context': 'https://schema.org',
@@ -452,8 +454,7 @@ describe('Metadata utilities', () => {
               vocab: 'Vocab',
               vocabUri: 'http://example.com'
             }
-          ],
-          universes: []
+          ] 
         })
       ).toEqual({
         '@context': 'https://schema.org',

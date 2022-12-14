@@ -86,7 +86,7 @@ describe('Detail component', () => {
   it('should handle generating elements with no value', () => {
     // "" is a falsy value, so should be dropped.
     expect(
-      mount(<>{Detail.generateElements([""], "p", e => e)}</>).html()
+      mount(<>{Detail.generateElements([""], "div", e => e)}</>).html()
     ).toContain('notAvailable');
   });
 

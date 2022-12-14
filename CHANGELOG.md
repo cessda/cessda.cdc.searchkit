@@ -14,7 +14,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - *Fixed (for any bug fixes)*
 - *Security (in case of vulnerabilities)*
 
+## [3.2.0] - 2022-12-08
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7413641.svg)](https://doi.org/10.5281/zenodo.7413641)
+
+### Additions
+
+- Add a "Not Found" page if a path that is not either `/`, `/about` or `/detail` is requested. ([#469](https://bitbucket.org/cessda/cessda.cdc.versions/issues/469))
+- Add universe descriptions to the study detail page. ([#471](https://bitbucket.org/cessda/cessda.cdc.versions/issues/471))
+- Add related publications to the study detail page. ([#471](https://bitbucket.org/cessda/cessda.cdc.versions/issues/471))
+- Make the search filters "float", keeping them onscreen when the search page is scrolled. ([#473](https://bitbucket.org/cessda/cessda.cdc.versions/issues/473))
+
+### Changes
+
+- Replace `node-sass` with Dart Sass (i.e. `sass`). This is due to the deprecation of `node-sass` and also makes Searchkit more portable between different versions of Node.
+- Use AND for the search API, reflecting the default behaviour of the user interface. ([#475](https://bitbucket.org/cessda/cessda.cdc.versions/issues/475))
+- Default to only displaying 12 keywords, add a button to show all keywords ([#500](https://bitbucket.org/cessda/cessda.cdc.versions/issues/500))
+
+### Fixes
+
+- Fix the search API returning `undefined` for the `ResultsCount.available` field. This was due to Elasticsearch 7 changing the way the total results were returned. ([#493](https://bitbucket.org/cessda/cessda.cdc.versions/issues/493))
+
 ## [3.1.0] - 2022-09-22
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7410382.svg)](https://doi.org/10.5281/zenodo.7410382)
 
 ### Changes
 
@@ -22,18 +45,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixes
 
-- Improve Google Datasearch results by fixing soft 404 errors ([#467](https://bitbucket.org/cessda/cessda.cdc.versions/issues/467))
+- Improve Google Datasearch results by fixing soft 404 errors. ([#467](https://bitbucket.org/cessda/cessda.cdc.versions/issues/467))
 
 ## [3.0.3] - 2022-09-07
 
 ### Additions
 
-- Add signposting links to the OAI-PMH representation into the HTML `<head>` element ([#455](https://bitbucket.org/cessda/cessda.cdc.versions/issues/455))
+- Add signposting links to the OAI-PMH representation into the HTML `<head>` element. ([#455](https://bitbucket.org/cessda/cessda.cdc.versions/issues/455))
 
 ### Fixes
 
-- Ensure that all required fields are present before rendering the HTML ([#460](https://bitbucket.org/cessda/cessda.cdc.versions/issues/460))
-- Return 404 if a client requests the detail page but does not specify a `q` parameter ([#467](https://bitbucket.org/cessda/cessda.cdc.versions/issues/467))
+- Ensure that all required fields are present before rendering the HTML. ([#460](https://bitbucket.org/cessda/cessda.cdc.versions/issues/460))
+- Return 404 if a client requests the detail page but does not specify a `q` parameter. ([#467](https://bitbucket.org/cessda/cessda.cdc.versions/issues/467))
 
 ## [3.0.2] - 2022-09-06
 

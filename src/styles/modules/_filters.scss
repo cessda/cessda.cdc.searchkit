@@ -1,6 +1,12 @@
 .sk-layout__filters {
   position: relative;
 
+  .float {
+    position: sticky;
+    top: 15px;
+    z-index: 1;
+  }
+
   .sk-select {
     &.is-disabled {
       display: block;
