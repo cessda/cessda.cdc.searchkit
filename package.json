@@ -66,7 +66,7 @@
     "@types/enzyme-adapter-react-16": "1.0.6",
     "@types/express": "4.17.17",
     "@types/express-http-proxy": "1.6.3",
-    "@types/jest": "29.4.0",
+    "@types/jest": "29.5.0",
     "@types/jquery": "3.5.16",
     "@types/method-override": "0.0.32",
     "@types/mini-css-extract-plugin": "2.5.1",
