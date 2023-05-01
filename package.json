@@ -105,7 +105,7 @@
     "jest-junit": "16.0.0",
     "jest-mock-fetch": "2.0.5",
     "mini-css-extract-plugin": "2.7.5",
-    "node-mocks-http": "1.12.1",
+    "node-mocks-http": "1.12.2",
     "process": "0.11.10",
     "react-test-renderer": "16.14.0",
     "redux-devtools-extension": "2.13.9",
