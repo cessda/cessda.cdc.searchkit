@@ -25,8 +25,8 @@ import responseTime from 'response-time';
 import { CMMStudy, getJsonLd, getStudyModel } from '../common/metadata';
 import { startMetricsListening, apiResponseTimeHandler, uiResponseTimeHandler, uiResponseTimeTotalFailedHistogram, uiResponseTimeZeroElasticResultsHistogram, searchAPIClientIPGauge, searchAPIClientCountryGauge } from './metrics';
 import Elasticsearch from './elasticsearch';
-import { AggregationsValueCountAggregate, SearchResponse } from '@elastic/elasticsearch/api/types';
-import { ConnectionError, ResponseError } from '@elastic/elasticsearch/lib/errors';
+import { AggregationsValueCountAggregate, SearchResponse } from '@elastic/elasticsearch/lib/api/types';
+import { errors } from '@elastic/elasticsearch';
 import { Response } from 'express-serve-static-core';
 import { logger } from './logger';
 import cors from 'cors';
@@ -113,7 +113,7 @@ function getSearchkitRouter() {
         similars: similars 
       });
     } catch (e) {
-      if (e instanceof ResponseError && e.statusCode === 404) {
+      if (e instanceof errors.ResponseError && e.statusCode === 404) {
         // Try to find if the study is available in other languages
         const indices = await elasticsearch.getIndicesForStudyId(req.params.id);
         res.status(404).json(indices.map(i => i.split("_")[1]));
@@ -208,15 +208,15 @@ function getSearchkitRouter() {
  * @param res the response to send to the client.
  */
 function elasticsearchErrorHandler(e: unknown, res: Response) {
-   if (e instanceof ConnectionError) {
+   if (e instanceof errors.ConnectionError) {
     // Elasticsearch didn't respond, send 502.
     logger.error('Elasticsearch Request failed: %s', e.message);
     res.sendStatus(502);
 
-  } else if (e instanceof ResponseError) {
+  } else if (e instanceof errors.ResponseError) {
     // Elasticsearch returned an error.
     logger.warn('Elasticsearch returned error: %s', e);
-    res.sendStatus(e.statusCode);
+    res.sendStatus(e.statusCode || 503);
     
   } else {
     // An unknown error occured.
@@ -279,10 +279,9 @@ function externalApiV2() {
       } else if (limit > maxApiLimit) {
         res.status(400).send({ message: `limit must be maximum ${maxApiLimit}`});
         return;
-      } else {
-        bodyQuery.size(limit);
       }
     } else {
+      // Default limit if not provided
       limit = 10;
     }
 
@@ -352,14 +351,14 @@ function externalApiV2() {
 
       // Calculate the total hits
       let totalHits: number;
-      switch (typeof response.body.hits.total) {
+      switch (typeof response.hits.total) {
         case "object":
           // If SearchTotalHits object, extract from the value field
-          totalHits = response.body.hits.total.value;
+          totalHits = response.hits.total.value;
           break;
         case "number":
           // If number, extract directly
-          totalHits = response.body.hits.total;
+          totalHits = response.hits.total;
           break;
         default:
           // Total hits not present, set to 0
@@ -367,7 +366,7 @@ function externalApiV2() {
           break;
       }
 
-      const resultsCount = apiResultsCount(offset, limit, response.body.hits.hits.length, totalHits);
+      const resultsCount = apiResultsCount(offset, limit, response.hits.hits.length, totalHits);
 
       /* 
        * Send the Response.
@@ -379,11 +378,11 @@ function externalApiV2() {
           res.json({
             SearchTerms: searchTerms,
             ResultsCount: resultsCount,
-            Results: response.body.hits.hits.map(obj => obj._source)
+            Results: response.hits.hits.map(obj => obj._source)
           });
           break;
         case "application/ld+json": {
-          const studyModels: CMMStudy[] = response.body.hits.hits.map(hit => getStudyModel(hit));
+          const studyModels: CMMStudy[] = response.hits.hits.map(hit => getStudyModel(hit._source));
           const jsonLdArray: WithContext<Dataset>[] = studyModels.map((value) => getJsonLd(value));
           res.contentType("application/ld+json").json({
             SearchTerms: searchTerms,
@@ -462,7 +461,7 @@ export async function getESrecordsByLanguages(lang:string): Promise<number>{
     track_total_hits: false
   });
 
-  const elasticAggs: any = response.body.aggregations;
+  const elasticAggs: any = response.aggregations;
   let result = 0;
   for (const x of elasticAggs.lang.buckets) {
     if (x.key === lang){
@@ -476,7 +475,7 @@ export async function getESrecordsByLanguages(lang:string): Promise<number>{
 //used by metrics.ts
 export async function getESindexLanguages(): Promise<Array<string>>{
   const indices = await elasticsearch.client.cat.indices({format: 'json'})
-  const filtered: (string | undefined)[] = indices.body.map(element=>{
+  const filtered: (string | undefined)[] = indices.map(element=>{
     if (element?.index?.startsWith('cmmstudy'))
       return element.index.slice(-2)
   }).filter(element=>{ return element !== undefined; })
@@ -498,7 +497,7 @@ export async function getESrecordsModified(): Promise<number>{
     track_total_hits: false
   });
 
-  const elasticAggs = response.body.aggregations;
+  const elasticAggs = response.aggregations;
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return (elasticAggs!.types_count as AggregationsValueCountAggregate).value || 0;
 }
@@ -518,7 +517,7 @@ export async function getESrecordsByEndpoint(): Promise<{ key: string, doc_count
     },
     track_total_hits: false
   });
-  const elasticAggs: any | undefined = response.body.aggregations;
+  const elasticAggs: any | undefined = response.aggregations;
   const results: { key: string, doc_count: number }[] = elasticAggs.aggregationResults.buckets;
   return results;
 }
@@ -552,8 +551,10 @@ function jsonProxy() {
       if (!_.isEmpty(json._source)) {
         // If the client requests JSON-LD, return it
         switch (userReq.accepts(["json", "application/ld+json"])) {
-          case "application/ld+json":
-            return getJsonLd(json._source);
+          case "application/ld+json": {
+            const cmmstudy = getStudyModel(json._source,);
+            return getJsonLd(cmmstudy);
+          }
           case "json":
             return json._source;
           default:
@@ -578,7 +579,7 @@ export interface Metadata {
   description: string;
   publisher: string;
   title: string;
-  jsonLd: WithContext<Dataset>;
+  jsonLd: WithContext<Dataset> | undefined;
   id: string;
 }
 
@@ -591,13 +592,13 @@ async function getMetadata(q: string, lang: string | undefined): Promise<Metadat
   const response = await elasticsearch.getStudy(q, `cmmstudy_${lang}`);
 
   if (response) {
-    const study = getStudyModel({ _source: response });
+    const study = getStudyModel(response);
     return {
       creators: study.creators.join('; '),
       description: study.abstractShort,
       title: study.titleStudy,
       publisher: study.publisher.publisher,
-      jsonLd: getJsonLd(study),
+      jsonLd: study.abstract.length >= 50 ? getJsonLd(study) : undefined,
       id: study.id
     };
   } else {
@@ -636,7 +637,7 @@ export async function renderResponse(req: express.Request, res: express.Response
             status = 404;
           }
         } catch (e) {
-          if (e instanceof ResponseError && e.statusCode === 404) {
+          if (e instanceof errors.ResponseError && e.statusCode === 404) {
             status = e.statusCode;
           } else {
             logger.error(`Cannot communicate with Elasticsearch: ${e}`);

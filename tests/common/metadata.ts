@@ -18,94 +18,92 @@ describe('Metadata utilities', () => {
     it('should return a populated study model', () => {
       expect(
         getStudyModel({
-          _source: {
-            id: "1",
-            titleStudy: 'Study Title',
-            titleStudyHighlight: 'Study Title',
-            abstract: 'Abstract',
-            abstractShort: 'Abstract',
-            abstractHighlight: 'Abstract',
-            abstractHighlightShort: 'Abstract',
-            classifications: [
-              {
-                id: 'UKDS1234',
-                term: 'Term',
-                vocab: 'Vocab',
-                vocabUri: 'http://example.com'
-              }
-            ],
-            creators: [
-              'Jane Doe',
-              'University of Essex',
-              'John Smith (University of Essex)',
-              'Joe Bloggs, University of Essex'
-            ],
-            code: 'UKDS',
-            dataAccessFreeTexts: ['Data Access Free Texts'],
-            dataCollectionFreeTexts: [],
-            dataCollectionPeriodEnddate: '',
-            dataCollectionPeriodStartdate: '2001',
-            fileLanguages: ['en'],
-            keywords: [
-              {
-                id: 'UKDS1234',
-                term: 'Term',
-                vocab: 'Vocab',
-                vocabUri: 'http://example.com'
-              }
-            ],
-            langAvailableIn: ['EN'],
-            lastModified: '2001-01-01T12:00:00Z',
-            pidStudies: [
-              {
-                agency: 'UKDS',
-                pid: 'UKDS1234'
-              }
-            ],
-            publicationYear: '2001-01-01',
-            publisher: {
-              abbr: "UKDS",
-              publisher: 'UK Data Service'
-            },
-            samplingProcedureFreeTexts: [
-              'Sampling Procedure<script></script>'
-            ],
-            studyAreaCountries: [
-              {
-                abbr: 'EN',
-                country: 'England',
-                searchField: 'England'
-              }
-            ],
-            studyNumber: 'UKDS1234',
-            studyUrl: 'http://example.com',
-            studyXmlSourceUrl: 'http://example.com',
-            typeOfModeOfCollections: [
-              {
-                id: 'UKDS1234',
-                term: 'Term',
-                vocab: 'Vocab',
-                vocabUri: 'http://example.com'
-              }
-            ],
-            typeOfTimeMethods: [
-              {
-                id: 'UKDS1234',
-                term: 'Term',
-                vocab: 'Vocab',
-                vocabUri: 'http://example.com'
-              }
-            ],
-            typeOfSamplingProcedures: [],
-            unitTypes: [
-              {
-                id: 'UKDS1234',
-                term: 'Term',
-                vocab: 'Vocab',
-                vocabUri: 'http://example.com'
-              }
-            ]
-          }
+          id: "1",
+          titleStudy: 'Study Title',
+          titleStudyHighlight: 'Study Title',
+          abstract: 'Abstract',
+          abstractShort: 'Abstract',
+          abstractHighlight: 'Abstract',
+          abstractHighlightShort: 'Abstract',
+          classifications: [
+            {
+              id: 'UKDS1234',
+              term: 'Term',
+              vocab: 'Vocab',
+              vocabUri: 'http://example.com'
+            }
+          ],
+          creators: [
+            'Jane Doe',
+            'University of Essex',
+            'John Smith (University of Essex)',
+            'Joe Bloggs, University of Essex'
+          ],
+          code: 'UKDS',
+          dataAccessFreeTexts: ['Data Access Free Texts'],
+          dataCollectionFreeTexts: [],
+          dataCollectionPeriodEnddate: '',
+          dataCollectionPeriodStartdate: '2001',
+          fileLanguages: ['en'],
+          keywords: [
+            {
+              id: 'UKDS1234',
+              term: 'Term',
+              vocab: 'Vocab',
+              vocabUri: 'http://example.com'
+            }
+          ],
+          langAvailableIn: ['EN'],
+          lastModified: '2001-01-01T12:00:00Z',
+          pidStudies: [
+            {
+              agency: 'UKDS',
+              pid: 'UKDS1234'
+            }
+          ],
+          publicationYear: '2001-01-01',
+          publisher: {
+            abbr: "UKDS",
+            publisher: 'UK Data Service'
+          },
+          samplingProcedureFreeTexts: [
+            'Sampling Procedure<script></script>'
+          ],
+          studyAreaCountries: [
+            {
+              abbr: 'EN',
+              country: 'England',
+              searchField: 'England'
+            }
+          ],
+          studyNumber: 'UKDS1234',
+          studyUrl: 'http://example.com',
+          studyXmlSourceUrl: 'http://example.com',
+          typeOfModeOfCollections: [
+            {
+              id: 'UKDS1234',
+              term: 'Term',
+              vocab: 'Vocab',
+              vocabUri: 'http://example.com'
+            }
+          ],
+          typeOfTimeMethods: [
+            {
+              id: 'UKDS1234',
+              term: 'Term',
+              vocab: 'Vocab',
+              vocabUri: 'http://example.com'
+            }
+          ],
+          typeOfSamplingProcedures: [],
+          unitTypes: [
+            {
+              id: 'UKDS1234',
+              term: 'Term',
+              vocab: 'Vocab',
+              vocabUri: 'http://example.com'
+            }
+          ]
         })
       ).toEqual({
         id: '1',
@@ -202,7 +200,7 @@ describe('Metadata utilities', () => {
 
     it('should return a study model with default values', () => {
       expect(
-        getStudyModel({ _source: {}  })
+        getStudyModel({})
       ).toEqual({
         id: undefined,
         titleStudy: undefined,
@@ -239,6 +237,14 @@ describe('Metadata utilities', () => {
         universe: undefined
       });
     });
+  });
+
+  it('should throw if an incorrect type is given', () => {
+    expect(() => {
+      getStudyModel(undefined)
+    }).toThrow(
+      TypeError
+    );
   });
 
   describe('getJsonLd()', () => {

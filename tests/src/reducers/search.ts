@@ -21,7 +21,7 @@ const initialState = search(undefined, { type: INIT_SEARCHKIT });
 
 describe('Search reducer', () => {
   it('should return the initial state', () => {
-    // @ts-expect-error
+    // @ts-expect-error - allow testing using an undefined type
     expect(search(undefined, { type: undefined })).toEqual(initialState);
   });
 
@@ -137,7 +137,7 @@ describe('Search reducer', () => {
       jsonLd: undefined
     });
 
-    const emptyStudy = getStudyModel({ _source: {} });
+    const emptyStudy = getStudyModel({});
     
     expect(
       search(
@@ -173,6 +173,7 @@ describe('Search reducer', () => {
   it('should handle UPDATE_QUERY', () => {
     // Mock searchkit query.
     const query = {
+      index: 'cmmstudy_en',
       query: {
         bool: {
           must: [queryBuilder('search text')]
@@ -231,7 +232,7 @@ describe('Search reducer', () => {
 
   it('should handle unknown action type', () => {
     const state = initialState;
-    //@ts-expect-error
+    //@ts-expect-error - allow sending an empty action
     expect(search(state, {})).toEqual(state);
   });
 });

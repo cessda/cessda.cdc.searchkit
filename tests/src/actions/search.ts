@@ -42,15 +42,15 @@ import { State } from '../../../src/types';
 import { AnyAction } from 'redux';
 import { enLanguage } from '../utilities/language';
 import { getStudyModel } from '../../../common/metadata';
-import { mockStudy } from '../../common/mockdata';
 
-const mockStore = configureMockStore<Partial<State>, ThunkDispatch<State, any, AnyAction>>([thunk]);
+const mockStore = configureMockStore<Partial<State>, ThunkDispatch<State, never, AnyAction>>([thunk]);
 
 
 // Create a SearchkitManager with an instant timeout.
 jest.mock('../../src/utilities/searchkit', () => ({
   __esModule: true,
   ...jest.requireActual('../../src/utilities/searchkit'),
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   default: new (require('searchkit').SearchkitManager)('api/sk', { timeout: 0 })
 }));
 
@@ -71,7 +71,7 @@ describe('Search actions', () => {
     };
 
     // Mock Matomo Analytics library (no metrics will actually be sent).
-    // @ts-ignore
+    // @ts-expect-error - mocking the global _paq object
     global['_paq'] = [];
   });
 
@@ -88,7 +88,7 @@ describe('Search actions', () => {
       // Mock Redux store.
       const store = mockStore({
         routing: {
-          // @ts-expect-error
+          // @ts-expect-error - only parameters required by the test are provided
           locationBeforeTransitions: {
             pathname: '/',
             query: {
@@ -179,7 +179,7 @@ describe('Search actions', () => {
       // Mock Redux store.
       const store = mockStore({
         routing: {
-          // @ts-expect-error
+          // @ts-expect-error - only parameters required by the test are provided
           locationBeforeTransitions: {
             pathname: '/detail',
             query: {
@@ -247,7 +247,7 @@ describe('Search actions', () => {
         },
         {
           type: UPDATE_DISPLAYED,
-          displayed: [getStudyModel({_source: { id: "1" }})],
+          displayed: [getStudyModel({ id: "1" })],
         },
         {
           type: TOGGLE_LOADING,
@@ -260,7 +260,7 @@ describe('Search actions', () => {
       // Mock Redux store.
       const store = mockStore({
         routing: {
-          // @ts-expect-error
+          // @ts-expect-error - only parameters required by the test are provided
           locationBeforeTransitions: {
             pathname: '/',
             query: {
@@ -287,7 +287,7 @@ describe('Search actions', () => {
       jest.runAllTimers();
 
       // Analytics library should have pushed events.
-      // @ts-expect-error
+      // @ts-expect-error - accessing the global _paq object
       expect(global['_paq']).toEqual([
         ['setReferrerUrl', '/?q=search%20text'],
         ['setCustomUrl', '/?q=search%20text'],
@@ -378,7 +378,7 @@ describe('Search actions', () => {
         updateDisplayed({
           hits: {
             hits: [
-              // @ts-expect-error
+              // @ts-expect-error - only parameters required by the test are provided
               {
                 _source: minimalStudy
               }
@@ -392,7 +392,7 @@ describe('Search actions', () => {
         {
           type: UPDATE_DISPLAYED,
           displayed: [
-            getStudyModel({ _source: minimalStudy })
+            getStudyModel(minimalStudy)
           ]
         }
       ]);
@@ -403,6 +403,7 @@ describe('Search actions', () => {
     it('is created when searchkit query changes', () => {
       // Mock searchkit query.
       const query = {
+        index: 'cmmstudy_en',
         query: {
           bool: {
             must: [queryBuilder('search text')]

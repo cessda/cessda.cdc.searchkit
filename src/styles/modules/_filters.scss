@@ -30,7 +30,15 @@
     .sk-panel__content {
       margin: 10px;
 
-      .Select-control, .Select-menu-outer, .sk-range-input__input, button {
+      .sk-input-filter {
+        background-color: #fff;
+      }
+
+      .sk-input-filter__text {
+        color: #000;
+      }
+
+      .Select-control, .Select-menu-outer, .sk-range-input__input, .sk-input-filter, button {
     
         border: 2px solid #eaeae8;
         border-radius: 3px;

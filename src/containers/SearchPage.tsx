@@ -18,7 +18,7 @@ import Footer from '../components/Footer';
 import TopBar from '../components/Topbar';
 import Pagination from '../components/Pagination';
 import {
-  Hits, Layout, LayoutBody, LayoutResults, NoHits, Pagination as SearchkitPagination, RangeFilter, RangeSliderInput,
+  Hits, InputFilter, Layout, LayoutBody, LayoutResults, NoHits, Pagination as SearchkitPagination, RangeFilter, RangeSliderInput,
   RefinementListFilter, SearchkitProvider, SideBar
 } from 'searchkit';
 import Translate from 'react-translate-component';
@@ -92,19 +92,41 @@ export class SearchPage extends Component<Props> {
                                         type: 'nested',
                                         options: {path: 'classifications', min_doc_count: 1}
                                       }}
+                                      orderKey="_count"
+                                      orderDirection="desc"
+                                      operator="OR"
+                                      containerComponent={<Panel title={<Translate content='filters.topic.label'/>}
+                                                                tooltip={<Translate content="filters.topic.tooltip" unsafe/>}
+                                                                className="classifications"
+                                                                collapsable={true}
+                                                                defaultCollapsed={true}/>}
+                                      listComponent={<MultiSelect placeholder={<Translate content='filters.topic.placeholder'/>}/>}
+                                      size={100}/>
+
+                {/* <RefinementListFilter id="keywords.term"
+                                      title={counterpart.translate('filters.topic.label')}
+                                      field={'keywordsSearchField'}
                                       orderKey="_key"
                                       orderDirection="asc"
                                       operator="OR"
                                       containerComponent={<Panel title={<Translate content='filters.topic.label'/>}
-                                                                tooltip={<Tooltip id="filters-topic-tooltip"
-                                                                                  content={<Translate content='filters.topic.tooltip.content' unsafe/>}
-                                                                                  ariaLabel={counterpart.translate("filters.topic.tooltip.ariaLabel")}/>}
-                                                                className="classifications"
+                                                                tooltip={<Translate content="filters.topic.tooltip" unsafe/>}
+                                                                className="keywords"
                                                                 collapsable={true}
                                                                 defaultCollapsed={true}/>}
-                                      listComponent={<MultiSelect placeholder={<Translate content='filters.topic.placeholder'/>}
-                                                                  ariaLabel={counterpart.translate('filters.topic.label')}/>}
-                                      size={2700}/>
+                                      listComponent={<MultiSelect placeholder={<Translate content='filters.topic.placeholder'/>}/>}
+                                      size={2700}/> */}
+
+                <InputFilter id="keywords.term"
+                              title="Keywords"
+                              searchOnChange={false}
+                              placeholder="Keywords"
+                              containerComponent={<Panel title="Keywords"
+                                                                tooltip={<Translate content="filters.topic.tooltip" unsafe/>}
+                                                                className="Keywords"
+                                                                collapsable={true}
+                                                                defaultCollapsed={true}/>}
+                              queryFields={["keywordsSearchField"]}/>
 
                 <RangeFilter min={1900}
                             max={new Date().getFullYear()}

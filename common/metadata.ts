@@ -14,7 +14,7 @@
 import striptags from 'striptags';
 import { Dataset, Organization, Person, WithContext } from 'schema-dts';
 import { truncate, upperFirst } from 'lodash';
-import { SearchHit } from '@elastic/elasticsearch/api/types';
+import { SearchHit } from '@elastic/elasticsearch/lib/api/types';
 
 export interface CMMStudy {
   /** The internal ID of the study */
@@ -127,44 +127,44 @@ export interface Universe {
  * 
  * The comments indicate the label displayed in the UI for each property (it is not always obvious).
  */
-export function getStudyModel(data: Pick<SearchHit<Partial<CMMStudy>>, "_source" | "highlight">): CMMStudy {
-  if (typeof(data._source) !== "object") {
+export function getStudyModel(source: Partial<CMMStudy> | undefined, highlight?: SearchHit["highlight"]): CMMStudy {
+  if (typeof(source) !== "object") {
     throw TypeError("_source is not an object");
   }
   return ({
-    id: data._source.id as string,
-    titleStudy: data._source.titleStudy as string,
-    titleStudyHighlight: data.highlight?.titleStudy ? stripHTMLElements(data.highlight.titleStudy.join()) : '',
-    code: data._source.code as string,
-    creators: data._source.creators || [],
-    pidStudies: data._source.pidStudies || [],
-    abstract: stripHTMLElements(data._source.abstract as string),
-    abstractShort: truncateAbstract(striptags(data._source.abstract as string)),
-    abstractHighlight: data.highlight?.abstract ? stripHTMLElements(data.highlight.abstract.join()) : '',
-    abstractHighlightShort: data.highlight?.abstract ? truncateAbstract(striptags(data.highlight.abstract.join())) : '',
-    studyAreaCountries: data._source.studyAreaCountries || [],
-    typeOfTimeMethods: data._source.typeOfTimeMethods || [],
-    unitTypes: data._source.unitTypes || [],
-    typeOfSamplingProcedures: data._source.typeOfSamplingProcedures || [],
-    samplingProcedureFreeTexts: (data._source.samplingProcedureFreeTexts || []).map(text => stripHTMLElements(text)),
-    typeOfModeOfCollections: data._source.typeOfModeOfCollections || [],
-    dataCollectionPeriodStartdate: data._source.dataCollectionPeriodStartdate || '',
-    dataCollectionPeriodEnddate: data._source.dataCollectionPeriodEnddate || '',
-    dataCollectionFreeTexts: data._source.dataCollectionFreeTexts || [],
-    dataCollectionYear: data._source.dataCollectionYear,
-    fileLanguages: data._source.fileLanguages || [],
-    publisher: data._source.publisher as Publisher,
-    publicationYear: data._source.publicationYear || '',
-    dataAccessFreeTexts: (data._source.dataAccessFreeTexts || []).map(text => stripHTMLElements(text)),
-    studyNumber: data._source.studyNumber || '',
-    classifications: data._source.classifications || [],
-    keywords: data._source.keywords || [],
-    lastModified: data._source.lastModified || '',
-    studyUrl: data._source.studyUrl,
-    studyXmlSourceUrl: data._source.studyXmlSourceUrl as string,
-    langAvailableIn: (data._source.langAvailableIn || []).map(i => i.toUpperCase()).sort(),
-    universe: data._source.universe,
-    relatedPublications: data._source.relatedPublications || []
+    id: source.id as string,
+    titleStudy: source.titleStudy as string,
+    titleStudyHighlight: highlight?.titleStudy ? stripHTMLElements(highlight.titleStudy.join()) : '',
+    code: source.code as string,
+    creators: source.creators || [],
+    pidStudies: source.pidStudies || [],
+    abstract: stripHTMLElements(source.abstract as string),
+    abstractShort: truncateAbstract(striptags(source.abstract as string)),
+    abstractHighlight: highlight?.abstract ? stripHTMLElements(highlight.abstract.join()) : '',
+    abstractHighlightShort: highlight?.abstract ? truncateAbstract(striptags(highlight.abstract.join())) : '',
+    studyAreaCountries: source.studyAreaCountries || [],
+    typeOfTimeMethods: source.typeOfTimeMethods || [],
+    unitTypes: source.unitTypes || [],
+    typeOfSamplingProcedures: source.typeOfSamplingProcedures || [],
+    samplingProcedureFreeTexts: (source.samplingProcedureFreeTexts || []).map(text => stripHTMLElements(text)),
+    typeOfModeOfCollections: source.typeOfModeOfCollections || [],
+    dataCollectionPeriodStartdate: source.dataCollectionPeriodStartdate || '',
+    dataCollectionPeriodEnddate: source.dataCollectionPeriodEnddate || '',
+    dataCollectionFreeTexts: source.dataCollectionFreeTexts || [],
+    dataCollectionYear: source.dataCollectionYear,
+    fileLanguages: source.fileLanguages || [],
+    publisher: source.publisher as Publisher,
+    publicationYear: source.publicationYear || '',
+    dataAccessFreeTexts: (source.dataAccessFreeTexts || []).map(text => stripHTMLElements(text)),
+    studyNumber: source.studyNumber || '',
+    classifications: source.classifications || [],
+    keywords: source.keywords || [],
+    lastModified: source.lastModified || '',
+    studyUrl: source.studyUrl,
+    studyXmlSourceUrl: source.studyXmlSourceUrl as string,
+    langAvailableIn: (source.langAvailableIn || []).map(i => i.toUpperCase()).sort(),
+    universe: source.universe,
+    relatedPublications: source.relatedPublications || []
   });
 }
 

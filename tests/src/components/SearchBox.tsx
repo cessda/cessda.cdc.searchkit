@@ -16,7 +16,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import { mapDispatchToProps, mapStateToProps, SearchBox, Props } from '../../../src/components/SearchBox';
 import searchkit from '../../../src/utilities/searchkit';
-import { Browser, BrowserInfo, detect } from 'detect-browser';
+import { Browser, detect } from 'detect-browser';
 
 // Mock detect() in detect-browser module.
 jest.mock('detect-browser', () => ({
@@ -66,8 +66,8 @@ describe('SearchBox component', () => {
     const { props, enzymeWrapper } = setup();
     enzymeWrapper.instance().onChange({
       target: {
-        value:
-          'Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus magna fringilla urna porttitor dolor purus non enim praesent elementum facilisis leo vel fringilla est ullamcorper eget nulla facilisi etiam dignissim diam quis enim lobortis scelerisque.'
+        //@ts-expect-error - only required values are provided
+        value: 'Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus magna fringilla urna porttitor dolor purus non enim praesent elementum facilisis leo vel fringilla est ullamcorper eget nulla facilisi etiam dignissim diam quis enim lobortis scelerisque.'
       }
     });
     expect(props.push).not.toHaveBeenCalled();
@@ -77,6 +77,7 @@ describe('SearchBox component', () => {
     const { props, enzymeWrapper } = setup();
     enzymeWrapper.instance().onChange({
       target: {
+        //@ts-expect-error - only required values are provided
         value: props.query
       }
     });
@@ -89,6 +90,7 @@ describe('SearchBox component', () => {
     });
     enzymeWrapper.instance().onChange({
       target: {
+        //@ts-expect-error - only required values are provided
         value: props.query
       }
     });
@@ -104,6 +106,7 @@ describe('SearchBox component', () => {
     );
     enzymeWrapper.instance().onChange({
       target: {
+        //@ts-expect-error - only required values are provided
         value: props.query
       }
     });
@@ -119,6 +122,7 @@ describe('SearchBox component', () => {
     );
     enzymeWrapper.instance().onChange({
       target: {
+        //@ts-expect-error - only required values are provided
         value: 'query'
       }
     });

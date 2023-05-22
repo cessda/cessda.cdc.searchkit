@@ -44,14 +44,16 @@ export class SearchBox extends SearchkitSearchBox {
     query: ''
   };
 
-  onChange(event: any): void {
+  onChange(event: Event): void {
     const {
       pathname,
       query
     } = this.props;
 
+    const target = event.target as HTMLInputElement;
+
     // Do not process queries with more than 250 characters.
-    if (event.target.value.length > 250) {
+    if (target.value.length > 250) {
       return;
     }
 
@@ -59,7 +61,7 @@ export class SearchBox extends SearchkitSearchBox {
     if (_.trim(pathname, '/')) {
       if (detect()?.name === 'ie') {
         // Workaround for legacy Internet Explorer bug where change event is fired multiple times.
-        if (event.target.value !== query) {
+        if (target.value !== query) {
           this.props.push('/');
         }
       } else {

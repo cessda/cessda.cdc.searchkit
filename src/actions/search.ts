@@ -16,7 +16,7 @@ import _ from "lodash";
 import { Thunk } from "../types";
 import { CMMStudy, getStudyModel } from "../../common/metadata";
 import getPaq from "../utilities/getPaq";
-import { SearchRequest, SearchResponse } from "@elastic/elasticsearch/api/types";
+import { SearchRequest, SearchResponse } from "@elastic/elasticsearch/lib/api/types";
 
 //////////// Redux Action Creator : INIT_SEARCHKIT
 export const INIT_SEARCHKIT = "INIT_SEARCHKIT";
@@ -29,7 +29,7 @@ export type InitSearchkitAction = {
 type SearchkitSearchRequest = {
   /** Index to search in */
   index: string;
-} & SearchRequest["body"];
+} & SearchRequest;
 
 export function initSearchkit(): Thunk {
   return (dispatch, getState) => {
@@ -185,7 +185,7 @@ export type UpdateDisplayedAction = {
 export function updateDisplayed(displayed: SearchResponse<Partial<CMMStudy>>): UpdateDisplayedAction {
   return {
     type: UPDATE_DISPLAYED,
-    displayed: displayed.hits.hits.map(hit => getStudyModel(hit))
+    displayed: displayed.hits.hits.map(hit => getStudyModel(hit._source, hit.highlight))
   };
 }
 
@@ -194,10 +194,10 @@ export const UPDATE_QUERY = "UPDATE_QUERY";
 
 export type UpdateQueryAction = {
   type: typeof UPDATE_QUERY;
-  query: Record<string, any>;
+  query: SearchkitSearchRequest;
 };
 
-export function updateQuery(query: Record<string, any>): UpdateQueryAction {
+export function updateQuery(query: SearchkitSearchRequest): UpdateQueryAction {
   return {
     type: UPDATE_QUERY,
     query

@@ -56,7 +56,8 @@ export class DetailPage extends Component<Props> {
     // Update the JSON-LD representation
     const jsonLDElement = document.getElementById("json-ld");
 
-    if (this.props.item) {
+    // Add JSON-LD metadata if a study is present and has an abstract at least 50 characters long
+    if (this.props.item && this.props.item.abstract.length >= 50) {
       const elementString = '<script id="json-ld" type="application/ld+json">' + JSON.stringify(getJsonLd(this.props.item)) + '</script>';
       if (jsonLDElement) {
         $(jsonLDElement).replaceWith(elementString);

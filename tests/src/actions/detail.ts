@@ -14,10 +14,11 @@
 import configureMockStore from 'redux-mock-store';
 import { AnyAction } from "redux";
 import thunk, { ThunkDispatch } from "redux-thunk";
-import { updateStudy, UPDATE_STUDY } from "../../../src/actions/detail";
+import { updateStudy, UPDATE_STUDY, CLEAR_STUDY } from "../../../src/actions/detail";
 import { Language, languageMap, languages } from "../../../src/utilities/language";
 import { State } from '../../../src/types';
 import { mockStudy } from '../../common/mockdata';
+import { getStudyModel } from '../../../common/metadata';
 import fetch from 'jest-mock-fetch';
 
 const mockStore = configureMockStore<Partial<State>, ThunkDispatch<State, never, AnyAction>>([thunk]);
@@ -58,13 +59,47 @@ describe('Detail actions', () => {
       expect(store.getActions()).toEqual([
         {
           type: UPDATE_STUDY,
-          displayed: mockStudy,
+          displayed: getStudyModel(mockStudy),
           similars: [
             {
               id: 2,
               titleStudy: 'Similar Study Title'
             }
           ]
+        }
+      ]);
+    });
+
+    it('returns a list of alternative languages when 404 occurs', async () => {
+      const enLanguage = languageMap.get("en") as Language;
+
+      // Mock Redux store.
+      const store = mockStore({
+        language: {
+          currentLanguage: enLanguage,
+          list: languages
+        }
+      });
+
+      const action = updateStudy("1");
+
+      const promise = store.dispatch(action);
+
+      expect(fetch).toHaveBeenCalledWith(`${window.location.origin}/api/sk/_get/${enLanguage.index}/${encodeURIComponent(mockStudy.id)}`);
+
+      fetch.mockResponse({
+        ok: false,
+        status: 404,
+        statusText: "Not found",
+        json: () => Array.from(languageMap.keys())
+      });
+
+      await promise;
+
+      expect(store.getActions()).toEqual([
+        {
+          type: CLEAR_STUDY,
+          languageAvailableIn: languages
         }
       ]);
     });

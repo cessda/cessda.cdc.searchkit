@@ -43,7 +43,7 @@ export function updateStudy(id: string): Thunk<Promise<void>> {
 
       // Get the study model from the hit.
       const json = await response.json() as { source: CMMStudy, similars: Similar[] };
-      const study = getStudyModel({ _source: json.source });
+      const study = getStudyModel(json.source);
 
       // Dispatch the study for display.
       dispatch({

@@ -11,27 +11,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Client } from '@elastic/elasticsearch'
-import { Client as NewTypes, ClientOptions } from '@elastic/elasticsearch/api/new'
+import { Client, ClientOptions } from '@elastic/elasticsearch'
 import { 
   AggregationsCardinalityAggregate,
   AggregationsNestedAggregate,
   AggregationsSignificantStringTermsAggregate
-} from "@elastic/elasticsearch/api/types";
+} from "@elastic/elasticsearch/lib/api/types";
 import _ from "lodash";
 import { CMMStudy } from "../common/metadata";
 import { logger } from "./logger";
 
 
 export default class Elasticsearch {
-  public readonly client: NewTypes;
+  public readonly client: Client;
 
   constructor(url: string, authentication?: ClientOptions["auth"]) {
     //Create ElasticSearch Client
     this.client = new Client({
       node: url,
       auth: authentication
-    }) as unknown as NewTypes;
+    });
 
     logger.info('Elasticsearch client configured');
   }
@@ -48,7 +47,7 @@ export default class Elasticsearch {
       index: index
     });
 
-    return response.body._source;
+    return response._source;
   }
 
   /**
@@ -61,12 +60,10 @@ export default class Elasticsearch {
     const response = await this.client.search<CMMStudy>({
       size: 5,
       index: index,
-      body: {
-        query: Elasticsearch.similarQuery(id, title)
-      }
+      query: Elasticsearch.similarQuery(id, title)
     });
 
-    const sources = response.body.hits.hits.map(hit => hit._source);
+    const sources = response.hits.hits.map(hit => hit._source);
 
     return _.compact(sources).map(s => ({
       id: s.id,
@@ -78,13 +75,11 @@ export default class Elasticsearch {
     const response = await this.client.search({
       size: 0,
       index: "cmmstudy_*",
-      body: {
-        query: { match_all: {} },
-        aggs: { 
-          unique_id: {
-            cardinality: {
-              field: "id"
-            }
+      query: { match_all: {} },
+      aggs: { 
+        unique_id: {
+          cardinality: {
+            field: "id"
           }
         }
       }
@@ -92,7 +87,7 @@ export default class Elasticsearch {
 
     // Assert the type as AggregationsCardinalityAggregate, then return the value
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return (response.body.aggregations!.unique_id as AggregationsCardinalityAggregate).value;
+    return (response.aggregations!.unique_id as AggregationsCardinalityAggregate).value;
   }
 
   async getListOfMetadataLanguages() {
@@ -100,28 +95,26 @@ export default class Elasticsearch {
       allow_no_indices: true,
       index: "*" 
     });
-    const indices = Object.keys(res.body);
+    const indices = Object.keys(res);
 
-    // Index names are of the form cmmstudy_${lang}, extract the ${lang} part
-    return indices.map(i => i.split("_")[1]);
+    // Index names are of the form cmmstudy_${lang}, extract the ${lang} part and filter out not needed indexes
+    return indices.filter(i => i.startsWith("cmmstudy_")).map(i => i.split("_")[1]);
   }
 
   async getSourceRepositoryNames() {
     const res = await this.client.search({
       size: 0,
-      body: {
-        aggs: {
-          publishers: {
-            nested: {
-              path: "publisherFilter"
-            },
-            aggs: {
-              publisher: {
-                terms: {
-                  field: "publisherFilter.publisher",
-                  order: { _key: "asc" },
-                  size: 30
-                }
+      aggs: {
+        publishers: {
+          nested: {
+            path: "publisherFilter"
+          },
+          aggs: {
+            publisher: {
+              terms: {
+                field: "publisherFilter.publisher",
+                order: { _key: "asc" },
+                size: 30
               }
             }
           }
@@ -130,7 +123,7 @@ export default class Elasticsearch {
     });
 
     // Unwrap the aggregations
-    const aggregation = res.body.aggregations?.publishers as AggregationsNestedAggregate;
+    const aggregation = res.aggregations?.publishers as AggregationsNestedAggregate;
     const publisherBuckets = (aggregation.publisher as AggregationsSignificantStringTermsAggregate).buckets;
     
     if (Array.isArray(publisherBuckets)) {
@@ -143,19 +136,17 @@ export default class Elasticsearch {
   async getListOfCountries() {
     const res = await this.client.search({
       size: 0,
-      body: {
-        aggs: {
-          studyAreaCountries: {
-            nested: {
-              path: "studyAreaCountries"
-            },
-            aggs: {
-              country: {
-                terms: {
-                  field: "studyAreaCountries.searchField",
-                  order: { _key: "asc" },
-                  size: 1000
-                }
+      aggs: {
+        studyAreaCountries: {
+          nested: {
+            path: "studyAreaCountries"
+          },
+          aggs: {
+            country: {
+              terms: {
+                field: "studyAreaCountries.searchField",
+                order: { _key: "asc" },
+                size: 1000
               }
             }
           }
@@ -164,7 +155,7 @@ export default class Elasticsearch {
     });
 
     // Unwrap the aggregations
-    const aggregation = res.body.aggregations?.studyAreaCountries as AggregationsNestedAggregate;
+    const aggregation = res.aggregations?.studyAreaCountries as AggregationsNestedAggregate;
     const countryBuckets = (aggregation.country as AggregationsSignificantStringTermsAggregate).buckets;
 
     if (Array.isArray(countryBuckets)) {
@@ -181,17 +172,15 @@ export default class Elasticsearch {
    */
   async getIndicesForStudyId(id: string) {
       const res = await this.client.search({
-        body: {
-          query: {
-            ids: {
-              values: [id]
-            }
+        query: {
+          ids: {
+            values: [id]
           }
         },
         _source: false
       });
 
-      return res.body.hits.hits.map(hit => hit._index);
+      return res.hits.hits.map(hit => hit._index);
   }
 
   /**
