@@ -14,6 +14,7 @@
 
 import React from "react";
 import { Link } from "react-router";
+import Tooltip from './Tooltip';
 import Panel from "./Panel";
 import Translate from "react-translate-component";
 import { truncate, upperFirst } from "lodash";
@@ -21,6 +22,7 @@ import { CMMStudy, DataCollectionFreeText, Universe } from "../../common/metadat
 import { ChronoField, DateTimeFormatter, DateTimeFormatterBuilder } from "@js-joda/core";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import striptags from "striptags";
+import counterpart from "counterpart";
 
 export interface Props {
   item: CMMStudy;
@@ -256,7 +258,9 @@ Summary information
         <Panel
           className="section-header"
           title={<Translate component="h2" content="metadata.methodology.label"/>}
-          tooltip={<Translate content="metadata.methodology.tooltip" unsafe/>}
+          tooltip={<Tooltip id="metadata-methodology-tooltip"
+                            content={<Translate content='metadata.methodology.tooltip.content' unsafe/>}
+                            ariaLabel={counterpart.translate("metadata.methodology.tooltip.ariaLabel")}/>}
           collapsable={false}
           defaultCollapsed={false}
         >
@@ -351,7 +355,9 @@ Summary information
         <Panel
           className="section-header"
           title={<Translate component="h2" content='metadata.topics.label'/>}
-          tooltip={<Translate content="metadata.topics.tooltip" unsafe/>}
+          tooltip={<Tooltip id="metadata-topics-tooltip"
+                            content={<Translate content='metadata.topics.tooltip.content' unsafe/>}
+                            ariaLabel={counterpart.translate("metadata.topics.tooltip.ariaLabel")}/>}
           collapsable={false}
         >
           <div className="tags">
@@ -366,7 +372,9 @@ Summary information
         <Panel
           className="section-header"
           title={<Translate component="h2" content='metadata.keywords.label'/>}
-          tooltip={<Translate content="metadata.keywords.tooltip" unsafe/>}
+          tooltip={<Tooltip id="metadata-keywords-tooltip"
+                            content={<Translate content='metadata.keywords.tooltip.content' unsafe/>}
+                            ariaLabel={counterpart.translate("metadata.keywords.tooltip.ariaLabel")}/>}
           collapsable={false}
         >
           <div className="tags">

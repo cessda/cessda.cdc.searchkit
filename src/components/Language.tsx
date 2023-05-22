@@ -20,6 +20,7 @@ import type {State} from '../types';
 import Select, { Options } from 'react-select';
 import { browserHistory } from 'react-router';
 import { push } from 'react-router-redux';
+import counterpart from 'counterpart';
 
 type Props = ReturnType<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>;
 
@@ -47,6 +48,7 @@ export class Language extends Component<Props> {
                 searchable={false}
                 clearable={false}
                 autosize={true}
+                aria-label={counterpart.translate("search.languageSelect")}
                 onChange={(option) => {
                   if (option && !Array.isArray(option) && option.value) {
                     const currentLocation = browserHistory.getCurrentLocation();

@@ -14,12 +14,23 @@
 
 import React from 'react';
 import {FaChevronLeft, FaChevronRight, FaEllipsisH} from 'react-icons/fa';
-import {AbstractItemList} from 'searchkit';
+import {AbstractItemList, ItemListProps} from 'searchkit';
+import counterpart from 'counterpart';
+
+export interface Props extends ItemListProps {
+  ariaLabel: string;
+}
 
 export default class Pagination extends AbstractItemList {
+  props: Props;
+
+  constructor(props: Props) {
+    super(props);
+    this.props = props;
+  }
 
   render() {
-    const {items, selectedItems, setItems} = this.props;
+    const {items, selectedItems, setItems, ariaLabel} = this.props;
     const links = [];
 
     for (let i = 0; i < items.length; i++) {
@@ -38,6 +49,7 @@ export default class Pagination extends AbstractItemList {
           <li key={items[i].key}>
             <a className={'pagination-link' + current}
                href={'/?p=' + items[i].page}
+               aria-label={counterpart.translate('pagination.page') + items[i].page}
                onClick={(e) => {
                  e.preventDefault(); 
                  setItems([items[i].page]);
@@ -50,9 +62,11 @@ export default class Pagination extends AbstractItemList {
     }
 
     return (
-      <nav className="pagination is-centered is-small" role="navigation" aria-label="pagination">
+      <nav className="pagination is-centered is-small" role="navigation"
+           aria-label={ariaLabel + selectedItems[0]}>
         <a className="pagination-previous"
            href={'/?p=' + items[0].page}
+           aria-label={counterpart.translate('pagination.previous') + items[0].page}
            onClick={(e) => {
              e.preventDefault(); 
              setItems([items[0].page]);
@@ -61,6 +75,7 @@ export default class Pagination extends AbstractItemList {
         </a>
         <a className="pagination-next"
            href={'/?p=' + items[items.length - 1].page}
+           aria-label={counterpart.translate('pagination.next') + items[items.length - 1].page}
            onClick={(e) => {
              e.preventDefault(); 
              setItems([items[items.length - 1].page]);

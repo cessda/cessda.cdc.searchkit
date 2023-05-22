@@ -16,7 +16,6 @@ import React from 'react';
 import { Panel as SearchkitPanel, PanelProps } from 'searchkit';
 import PropTypes from 'prop-types';
 import { connect, Dispatch } from 'react-redux';
-import Tooltip from './Tooltip';
 import type { State } from '../types';
 import { AnyAction, bindActionCreators } from 'redux';
 import { toggleMetadataPanels, ToggleMetadataPanelsAction } from '../actions/search';
@@ -70,7 +69,7 @@ export class Panel extends SearchkitPanel {
 
     return (
       <section className={'sk-panel__container' + (this.state.collapsed ? ' sk-panel__collapsed' : '')}>
-        {tooltip && <Tooltip content={tooltip}/>}
+        {tooltip}
         {super.render()}
       </section>
     );

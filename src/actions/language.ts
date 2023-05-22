@@ -63,7 +63,7 @@ export function initTranslations(): Thunk {
       const numberOfResults = process.env.PASC_DEBUG_MODE === 'true' ? 'numberOfResultsWithTime' : 'numberOfResults';
       switch (key) {
         case 'searchbox.placeholder': 
-          return counterpart.translate('search');
+          return counterpart.translate('search.placeholder');
         case 'hitstats.results_found': {
           const state = getState();
           return counterpart.translate(numberOfResults, {
