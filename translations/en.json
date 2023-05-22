@@ -33,6 +33,14 @@
         "ariaLabel": "More information about Topic filter"
       }
     },
+    "keywords": {
+      "label": "Keywords",
+      "placeholder": "Search keywords",
+      "tooltip": {
+        "content": "Keywords which describe the content of the data.",
+        "ariaLabel": "More information about Keywords filter"
+      }
+    },
     "collectionDates": {
       "label": "Collection years",
       "placeholder": "Search years",

@@ -96,7 +96,9 @@ export class SearchPage extends Component<Props> {
                                       orderDirection="desc"
                                       operator="OR"
                                       containerComponent={<Panel title={<Translate content='filters.topic.label'/>}
-                                                                tooltip={<Translate content="filters.topic.tooltip" unsafe/>}
+                                                                tooltip={<Tooltip id="filters-topic-tooltip"
+                                                                                  content={<Translate content='filters.topic.tooltip.content' unsafe/>}
+                                                                                  ariaLabel={counterpart.translate("filters.topic.tooltip.ariaLabel")}/>}
                                                                 className="classifications"
                                                                 collapsable={true}
                                                                 defaultCollapsed={true}/>}
@@ -118,14 +120,16 @@ export class SearchPage extends Component<Props> {
                                       size={2700}/> */}
 
                 <InputFilter id="keywords.term"
-                              title="Keywords"
+                              title={counterpart.translate('filters.keywords.label')}
                               searchOnChange={false}
-                              placeholder="Keywords"
-                              containerComponent={<Panel title="Keywords"
-                                                                tooltip={<Translate content="filters.topic.tooltip" unsafe/>}
-                                                                className="Keywords"
-                                                                collapsable={true}
-                                                                defaultCollapsed={true}/>}
+                              placeholder={counterpart.translate('filters.keywords.placeholder')}
+                              containerComponent={<Panel title={<Translate content='filters.keywords.label'/>}
+                                                        tooltip={<Tooltip id="filters-keywords-tooltip"
+                                                                          content={<Translate content='filters.keywords.tooltip.content' unsafe/>}
+                                                                          ariaLabel={counterpart.translate("filters.keywords.tooltip.ariaLabel")}/>}
+                                                        className="keywords"
+                                                        collapsable={true}
+                                                        defaultCollapsed={true}/>}
                               queryFields={["keywordsSearchField"]}/>
 
                 <RangeFilter min={1900}
