@@ -102,7 +102,8 @@ export class SearchPage extends Component<Props> {
                                                                 className="classifications"
                                                                 collapsable={true}
                                                                 defaultCollapsed={true}/>}
-                                      listComponent={<MultiSelect placeholder={<Translate content='filters.topic.placeholder'/>}/>}
+                                      listComponent={<MultiSelect placeholder={<Translate content='filters.topic.placeholder'/>}
+                                                                  ariaLabel={counterpart.translate('filters.topic.label')}/>}
                                       size={100}/>
 
                 {/* <RefinementListFilter id="keywords.term"
