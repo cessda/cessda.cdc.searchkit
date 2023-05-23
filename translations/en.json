@@ -14,7 +14,7 @@
     "placeholder": "Enter search term in the selected language",
     "tooltip": {
       "content": "The catalogue contains study descriptions in various languages. The system searches with your search terms from study descriptions available in the language you have selected. The catalogue does not have ‘All languages’ option as due to linguistic differences this would give incomplete results. See the User Guide for more detailed information.",
-      "ariaLabel":"More information about search and search language"
+      "ariaLabel":"Tooltip button for search and search language"
     },
     "languageSelect": "Select search language"
   },
@@ -30,15 +30,15 @@
       "placeholder": "Search topics",
       "tooltip": {
         "content": "<a href=\"https://vocabularies.cessda.eu/vocabulary/TopicClassification?lang=en\">CESSDA Topic Classification</a> serves to identify the general topics, subjects or themes of a study. Note: Some studies use other topic classifications and are not included in the filter.",
-        "ariaLabel": "More information about Topic filter"
+        "ariaLabel": "Tooltip button for Topic filter"
       }
     },
     "keywords": {
       "label": "Keywords",
       "placeholder": "Search keywords",
       "tooltip": {
-        "content": "Keywords which describe the content of the data.",
-        "ariaLabel": "More information about Keywords filter"
+        "content": "Keywords which describe the content of the data. Many but not all metadata providers use <a href=\"https://elsst.cessda.eu/\">ELSST Thesaurus</a> for their keywords. Search term can be truncated by using the asterisk (*) after the search term, e.g. discrim*.",
+        "ariaLabel": "Tooltip button for Keywords filter"
       }
     },
     "collectionDates": {
@@ -46,15 +46,15 @@
       "placeholder": "Search years",
       "tooltip": {
         "content": "The year(s) in which the data for the study were collected.",
-        "ariaLabel": "More information about Collection years filter"
+        "ariaLabel": "Tooltip button for Collection years filter"
       }
     },
     "languageOfDataFiles": {
       "label": "Language of data files",
-      "placeholder": "Search languages",
+      "placeholder": "Search language of data files",
       "tooltip": {
         "content": "Language of the research dataset, i.e. the language of the variable names/labels or interview transcriptions etc.",
-        "ariaLabel": "More information about language of data files"
+        "ariaLabel": "Tooltip button for language of data files"
       }
     },
     "country": {
@@ -62,7 +62,7 @@
       "placeholder": "Search countries",
       "tooltip": {
         "content": "The country which the data cover. Note: the filter only includes those studies where the metadata provide an ISO 3166-1 country code. Use an additional free-text search with country name for more results.",
-        "ariaLabel":"More information about Country filter"
+        "ariaLabel":"Tooltip button for Country filter"
       }
     },
     "langAvailableIn": {
@@ -70,7 +70,7 @@
       "placeholder": "Search language(s)",
       "tooltip": {
         "content": "Language of study titles and abstract / description.",
-        "ariaLabel": "More information about search language"
+        "ariaLabel": "Tooltip button for search language"
       }
     },
     "publisher": {
@@ -78,7 +78,7 @@
       "placeholder": "Search publishers",
       "tooltip": {
         "content": "Name of the institution providing the information on the study.",
-        "ariaLabel": "More information about Publisher filter"
+        "ariaLabel": "Tooltip button for Publisher filter"
       }
     },
     "summary": {
@@ -163,7 +163,7 @@
       "label": "Methodology",
       "tooltip": {
         "content": "Terminology used is generally based on DDI controlled vocabularies: Time Method, Analysis Unit, Sampling Procedure and Mode of Collection, available at <a href=\"https://vocabularies.cessda.eu/\">CESSDA Vocabulary Service<a/>.",
-        "ariaLabel": "More information about Methodology"
+        "ariaLabel": "Tooltip button for Methodology"
       }
     },
     "country": "Country",
@@ -183,14 +183,14 @@
       "label": "Topics",
       "tooltip": {
         "content": "Many but not all metadata providers use <a href=\"https://vocabularies.cessda.eu/vocabulary/TopicClassification?lang=en\">CESSDA Topic Classification</a> for their topic terms.",
-        "ariaLabel": "More information about Topics"
+        "ariaLabel": "Tooltip button for Topics"
       }
     },
     "keywords": {
       "label": "Keywords",
       "tooltip": {
         "content": "Many but not all metadata providers use <a href=\"https://elsst.cessda.eu/\">ELSST Thesaurus</a> for their keywords.",
-        "ariaLabel": "More information about Keywords"
+        "ariaLabel": "Tooltip button for Keywords"
       }
     },
     "relatedPublications": "Related publications"
