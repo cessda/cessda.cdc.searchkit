@@ -104,6 +104,21 @@ export default class Detail extends React.Component<Props, State> {
     }
   }
 
+  /**
+   * Joins values of specified field in an array of objects by the given character
+   * as long as the values are strings and truthy.
+   *
+   * @param arr array of objects
+   * @param field name of the field to look for values
+   * @param char character to use for joining (space added by default)
+   * @returns <div> element that contains values separated by a character
+   */
+  static joinFieldValuesByCharacter(arr: Array<{[key:string]: any}>, field: string, char: string) {
+    return (
+      <div>{arr.filter(obj =>  obj[field] && typeof obj[field] === 'string').map(obj => obj[field]).join(`${char} `)}</div>
+    )
+  }
+
   static formatDate(
     dateTimeFormatter: DateTimeFormatter,
     date1?: string,
@@ -281,7 +296,7 @@ Summary information
             component="h3"
             content="metadata.country"
           />
-          {Detail.generateElements(item.studyAreaCountries, 'div', country => country.country)}
+          {Detail.joinFieldValuesByCharacter(item.studyAreaCountries, "country", ",")}
 
           <Translate
             className="data-label"

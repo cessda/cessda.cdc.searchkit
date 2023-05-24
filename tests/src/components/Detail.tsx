@@ -90,6 +90,15 @@ describe('Detail component', () => {
     ).toContain('notAvailable');
   });
 
+  it('should handle joining values and returning them in div even if some have no value', () => {
+    expect(
+      mount(<>{Detail.joinFieldValuesByCharacter([{"country": "Finland"}, {"country": null},
+                                                  {"country": "Norway"}, {"country": undefined},
+                                                  {"country": "Sweden"}, {"notcountry": "Other"}],
+                                                  "country", ",")}</>).html()
+    ).toContain('<div>Finland, Norway, Sweden</div>');
+  });
+
   it('should handle formatting dates with missing data', () => {
     expect(
       mount(<>{Detail.formatDate(Detail.dateFormatter)}</>).html()
