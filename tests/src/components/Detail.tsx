@@ -92,10 +92,10 @@ describe('Detail component', () => {
 
   it('should handle joining values and returning them in div even if some have no value', () => {
     expect(
-      mount(<>{Detail.joinFieldValuesByCharacter([{"country": "Finland"}, {"country": null},
-                                                  {"country": "Norway"}, {"country": undefined},
-                                                  {"country": "Sweden"}, {"notcountry": "Other"}],
-                                                  "country", ",")}</>).html()
+      mount(<>{Detail.joinValuesBySeparator([{"country": "Finland"}, {"country": ""},
+                                             {"country": "Norway"}, {"country": "Sweden"},
+                                             {"country": " "}],
+                                             c => c.country, ", ")}</>).html()
     ).toContain('<div>Finland, Norway, Sweden</div>');
   });
 
