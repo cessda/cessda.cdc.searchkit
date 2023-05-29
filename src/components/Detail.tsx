@@ -69,19 +69,21 @@ export default class Detail extends React.Component<Props, State> {
   static generateElements<T, R>(
     field: T[],
     element: 'div' | 'tag' | 'ul',
-    callback?: (args: T) => R
+    callback?: (args: T) => R,
+    omitLang?: boolean
   ) {
     const elements: JSX.Element[] = [];
+    const lang = counterpart.getLocale();
 
     for (let i = 0; i < field.length; i++) {
       if (field[i]) {
         const value = callback?.(field[i]) ?? field[i];
         switch(element) {
           case 'tag':
-            elements.push(<span className="tag" key={i}>{value}</span>);
+            elements.push(<span className="tag" lang={omitLang ? undefined : lang} key={i}>{value}</span>);
             break;
           case 'div':
-            elements.push(<div key={i}>{value}</div>);
+            elements.push(<div lang={omitLang ? undefined : lang} key={i}>{value}</div>);
             break;
           case 'ul':
             elements.push(<li key={i}>{value}</li>)
@@ -90,12 +92,12 @@ export default class Detail extends React.Component<Props, State> {
     }
 
     if (elements.length === 0) {
-      return <Translate content="language.notAvailable.field" />;
+      return <Translate content="language.notAvailable.field" lang={lang} />;
     }
 
     if (element === 'ul') {
       return (
-        <ul>
+        <ul lang={omitLang ? undefined : lang}>
           {elements}
         </ul>
       );
@@ -114,7 +116,7 @@ export default class Detail extends React.Component<Props, State> {
    */
   static joinValuesBySeparator<T>(arr: Array<T>, extractor: (object: T) => string, separator: string) {
     return (
-      <div>{arr.map(element => extractor(element)).filter(value => value && value.trim() !== '').join(separator)}</div>
+      <div lang={counterpart.getLocale()}>{arr.map(element => extractor(element)).filter(value => value && value.trim() !== '').join(separator)}</div>
     )
   }
 
@@ -125,7 +127,7 @@ export default class Detail extends React.Component<Props, State> {
     dateFallback?: DataCollectionFreeText[]
   ): JSX.Element | JSX.Element[] {
     if (!date1 && !date2 && !dateFallback) {
-      return <Translate content="language.notAvailable.field" />;
+      return <Translate content="language.notAvailable.field" lang={counterpart.getLocale()} />;
     }
     if (!date1 && !date2 && dateFallback) {
       if (dateFallback.length === 2 && dateFallback[0].event === 'start' && dateFallback[1].event === 'end') {
@@ -149,7 +151,7 @@ export default class Detail extends React.Component<Props, State> {
         return <p>{Detail.parseDate(date1, dateTimeFormatter)} - {Detail.parseDate(date2, dateTimeFormatter)}</p>
       }
     } else {
-      return <Translate content="language.notAvailable.field" />;
+      return <Translate content="language.notAvailable.field" lang={counterpart.getLocale()} />;
     }
   }
 
@@ -180,13 +182,13 @@ export default class Detail extends React.Component<Props, State> {
    * @returns the formatted <p> element
    */
   private static formatUniverse(universe: Universe) {
-    const inclusion = <p>{striptags(universe.inclusion)}</p>;
+    const inclusion = <p lang={counterpart.getLocale()}>{striptags(universe.inclusion)}</p>;
 
     if (universe.exclusion) {
       return (
         <>
           {inclusion}
-          <p>Excludes: {striptags(universe.exclusion)}</p>
+          <p lang={counterpart.getLocale()}>Excludes: {striptags(universe.exclusion)}</p>
         </>
       );
     } else {
@@ -196,6 +198,7 @@ export default class Detail extends React.Component<Props, State> {
 
   render() {
     const { item } = this.props;
+    const lang = counterpart.getLocale();
 
     return (
       <article className="w-100">
@@ -208,8 +211,8 @@ Summary information
           content="metadata.studyTitle"
         />
 
-        <p>
-          {item.titleStudy || <Translate content="language.notAvailable.field" />}
+        <p lang={lang}>
+          {item.titleStudy || <Translate content="language.notAvailable.field"/>}
         </p>
 
         <section>
@@ -234,7 +237,7 @@ Summary information
             }
 
             return <p>{pidStudy.pid}</p>;
-          })}
+          }, true)}
         </section>
 
         <section>
@@ -244,9 +247,9 @@ Summary information
             content="metadata.abstract"
           />
           {this.state.abstractExpanded ?
-            <div className="data-abstract" dangerouslySetInnerHTML={{ __html: item.abstract }}/>
+            <div className="data-abstract" lang={lang} dangerouslySetInnerHTML={{ __html: item.abstract }}/>
           :
-            <div className="data-abstract">{truncate(striptags(item.abstract), { length: Detail.truncatedAbstractLength, separator: ' ' })}</div>
+            <div className="data-abstract" lang={lang}>{truncate(striptags(item.abstract), { length: Detail.truncatedAbstractLength, separator: ' ' })}</div>
           }
           {item.abstract.length > Detail.truncatedAbstractLength &&
             <a className="button is-small is-white" onClick={() => {
@@ -316,7 +319,7 @@ Summary information
             component="h3"
             content="metadata.universe"
           />
-          {item.universe ? Detail.formatUniverse(item.universe) : <Translate content="language.notAvailable.field" />}
+          {item.universe ? Detail.formatUniverse(item.universe) : <Translate content="language.notAvailable.field" lang={lang} />}
 
           <Translate
             className="data-label"
@@ -345,7 +348,7 @@ Summary information
             component="h3"
             content="metadata.publisher"
           />
-          <p>
+          <p lang={lang}>
             {item.publisher ? item.publisher.publisher : <Translate content="language.notAvailable.field" />}
           </p>
 
@@ -429,7 +432,7 @@ Summary information
             } else {
               return relatedPublicationTitle;
             }
-          })}
+          }, true)}
         </Panel>
       </article>
     );

@@ -157,10 +157,10 @@ export class DetailPage extends Component<Props> {
               </>
             :
               <div className="panel pt-15">
-                <p className="fs-14 mb-15">
+                <p className="fs-14 mb-15" lang={currentLanguage.code}>
                   <Translate component="strong" content="language.notAvailable.heading"/>
                 </p>
-                <Translate className="fs-14 mb-15" component="p" content="language.notAvailable.content"/>
+                <Translate className="fs-14 mb-15" component="p" content="language.notAvailable.content" lang={currentLanguage.code}/>
                 {this.props.availableLanguages.length > 0 &&
                   <p className="fs-14 mb-15"><Translate content="language.notAvailable.alternateLanguage"/>: {languageLinks}</p>
                 }

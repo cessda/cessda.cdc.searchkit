@@ -95,7 +95,7 @@ export class Result extends Component<Props, ComponentState> {
 	
     return (
       <div className="list_hit" data-qa="hit">
-        <h4 className={bemBlocks.item().mix(bemBlocks.container('hith4'))}>
+        <h4 className={bemBlocks.item().mix(bemBlocks.container('hith4'))} lang={currentLanguage}>
           <Link to={{
             pathname: "/detail",
             query: {
@@ -104,10 +104,10 @@ export class Result extends Component<Props, ComponentState> {
             }
           }}><span dangerouslySetInnerHTML={{__html: item.titleStudyHighlight || item.titleStudy}}></span></Link>
         </h4>
-        <div className={bemBlocks.item().mix(bemBlocks.container('meta'))}>
+        <div className={bemBlocks.item().mix(bemBlocks.container('meta'))} lang={currentLanguage}>
           {creators}
         </div>
-        <div className={bemBlocks.item().mix(bemBlocks.container('desc'))}>
+        <div className={bemBlocks.item().mix(bemBlocks.container('desc'))} lang={currentLanguage}>
           {this.state.abstractExpanded ? 
             <span className="abstr" dangerouslySetInnerHTML={{__html: item.abstractHighlight || item.abstract}}/>
           :

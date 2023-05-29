@@ -18,6 +18,7 @@ import type {State} from '../types';
 import {push} from 'react-router-redux';
 import Translate from 'react-translate-component';
 import { Link } from 'react-router';
+import counterpart from 'counterpart';
 
 export type Props = ReturnType<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>
 
@@ -39,7 +40,7 @@ export class Similars extends Component<Props> {
     }
 
     return (
-      <div className="similars">
+      <div className="similars" lang={counterpart.getLocale()}>
         {links}
         {links.length === 0 &&
          <Translate component="p" content="similarResults.notAvailable"/>

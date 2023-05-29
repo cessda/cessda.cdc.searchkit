@@ -96,7 +96,7 @@ describe('Detail component', () => {
                                              {"country": "Norway"}, {"country": "Sweden"},
                                              {"country": " "}],
                                              c => c.country, ", ")}</>).html()
-    ).toContain('<div>Finland, Norway, Sweden</div>');
+    ).toContain('<div lang="en">Finland, Norway, Sweden</div>');
   });
 
   it('should handle formatting dates with missing data', () => {
