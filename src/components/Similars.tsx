@@ -33,14 +33,14 @@ export class Similars extends Component<Props> {
 
     for (let i = 0; i < similars.length; i++) {
       // Construct the similar URL
-      links.push(<Link key={i} to={{
+      links.push(<p lang={counterpart.getLocale()}><Link key={i} to={{
         pathname: '/detail',
         query: { q: similars[i].id }
-      }}>{similars[i].title}</Link>);
+      }}>{similars[i].title}</Link></p>);
     }
 
     return (
-      <div className="similars" lang={counterpart.getLocale()}>
+      <div className="similars">
         {links}
         {links.length === 0 &&
          <Translate component="p" content="similarResults.notAvailable"/>
