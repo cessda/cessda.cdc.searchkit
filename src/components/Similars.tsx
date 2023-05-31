@@ -18,7 +18,6 @@ import type {State} from '../types';
 import {push} from 'react-router-redux';
 import Translate from 'react-translate-component';
 import { Link } from 'react-router';
-import counterpart from 'counterpart';
 
 export type Props = ReturnType<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>
 
@@ -26,14 +25,15 @@ export class Similars extends Component<Props> {
 
   render() {
     const {
-      similars    
+      similars,
+      currentLanguage
     } = this.props;
 
     const links: JSX.Element[] = [];
 
     for (let i = 0; i < similars.length; i++) {
       // Construct the similar URL
-      links.push(<p lang={counterpart.getLocale()}><Link key={i} to={{
+      links.push(<p lang={currentLanguage}><Link key={i} to={{
         pathname: '/detail',
         query: { q: similars[i].id }
       }}>{similars[i].title}</Link></p>);
@@ -50,9 +50,10 @@ export class Similars extends Component<Props> {
   }
 }
 
-export function mapStateToProps(state: Pick<State, "detail">) {
+export function mapStateToProps(state: Pick<State, "detail" | "language">) {
   return {
-    similars: state.detail.similars
+    similars: state.detail.similars,
+    currentLanguage: state.language.currentLanguage.code
   };
 }
 

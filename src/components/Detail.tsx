@@ -26,6 +26,7 @@ import counterpart from "counterpart";
 
 export interface Props {
   item: CMMStudy;
+  lang: string;
 }
 
 export interface State {
@@ -66,14 +67,14 @@ export default class Detail extends React.Component<Props, State> {
 
   static readonly dateFormatter = DateTimeFormatter.ofPattern("[[dd/]MM/]uuuu");
 
-  static generateElements<T, R>(
+  generateElements<T, R>(
     field: T[],
     element: 'div' | 'tag' | 'ul',
     callback?: (args: T) => R,
     omitLang?: boolean
   ) {
     const elements: JSX.Element[] = [];
-    const lang = counterpart.getLocale();
+    const lang = this.props.lang;
 
     for (let i = 0; i < field.length; i++) {
       if (field[i]) {
@@ -114,29 +115,29 @@ export default class Detail extends React.Component<Props, State> {
    * @param separator the character(s) used for joining the field values
    * @returns <div> element that contains the values separated by the separator
    */
-  static joinValuesBySeparator<T>(arr: Array<T>, extractor: (object: T) => string, separator: string) {
+  joinValuesBySeparator<T>(arr: Array<T>, extractor: (object: T) => string, separator: string) {
     return (
-      <div lang={counterpart.getLocale()}>{arr.map(element => extractor(element)).filter(value => value && value.trim() !== '').join(separator)}</div>
+      <div lang={this.props.lang}>{arr.map(element => extractor(element)).filter(value => value && value.trim() !== '').join(separator)}</div>
     )
   }
 
-  static formatDate(
+  formatDate(
     dateTimeFormatter: DateTimeFormatter,
     date1?: string,
     date2?: string,
     dateFallback?: DataCollectionFreeText[]
   ): JSX.Element | JSX.Element[] {
     if (!date1 && !date2 && !dateFallback) {
-      return <Translate content="language.notAvailable.field" lang={counterpart.getLocale()} />;
+      return <Translate content="language.notAvailable.field" lang={this.props.lang} />;
     }
     if (!date1 && !date2 && dateFallback) {
       if (dateFallback.length === 2 && dateFallback[0].event === 'start' && dateFallback[1].event === 'end') {
         // Handle special case where array items are a start/end date range.
-        return Detail.formatDate(dateTimeFormatter, dateFallback[0].dataCollectionFreeText, dateFallback[1].dataCollectionFreeText);
+        return this.formatDate(dateTimeFormatter, dateFallback[0].dataCollectionFreeText, dateFallback[1].dataCollectionFreeText);
       }
       // Generate elements for each date in the array.
       return (
-          Detail.generateElements(
+          this.generateElements(
             dateFallback,
             'div',
             date => Detail.parseDate(date.dataCollectionFreeText, dateTimeFormatter)
@@ -151,7 +152,7 @@ export default class Detail extends React.Component<Props, State> {
         return <p>{Detail.parseDate(date1, dateTimeFormatter)} - {Detail.parseDate(date2, dateTimeFormatter)}</p>
       }
     } else {
-      return <Translate content="language.notAvailable.field" lang={counterpart.getLocale()} />;
+      return <Translate content="language.notAvailable.field" lang={this.props.lang} />;
     }
   }
 
@@ -181,14 +182,14 @@ export default class Detail extends React.Component<Props, State> {
    * @param universe the universe to format
    * @returns the formatted <p> element
    */
-  private static formatUniverse(universe: Universe) {
-    const inclusion = <p lang={counterpart.getLocale()}>{striptags(universe.inclusion)}</p>;
+  private formatUniverse(universe: Universe) {
+    const inclusion = <p lang={this.props.lang}>{striptags(universe.inclusion)}</p>;
 
     if (universe.exclusion) {
       return (
         <>
           {inclusion}
-          <p lang={counterpart.getLocale()}>Excludes: {striptags(universe.exclusion)}</p>
+          <p lang={this.props.lang}>Excludes: {striptags(universe.exclusion)}</p>
         </>
       );
     } else {
@@ -197,8 +198,7 @@ export default class Detail extends React.Component<Props, State> {
   }
 
   render() {
-    const { item } = this.props;
-    const lang = counterpart.getLocale();
+    const { item, lang } = this.props;
 
     return (
       <article className="w-100">
@@ -221,7 +221,7 @@ Summary information
             component="h2"
             content="metadata.creator"
           />
-          {Detail.generateElements(item.creators, 'div')}
+          {this.generateElements(item.creators, 'div')}
         </section>
 
         <section>
@@ -230,7 +230,7 @@ Summary information
             component="h2"
             content="metadata.studyPersistentIdentifier"
           />
-          {Detail.generateElements(item.pidStudies.filter(p => p.pid), 'div', pidStudy => {
+          {this.generateElements(item.pidStudies.filter(p => p.pid), 'div', pidStudy => {
             // The agency field is an optional attribute, only append if present
             if (pidStudy.agency) {
               return <p>{`${pidStudy.pid} (${pidStudy.agency})`}</p>;
@@ -286,7 +286,7 @@ Summary information
             component="h3"
             content="metadata.dataCollectionPeriod"
           />
-          {Detail.formatDate(
+          {this.formatDate(
             Detail.dateFormatter,
             item.dataCollectionPeriodStartdate,
             item.dataCollectionPeriodEnddate,
@@ -298,35 +298,35 @@ Summary information
             component="h3"
             content="metadata.country"
           />
-          {Detail.joinValuesBySeparator(item.studyAreaCountries, c => c.country, ", ")}
+          {this.joinValuesBySeparator(item.studyAreaCountries, c => c.country, ", ")}
 
           <Translate
             className="data-label"
             component="h3"
             content="metadata.timeDimension"
           />
-          {Detail.generateElements(item.typeOfTimeMethods, 'div', time => time.term)}
+          {this.generateElements(item.typeOfTimeMethods, 'div', time => time.term)}
 
           <Translate
             className="data-label"
             component="h3"
             content="metadata.analysisUnit"
           />
-          {Detail.generateElements(item.unitTypes, 'div', unit => unit.term)}
+          {this.generateElements(item.unitTypes, 'div', unit => unit.term)}
 
           <Translate
             className="data-label"
             component="h3"
             content="metadata.universe"
           />
-          {item.universe ? Detail.formatUniverse(item.universe) : <Translate content="language.notAvailable.field" lang={lang} />}
+          {item.universe ? this.formatUniverse(item.universe) : <Translate content="language.notAvailable.field" lang={lang} />}
 
           <Translate
             className="data-label"
             component="h3"
             content="metadata.samplingProcedure"
           />
-          {Detail.generateElements(item.samplingProcedureFreeTexts, 'div', text => 
+          {this.generateElements(item.samplingProcedureFreeTexts, 'div', text =>
             <div className="data-abstract" dangerouslySetInnerHTML={{__html: text}}/>
           )}
 
@@ -335,7 +335,7 @@ Summary information
             component="h3"
             content="metadata.dataCollectionMethod"
           />
-          {Detail.generateElements(item.typeOfModeOfCollections, 'div', method => method.term)}
+          {this.generateElements(item.typeOfModeOfCollections, 'div', method => method.term)}
         </Panel>
 
         <Panel
@@ -357,14 +357,14 @@ Summary information
             component="h3"
             content="metadata.yearOfPublication"
           />
-          {Detail.formatDate(DateTimeFormatter.ofPattern("uuuu"), item.publicationYear)}
+          {this.formatDate(DateTimeFormatter.ofPattern("uuuu"), item.publicationYear)}
 
           <Translate
             className="data-label"
             component="h3"
             content="metadata.termsOfDataAccess"
           />
-          {Detail.generateElements(item.dataAccessFreeTexts, 'div', text => 
+          {this.generateElements(item.dataAccessFreeTexts, 'div', text =>
             <div className="data-abstract" dangerouslySetInnerHTML={{ __html: text }} />
           )}
         </Panel>
@@ -378,7 +378,7 @@ Summary information
           collapsable={false}
         >
           <div className="tags">
-            {Detail.generateElements(
+            {this.generateElements(
               item.classifications,
               'tag',
               classifications => <Link to={"/?classifications.term[0]=" + encodeURI(classifications.term)}>{upperFirst(classifications.term)}</Link>
@@ -395,7 +395,7 @@ Summary information
           collapsable={false}
         >
           <div className="tags">
-            {Detail.generateElements(this.state.keywordsExpanded ? item.keywords : item.keywords.slice(0, 12), 'tag',
+            {this.generateElements(this.state.keywordsExpanded ? item.keywords : item.keywords.slice(0, 12), 'tag',
               keywords => <Link to={`/?keywords_term=${encodeURI(keywords.term)}`}>{upperFirst(keywords.term)}</Link>
             )}
           </div>
@@ -425,7 +425,7 @@ Summary information
           title={<Translate component="h2" content="metadata.relatedPublications"/>}
           collapsable={false}
         >
-          {Detail.generateElements(item.relatedPublications, 'ul', relatedPublication => {
+          {this.generateElements(item.relatedPublications, 'ul', relatedPublication => {
             const relatedPublicationTitle = striptags(relatedPublication.title);
             if (relatedPublication.holdings?.length > 0) {
               return <a href={relatedPublication.holdings[0]}>{relatedPublicationTitle}</a>;

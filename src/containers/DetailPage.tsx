@@ -153,7 +153,7 @@ export class DetailPage extends Component<Props> {
         
                   <div className="is-clearfix"/>
                 </div>
-                <Detail item={item}/>
+                <Detail item={item} lang={currentLanguage.code}/>
               </>
             :
               <div className="panel pt-15">

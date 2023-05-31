@@ -23,13 +23,16 @@ function setup(item?: Partial<CMMStudy>) {
     item: {
       ...mockStudy,
       ...item
-    }
+    },
+    lang: "en"
   };
 
   const enzymeWrapper = shallow(<Detail {...props} />);
+  const detailInstance = enzymeWrapper.instance() as Detail;
   return {
     props,
-    enzymeWrapper
+    enzymeWrapper,
+    detailInstance
   };
 }
 
@@ -84,15 +87,17 @@ describe('Detail component', () => {
   });
 
   it('should handle generating elements with no value', () => {
+    const { detailInstance } = setup();
     // "" is a falsy value, so should be dropped.
     expect(
-      mount(<>{Detail.generateElements([""], "div", e => e)}</>).html()
+      mount(<>{detailInstance.generateElements([""], "div", e => e)}</>).html()
     ).toContain('notAvailable');
   });
 
   it('should handle joining values and returning them in div even if some have no value', () => {
+    const { detailInstance } = setup();
     expect(
-      mount(<>{Detail.joinValuesBySeparator([{"country": "Finland"}, {"country": ""},
+      mount(<>{detailInstance.joinValuesBySeparator([{"country": "Finland"}, {"country": ""},
                                              {"country": "Norway"}, {"country": "Sweden"},
                                              {"country": " "}],
                                              c => c.country, ", ")}</>).html()
@@ -100,15 +105,17 @@ describe('Detail component', () => {
   });
 
   it('should handle formatting dates with missing data', () => {
+    const { detailInstance } = setup();
     expect(
-      mount(<>{Detail.formatDate(Detail.dateFormatter)}</>).html()
+      mount(<>{detailInstance.formatDate(Detail.dateFormatter)}</>).html()
     ).toContain('notAvailable');
   });
 
   it('should handle special case where array items are a start/end date range', () => {
+    const { detailInstance } = setup();
     expect(
       mount(<>{
-        Detail.formatDate(
+        detailInstance.formatDate(
           Detail.dateFormatter,
           undefined,
           undefined,
@@ -130,9 +137,10 @@ describe('Detail component', () => {
   });
 
   it('should handle formatting dates with fallback array containing date range', () => {
+    const { detailInstance } = setup();
     expect(
       mount(<>{
-        Detail.formatDate(
+        detailInstance.formatDate(
           Detail.dateFormatter,
           undefined,
           undefined,
@@ -155,32 +163,36 @@ describe('Detail component', () => {
   });
 
   it('should handle formatting dates with invalid first date', () => {
+    const { detailInstance } = setup();
     expect(
-      mount(<>{Detail.formatDate(Detail.dateFormatter, 'Not a date')}</>)
+      mount(<>{detailInstance.formatDate(Detail.dateFormatter, 'Not a date')}</>)
         .find('p')
         .text()
     ).toBe('Not a date');
   });
 
   it('should handle formatting dates as a range with invalid first date', () => {
+    const { detailInstance } = setup();
     expect(
-      mount(<>{Detail.formatDate(Detail.dateFormatter, 'Not a date', '2006-05-04')}</>)
+      mount(<>{detailInstance.formatDate(Detail.dateFormatter, 'Not a date', '2006-05-04')}</>)
         .find('p')
         .text()
     ).toBe('Not a date - 04/05/2006');
   });
 
   it('should handle formatting dates as a range with valid second date', () => {
+    const { detailInstance } = setup();
     expect(
-      mount(<>{Detail.formatDate(Detail.dateFormatter, '2003-02-01', '2006-05-04')}</>)
+      mount(<>{detailInstance.formatDate(Detail.dateFormatter, '2003-02-01', '2006-05-04')}</>)
         .find('p')
         .text()
     ).toBe('01/02/2003 - 04/05/2006');
   });
 
   it('should handle formatting dates as a range with invalid second date', () => {
+    const { detailInstance } = setup();
     expect(
-      mount(<>{Detail.formatDate(Detail.dateFormatter, '2003-02-01', 'Not a date')}</>)
+      mount(<>{detailInstance.formatDate(Detail.dateFormatter, '2003-02-01', 'Not a date')}</>)
         .find('p')
         .text()
     ).toBe('01/02/2003 - Not a date');
