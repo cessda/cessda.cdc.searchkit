@@ -274,6 +274,57 @@ Summary information
 
         <Panel
           className="section-header"
+          title={<Translate component="h2" content='metadata.topics.label'/>}
+          tooltip={<Tooltip id="metadata-topics-tooltip"
+                            content={<Translate content='metadata.topics.tooltip.content' unsafe/>}
+                            ariaLabel={counterpart.translate("metadata.topics.tooltip.ariaLabel")}/>}
+          collapsable={false}
+        >
+          <div className="tags">
+            {this.generateElements(
+              item.classifications,
+              'tag',
+              classifications => <Link to={"/?classifications.term[0]=" + encodeURI(classifications.term)}>{upperFirst(classifications.term)}</Link>
+            )}
+          </div>
+        </Panel>
+
+        <Panel
+          className="section-header"
+          title={<Translate component="h2" content='metadata.keywords.label'/>}
+          tooltip={<Tooltip id="metadata-keywords-tooltip"
+                            content={<Translate content='metadata.keywords.tooltip.content' unsafe/>}
+                            ariaLabel={counterpart.translate("metadata.keywords.tooltip.ariaLabel")}/>}
+          collapsable={false}
+        >
+          <div className="tags">
+            {this.generateElements(this.state.keywordsExpanded ? item.keywords : item.keywords.slice(0, 12), 'tag',
+              keywords => <Link to={`/?keywords_term=${encodeURI(keywords.term)}`}>{upperFirst(keywords.term)}</Link>
+            )}
+          </div>
+          {item.keywords.length > Detail.truncatedKeywordsLength &&
+            <a className="button is-small is-white" onClick={() => {
+              this.setState(state => ({
+                keywordsExpanded: !state.keywordsExpanded
+              }));
+            }}>
+              {this.state.keywordsExpanded ?
+              <>
+                <span className="icon is-small"><FaAngleUp/></span>
+                <Translate component="span" content="readLess"/>
+              </>
+              :
+              <>
+                <span className="icon is-small"><FaAngleDown/></span>
+                <Translate component="span" content="readMore"/>
+              </>
+              }
+            </a>
+          }
+        </Panel>
+
+        <Panel
+          className="section-header"
           title={<Translate component="h2" content="metadata.methodology.label"/>}
           tooltip={<Tooltip id="metadata-methodology-tooltip"
                             content={<Translate content='metadata.methodology.tooltip.content' unsafe/>}
@@ -367,57 +418,6 @@ Summary information
           {this.generateElements(item.dataAccessFreeTexts, 'div', text =>
             <div className="data-abstract" dangerouslySetInnerHTML={{ __html: text }} />
           )}
-        </Panel>
-
-        <Panel
-          className="section-header"
-          title={<Translate component="h2" content='metadata.topics.label'/>}
-          tooltip={<Tooltip id="metadata-topics-tooltip"
-                            content={<Translate content='metadata.topics.tooltip.content' unsafe/>}
-                            ariaLabel={counterpart.translate("metadata.topics.tooltip.ariaLabel")}/>}
-          collapsable={false}
-        >
-          <div className="tags">
-            {this.generateElements(
-              item.classifications,
-              'tag',
-              classifications => <Link to={"/?classifications.term[0]=" + encodeURI(classifications.term)}>{upperFirst(classifications.term)}</Link>
-            )}
-          </div>
-        </Panel>
-
-        <Panel
-          className="section-header"
-          title={<Translate component="h2" content='metadata.keywords.label'/>}
-          tooltip={<Tooltip id="metadata-keywords-tooltip"
-                            content={<Translate content='metadata.keywords.tooltip.content' unsafe/>}
-                            ariaLabel={counterpart.translate("metadata.keywords.tooltip.ariaLabel")}/>}
-          collapsable={false}
-        >
-          <div className="tags">
-            {this.generateElements(this.state.keywordsExpanded ? item.keywords : item.keywords.slice(0, 12), 'tag',
-              keywords => <Link to={`/?keywords_term=${encodeURI(keywords.term)}`}>{upperFirst(keywords.term)}</Link>
-            )}
-          </div>
-          {item.keywords.length > Detail.truncatedKeywordsLength &&
-            <a className="button is-small is-white" onClick={() => {
-              this.setState(state => ({
-                keywordsExpanded: !state.keywordsExpanded
-              }));
-            }}>
-              {this.state.keywordsExpanded ?
-              <>
-                <span className="icon is-small"><FaAngleUp/></span>
-                <Translate component="span" content="readLess"/>
-              </>
-              :
-              <>
-                <span className="icon is-small"><FaAngleDown/></span>
-                <Translate component="span" content="readMore"/>
-              </>
-              }
-            </a>
-          }
         </Panel>
 
         <Panel
