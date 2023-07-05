@@ -33,7 +33,7 @@ export class Similars extends Component<Props> {
 
     for (let i = 0; i < similars.length; i++) {
       // Construct the similar URL
-      links.push(<p lang={currentLanguage}><Link key={i} to={{
+      links.push(<p key={similars[i].id} lang={currentLanguage}><Link to={{
         pathname: '/detail',
         query: { q: similars[i].id }
       }}>{similars[i].title}</Link></p>);

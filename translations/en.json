@@ -25,11 +25,16 @@
     "resetSearch": "Reset Search"
   },
   "filters": {
+    "view": {
+      "more": "Add %(facetsPerPage)s more %(name)s to searchable %(name)s list",
+      "less": "Keep only %(defaultSize)s most common %(name)s in searchable %(name)s list",
+      "all": "Add all %(name)s to searchable %(name)s list"
+    },
     "topic": {
       "label": "Topic",
       "placeholder": "Search topics",
       "tooltip": {
-        "content": "<a href=\"https://vocabularies.cessda.eu/vocabulary/TopicClassification?lang=en\">CESSDA Topic Classification</a> serves to identify the general topics, subjects or themes of a study. Note: Some studies use other topic classifications and are not included in the filter.",
+        "content": "Topic terms serve to identify the general topics, subjects or themes of a study. Many but not all metadata providers use <a href=\"https://vocabularies.cessda.eu/vocabulary/TopicClassification?lang=en\">CESSDA Topic Classification</a> for their topic terms.",
         "ariaLabel": "Tooltip button for Topic filter"
       }
     },
@@ -37,7 +42,7 @@
       "label": "Keywords",
       "placeholder": "Search keywords",
       "tooltip": {
-        "content": "Keywords which describe the content of the data. Many but not all metadata providers use <a href=\"https://elsst.cessda.eu/\">ELSST Thesaurus</a> for their keywords. Search term can be truncated by using the asterisk (*) after the search term, e.g. discrim*.",
+        "content": "Keywords which describe the content of the data. Many but not all metadata providers use <a href=\"https://elsst.cessda.eu/\">ELSST Thesaurus</a> for their keywords.",
         "ariaLabel": "Tooltip button for Keywords filter"
       }
     },

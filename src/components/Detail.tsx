@@ -299,7 +299,7 @@ Summary information
         >
           <div className="tags">
             {this.generateElements(this.state.keywordsExpanded ? item.keywords : item.keywords.slice(0, 12), 'tag',
-              keywords => <Link to={`/?keywords_term=${encodeURI(keywords.term)}`}>{upperFirst(keywords.term)}</Link>
+              keywords => <Link to={`/?keywords.term[0]=${encodeURI(keywords.term)}`}>{upperFirst(keywords.term)}</Link>
             )}
           </div>
           {item.keywords.length > Detail.truncatedKeywordsLength &&
