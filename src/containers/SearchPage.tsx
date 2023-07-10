@@ -19,7 +19,7 @@ import TopBar from '../components/Topbar';
 import Pagination from '../components/Pagination';
 import {
   Hits, Layout, LayoutBody, LayoutResults, NoHits, Pagination as SearchkitPagination, RangeFilter, RangeSliderInput,
-  RefinementListFilter, SearchkitProvider, SideBar, FacetAccessor
+  RefinementListFilter, SearchkitProvider, SideBar
 } from 'searchkit';
 import Translate from 'react-translate-component';
 import Header from '../components/Header';
@@ -32,21 +32,12 @@ import $ from 'jquery';
 import type {State} from '../types';
 import counterpart from 'counterpart';
 
-type FacetsPerPage = {
-  [key: string]: number;
-};
-
 export type Props = ReturnType<typeof mapStateToProps>;
 
 export class SearchPage extends Component<Props> {
 
-  facetsPerPage: FacetsPerPage = {
-    'keywords.term': 100000
-  }
-
   componentDidMount() {
     this.updateTitle();
-    this.changeFacetsPerPage();
     searchkit.resetState();
 
     // Remove the JSON-LD representation if present
@@ -72,15 +63,6 @@ export class SearchPage extends Component<Props> {
     } else {
       document.title = counterpart.translate('datacatalogue');
     }
-  }
-
-  changeFacetsPerPage() {
-    // Change the default (50) facetsPerPage if it has been defined for the filter
-    searchkit.getAccessorsByType(FacetAccessor).forEach((facet: FacetAccessor) => {
-      if (this.facetsPerPage[facet.key]) {
-        facet.options.facetsPerPage = this.facetsPerPage[facet.key]
-      }
-    });
   }
 
   autoExpandFilter(filterName: string): void {
@@ -143,7 +125,7 @@ export class SearchPage extends Component<Props> {
                                       containerComponent={<Panel
                                         title={<Translate content='filters.keywords.label'/>}
                                         tooltip={<Tooltip id="filters-keywords-tooltip"
-                                                          content={<Translate content='filters.keywords.tooltip.content' unsafe/>}
+                                                          content={<Translate content='filters.keywords.tooltip.content' size='2000' unsafe/>}
                                                           ariaLabel={counterpart.translate("filters.keywords.tooltip.ariaLabel")}/>}
                                         className="keywords"
                                         collapsable={true}
@@ -152,35 +134,7 @@ export class SearchPage extends Component<Props> {
                                       listComponent={<MultiSelect placeholder={<Translate content='filters.keywords.placeholder'/>}
                                                                   ariaLabel={counterpart.translate('filters.keywords.label')}/>}
                                       size={2000}
-                                      showMore={true}
-                                      translations={{
-                                        'facets.view_more': counterpart.translate('filters.view.more', {
-                                                                                  name: 'keywords',
-                                                                                  facetsPerPage: this.facetsPerPage["keywords.term"]
-                                        }),
-                                        'facets.view_less': counterpart.translate('filters.view.less', {
-                                                                                  name: 'keywords',
-                                                                                  defaultSize: 2000
-                                        }),
-                                        'facets.view_all': counterpart.translate('filters.view.all', {
-                                                                                 name: 'keywords'
-                                        })
-                                      }}/>
-
-                {/* <InputFilter id="keywords_term"
-                              title={counterpart.translate('filters.keywords.label')}
-                              searchOnChange={false}
-                              placeholder={counterpart.translate('filters.keywords.placeholder')}
-                              containerComponent={<Panel
-                                title={<Translate content='filters.keywords.label'/>}
-                                tooltip={<Tooltip id="filters-keywords-tooltip"
-                                                  content={<Translate content='filters.keywords.tooltip.content' unsafe/>}
-                                                  ariaLabel={counterpart.translate("filters.keywords.tooltip.ariaLabel")}/>}
-                                className="keywords"
-                                collapsable={true}
-                                defaultCollapsed={true}/>
-                              }
-                              queryFields={["keywordsSearchField"]}/> */}
+                                      showMore={false}/>
 
                 <RangeFilter min={1900}
                             max={new Date().getFullYear()}

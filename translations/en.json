@@ -42,7 +42,7 @@
       "label": "Keywords",
       "placeholder": "Search keywords",
       "tooltip": {
-        "content": "Keywords which describe the content of the data. Many but not all metadata providers use <a href=\"https://elsst.cessda.eu/\">ELSST Thesaurus</a> for their keywords.",
+        "content": "Keywords which describe the content of the data. Many but not all metadata providers use <a href=\"https://elsst.cessda.eu/\">ELSST Thesaurus</a> for their keywords. Searchable list contains %(size)s most common keywords.",
         "ariaLabel": "Tooltip button for Keywords filter"
       }
     },

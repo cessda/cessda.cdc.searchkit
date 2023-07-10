@@ -15,8 +15,6 @@ import _ from 'lodash';
 import React from 'react';
 import { shallow } from 'enzyme';
 import { mapStateToProps, Props, SearchPage } from '../../../src/containers/SearchPage';
-import searchkit from '../../../src/utilities/searchkit';
-import { FacetAccessor } from 'searchkit';
 
 // Mock props and shallow render container for test.
 function setup(partialProps?: Partial<Props>) {
@@ -51,24 +49,6 @@ describe('SearchPage container', () => {
     });
     const searchPage = enzymeWrapper.find('SearchkitProvider');
     expect(searchPage.exists()).toBe(true);
-  });
-
-  it('should change facetsPerPage for filters if set', () => {
-    const { enzymeWrapper } = setup();
-    const instance = enzymeWrapper.instance() as SearchPage;
-    const accessors = [
-      { key: 'classifications.term', options: { facetsPerPage: 50 } },
-      { key: 'keywords.term', options: { facetsPerPage: 50 } }
-    ];
-    jest.spyOn(searchkit, 'getAccessorsByType').mockImplementation(() => accessors);
-    instance['facetsPerPage'] = {
-      'classifications.term': 10000
-    }
-    instance.componentDidMount();
-    const topicAccessor = searchkit.getAccessorsByType(FacetAccessor).find((facet: FacetAccessor) => facet.key === 'classifications.term');
-    const keywordsAccessor = searchkit.getAccessorsByType(FacetAccessor).find((facet: FacetAccessor) => facet.key === 'keywords.term');
-    expect(topicAccessor.options.facetsPerPage).toBe(10000);
-    expect(keywordsAccessor.options.facetsPerPage).toBe(50);
   });
 
   it('should apply class when mobile filters visible', () => {
