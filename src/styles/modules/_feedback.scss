@@ -1,0 +1,25 @@
+#zammad-feedback-form {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+}
+
+.zammad-form {
+  display: flex;
+  flex-direction: column;
+
+  .zammad-form-group {
+    color: #333;
+
+    .zammad-form-control {
+      font-size: 1rem;
+      padding: 2px;
+    }
+  }
+
+  .btn {
+    @extend .button;
+    @extend .is-info;
+    margin: auto;
+  }
+}
