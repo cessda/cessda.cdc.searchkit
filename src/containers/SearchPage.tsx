@@ -88,7 +88,7 @@ export class SearchPage extends Component<Props> {
       <SearchkitProvider searchkit={searchkit}>
         <Layout className={showMobileFilters ? 'show-mobile-filters' : ''}>
           <Header/>
-          <div className="container">
+          <main className="container">
           <LayoutBody className="columns">
             <SideBar className="column is-4">
               <div className="float">
@@ -229,7 +229,7 @@ export class SearchPage extends Component<Props> {
                                    listComponent={<Pagination ariaLabel={counterpart.translate('pagination.navBottom')}/>}/>
             </LayoutResults>
           </LayoutBody>
-          </div>
+          </main>
           <Footer/>
         </Layout>
       </SearchkitProvider>

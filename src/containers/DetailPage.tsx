@@ -116,7 +116,7 @@ export class DetailPage extends Component<Props> {
       <SearchkitProvider searchkit={searchkit}>
         <Layout>
           <Header/>
-          <div className="container mb-3">
+          <main className="container mb-3">
           <LayoutBody className="columns">
             <SideBar className="is-hidden-mobile column is-4">
               <Panel title={<Translate content='similarResults.heading'/>}
@@ -168,7 +168,7 @@ export class DetailPage extends Component<Props> {
             }
             </LayoutResults>
           </LayoutBody>
-          </div>
+          </main>
           <Footer/>
         </Layout>
       </SearchkitProvider>

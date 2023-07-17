@@ -111,7 +111,7 @@ export class Header extends Component<Props> {
               </div>
             </div>
             <div className="column">
-              <div className="search-wrapper">
+              <div className="search-wrapper" role="search">
                 <SearchBox
                   autofocus={true}
                   searchOnChange={true}
@@ -157,11 +157,12 @@ export class Header extends Component<Props> {
               <div className="column is-centered is-hidden-touch">
                 {pathname === "/" && <HitsStats className="hits-count" />}
               </div>
-              <div className="column has-text-right-tablet has-text-left-mobile is-narrow-touch">
+              <nav className="column has-text-right-tablet has-text-left-mobile is-narrow-touch" aria-label="Main">
+                <Translate component={Link} to="/" className="is-sr-only is-hidden-mobile" content="header.frontPage"/>
                 <Translate component={Link} to="/about" className="sk-reset-filters link is-hidden-mobile" content="about.label"/>
                 <Translate component="a" href="/documentation" className="sk-reset-filters link is-hidden-mobile" content="documentation.label"/>
                 <Translate component="a" href="https://api.tech.cessda.eu/" className="sk-reset-filters link is-hidden-mobile" content="api.label"/>
-              </div>
+              </nav>
             </div>
           </div>
         </div>

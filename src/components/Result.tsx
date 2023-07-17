@@ -114,65 +114,59 @@ export class Result extends Component<Props, ComponentState> {
             <span dangerouslySetInnerHTML={{__html: item.abstractHighlightShort || item.abstractShort}}/>
           }
         </div>
-        <span className="level mt-10 result-actions">
-          <span className="level-left is-hidden-touch">
-            <div className="field is-grouped">
-              <div className="control">
-                {item.abstract.length > 500 &&
-                 <a className={bemBlocks.item().mix('button is-small is-white')} onClick={() => {
-                  // Notify Matomo Analytics of toggling "Read more" for a study.
-                  const _paq = getPaq();
-                  _paq.push(['trackEvent', 'Search', 'Read more', item.titleStudy]);
+        <div className="result-actions mt-10">
+          <div className="is-flex is-hidden-touch">
+            {item.abstract.length > 500 &&
+              <a className={bemBlocks.item().mix('button is-small is-white')} onClick={() => {
+              // Notify Matomo Analytics of toggling "Read more" for a study.
+              const _paq = getPaq();
+              _paq.push(['trackEvent', 'Search', 'Read more', item.titleStudy]);
 
-                  this.setState(state => ({
-                    abstractExpanded: !state.abstractExpanded
-                  }));
-                 }}>
-                   {this.state.abstractExpanded ?
-                    <>
-                      <span className="icon is-small"><FaAngleUp/></span>
-                      <Translate component="span" content="readLess"/>
-                    </>
-                   :
-                    <>
-                      <span className="icon is-small"><FaAngleDown/></span>
-                      <Translate component="span" content="readMore"/>
-                    </>
-                   }
-                 </a>
+              this.setState(state => ({
+                abstractExpanded: !state.abstractExpanded
+              }));
+              }}>
+                {this.state.abstractExpanded ?
+                <>
+                  <span className="icon is-small"><FaAngleUp/></span>
+                  <Translate component="span" content="readLess"/>
+                </>
+                :
+                <>
+                  <span className="icon is-small"><FaAngleDown/></span>
+                  <Translate component="span" content="readMore"/>
+                </>
                 }
-              </div>
-            </div>
-          </span>
-          <span className="level-right">
-            <div className="field is-grouped is-grouped-multiline">
-              {languages.length > 0 &&
-               <div className="control">
-                 <div className="buttons has-addons">
-                  <span className="button is-small is-white bg-w pe-none">
-                    <span className="icon is-small">
-                      <FaLanguage/>
-                    </span>
-                    <span><Translate content="language.label"/>:</span>
+              </a>
+            }
+          </div>
+          <div className="is-flex">
+            {languages.length > 0 &&
+              <div className="buttons has-addons">
+                <span className="button is-small is-white bg-w pe-none">
+                  <span className="icon is-small">
+                    <FaLanguage/>
                   </span>
-                   {languages}
-                 </div>
-               </div>
-              }
-              <div className="control">
-                {item.studyUrl &&
-                 <a className="button is-small is-white"
-                    href={item.studyUrl}
-                    rel="noreferrer"
-                    target="_blank">
-                   <span className="icon is-small"><FaExternalLinkAlt/></span>
-                   <Translate component="span" content="goToStudy"/>
-                 </a>
-                }
+                  <span><Translate content="language.label"/>:</span>
+                </span>
+                <span>
+                  {languages}
+                </span>
               </div>
-            </div>
-          </span>
-        </span>
+            }
+            <span>
+              {item.studyUrl &&
+                <a className="button is-small is-white"
+                  href={item.studyUrl}
+                  rel="noreferrer"
+                  target="_blank">
+                  <span className="icon is-small"><FaExternalLinkAlt/></span>
+                  <Translate component="span" content="goToStudy"/>
+                </a>
+              }
+            </span>
+          </div>
+        </div>
       </div>
     );
   }

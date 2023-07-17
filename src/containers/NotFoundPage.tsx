@@ -38,7 +38,7 @@ export class AboutPage extends Component {
       <SearchkitProvider searchkit={searchkit}>
         <Layout>
           <Header/>
-          <div className="container">
+          <main className="container">
             <LayoutBody className="columns">
               <LayoutResults className="not-found-layout">
                 <article className="not-found-container">
@@ -52,7 +52,7 @@ export class AboutPage extends Component {
                 <Link to="/">Return to the home page</Link> | <a href="https://www.cessda.eu">CESSDA main website</a>
               </div>
             </div>
-          </div>
+          </main>
           <Footer/>
         </Layout>
       </SearchkitProvider>

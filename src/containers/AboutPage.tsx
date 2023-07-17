@@ -37,7 +37,7 @@ export class AboutPage extends Component {
       <SearchkitProvider searchkit={searchkit}>
         <Layout>
           <Header/>
-          <div className="container">
+          <main className="container">
           <LayoutBody className="columns">
             <LayoutResults>
               <article className="about-container">
@@ -46,7 +46,7 @@ export class AboutPage extends Component {
               </article>
             </LayoutResults>
           </LayoutBody>
-          </div>
+          </main>
           <Footer/>
         </Layout>
       </SearchkitProvider>
