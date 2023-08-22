@@ -53,7 +53,7 @@ export default ({ content, id, ariaLabel }: TooltipProps) => {
          onMouseEnter={() => setIsActive(true)}
          onMouseLeave={() => setIsActive(false)}>
       <div className="dropdown-trigger">
-        <button ref={tooltipButtonRef} className="button" aria-haspopup="true"
+        <button ref={tooltipButtonRef} className="button focus-visible" aria-haspopup="true"
                 {...(isActive ? {'aria-describedby': id} : {'aria-label': ariaLabel})}
                 onClick={(e) => handleClick(e)}
                 onKeyDown={(e) => handleKeyDown(e)}>

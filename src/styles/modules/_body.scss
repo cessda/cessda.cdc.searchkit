@@ -85,7 +85,7 @@ body {
   .language-picker {
     height: 42px;
     padding-top: 0;
-    padding-right: 15px;
+    margin-right: 15px;
     font-size: 14px;
     font-weight: 500;
     z-index: 2;
@@ -95,7 +95,7 @@ body {
       top: 1px;
       right: 1px;
       background:#fff;
-      padding-left: 15px;
+      margin-left: 15px;
       color: #555;
       
      
@@ -160,6 +160,16 @@ body {
     button {
       height: 45px;
     }
+  }
+
+  .skip-link-wrapper:before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+  }
+  .skip-link-wrapper {
+    position: relative;
   }
 
   .search-wrapper {
@@ -428,4 +438,17 @@ padding: 6px 0;
 
 select::-ms-expand {
   display: none;
+}
+
+:focus-visible,
+.focus-visible:focus-visible,
+.is-focused:focus-visible,
+.sk-select select:focus-visible,
+.language-picker:focus-within .Select-control {
+  outline: #fdc29b solid 2px;
+}
+
+.sk-panel__container,
+.button-wrapper .dropdown .dropdown-trigger button {
+  outline-offset: 1px;
 }

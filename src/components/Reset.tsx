@@ -37,7 +37,8 @@ export function Reset(props: Props) {
           if (pathname === '/' && hasFilters) {
             resetFilters();
           }
-        }}>
+        }}
+        tabIndex={0}>
       {translate('reset.clear_all')}
     </a>
   );

@@ -62,13 +62,24 @@ export class Panel extends SearchkitPanel {
     }
   }
 
+  handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    // If panels contain elements that shouldn't toggle collapse for the container, they need to be excluded here (like 'a' and 'button')
+    if ((event.key === 'Enter' || event.key === ' ') && !['a', 'button'].includes((event.target as HTMLElement).tagName.toLowerCase())) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.toggleCollapsed();
+    }
+  };
+
   render() {
     const {
       tooltip
     } = this.props;
 
     return (
-      <section className={'sk-panel__container' + (this.state.collapsed ? ' sk-panel__collapsed' : '')}>
+      <section className={'sk-panel__container' + (this.state.collapsed ? ' sk-panel__collapsed' : '')}
+               tabIndex={this.props.collapsable ? 0 : -1}
+               onKeyDown={this.props.collapsable ? (e) => this.handleKeyDown(e) : undefined }>
         {tooltip}
         {super.render()}
       </section>

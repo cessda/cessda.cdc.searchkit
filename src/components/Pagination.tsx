@@ -47,7 +47,7 @@ export default class Pagination extends AbstractItemList {
         const current = items[i].page === selectedItems[0] ? ' is-current' : '';
         links.push(
           <li key={items[i].key}>
-            <a className={'pagination-link' + current}
+            <a className={'pagination-link focus-visible' + current}
                href={'/?p=' + items[i].page}
                aria-label={counterpart.translate('pagination.page') + items[i].page}
                onClick={(e) => {
@@ -64,7 +64,7 @@ export default class Pagination extends AbstractItemList {
     return (
       <nav className="pagination is-centered is-small" role="navigation"
            aria-label={ariaLabel + selectedItems[0]}>
-        <a className="pagination-previous"
+        <a className="pagination-previous focus-visible"
            href={'/?p=' + items[0].page}
            aria-label={counterpart.translate('pagination.previous') + items[0].page}
            onClick={(e) => {
@@ -73,7 +73,10 @@ export default class Pagination extends AbstractItemList {
             }}>
           <FaChevronLeft/>
         </a>
-        <a className="pagination-next"
+        <ul className="pagination-list">
+          {links}
+        </ul>
+        <a className="pagination-next focus-visible"
            href={'/?p=' + items[items.length - 1].page}
            aria-label={counterpart.translate('pagination.next') + items[items.length - 1].page}
            onClick={(e) => {
@@ -82,9 +85,6 @@ export default class Pagination extends AbstractItemList {
             }}>
           <FaChevronRight/>
         </a>
-        <ul className="pagination-list">
-          {links}
-        </ul>
       </nav>
     );
   }

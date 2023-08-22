@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, { Component } from "react";
+import React, { Component, FocusEvent } from "react";
 import { GroupedSelectedFilters, HitsStats, ResetFilters } from "searchkit";
 import Language from "./Language";
 import { connect, Dispatch } from "react-redux";
@@ -34,6 +34,34 @@ import Tooltip from "./Tooltip";
 export type Props = ReturnType<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>;
 
 export class Header extends Component<Props> {
+  toggleSummaryRef: React.RefObject<HTMLAnchorElement>;
+
+  constructor(props: Props) {
+    super(props);
+    this.toggleSummaryRef = React.createRef();
+    this.focusToggleSummary = this.focusToggleSummary.bind(this);
+  }
+
+  focusToggleSummary() {
+    if (this.toggleSummaryRef.current) {
+      this.toggleSummaryRef.current.focus();
+    }
+  };
+
+  handleKeyDown(event: React.KeyboardEvent) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      event.stopPropagation();
+      if (event.target instanceof HTMLElement) {
+        event.target.click();
+      }
+    }
+  };
+
+  toggleClassOnFocusBlur(e: FocusEvent<HTMLElement>, className: string) {
+    e.target.classList.toggle(className);
+  }
+
   render() {
     const {
       pathname,
@@ -110,6 +138,13 @@ export class Header extends Component<Props> {
                 </Link>
               </div>
             </div>
+            <div className="column is-narrow skip-link-wrapper is-hidden-mobile">
+              <a href="#main" id="skip-to-main" className="link is-sr-only"
+                onFocus={(e: FocusEvent<HTMLElement>) => this.toggleClassOnFocusBlur(e, "is-sr-only")}
+                onBlur={(e: FocusEvent<HTMLElement>) => this.toggleClassOnFocusBlur(e, "is-sr-only")}>
+                <Translate content="header.skipToMain"/>
+              </a>
+            </div>
             <div className="column">
               <div className="search-wrapper" role="search">
                 <SearchBox
@@ -133,32 +168,42 @@ export class Header extends Component<Props> {
               <div className="column is-narrow-touch">
                 <div className="reset-search">
                   {pathname === '/' &&
-                  <a className="sk-reset-filters link mobile-filters-toggle" onClick={toggleMobileFilters}>
-                    {showMobileFilters ? <Translate content="hideFilters"/> : <Translate content="showFilters"/>}
-                  </a>
-                }
+                    <a id="toggle-mobile-filters" className="sk-reset-filters link mobile-filters-toggle" tabIndex={0}
+                      onClick={toggleMobileFilters} onKeyDown={(e: React.KeyboardEvent) => this.handleKeyDown(e)}>
+                      {showMobileFilters ? <Translate content="hideFilters"/> : <Translate content="showFilters"/>}
+                    </a>
+                  }
 
-                   {filters &&
-                  <Translate component="a" className="sk-reset-filters link is-hidden-mobile" onClick={toggleSummary} content="filters.summary.label" />
-                }
-
-                <ResetFilters component={Reset}
-                              options={{query: false, filter: true, pagination: true}}
-                              translations={{
-                                'reset.clear_all': counterpart.translate('reset.filters')
-                              }}/>
-                <ResetFilters component={Reset}
-                              options={{query: true, filter: false, pagination: true}}
-                              translations={{
-                                'reset.clear_all': counterpart.translate('reset.query')
-                              }}/>
+                  {filters &&
+                    <a id="toggle-summary" className="sk-reset-filters link is-hidden-mobile" tabIndex={0}
+                      onClick={toggleSummary} onKeyDown={(e: React.KeyboardEvent) => this.handleKeyDown(e)}
+                      ref={this.toggleSummaryRef}>
+                      {counterpart.translate('filters.summary.label')}
+                    </a>
+                  }
+                  <span id="reset-filters" onKeyDown={(e: React.KeyboardEvent) => this.handleKeyDown(e)}>
+                    <ResetFilters component={Reset}
+                                  options={{query: false, filter: true, pagination: true}}
+                                  translations={{
+                                    'reset.clear_all': counterpart.translate('reset.filters')
+                                  }}/>
+                  </span>
+                  <span id="clear-search" onKeyDown={(e: React.KeyboardEvent) => this.handleKeyDown(e)}>
+                    <ResetFilters component={Reset}
+                                  options={{query: true, filter: false, pagination: true}}
+                                  translations={{
+                                    'reset.clear_all': counterpart.translate('reset.query')
+                                  }}/>
+                  </span>
                 </div>
               </div>
               <div className="column is-centered is-hidden-touch">
                 {pathname === "/" && <HitsStats className="hits-count" />}
               </div>
               <nav className="column has-text-right-tablet has-text-left-mobile is-narrow-touch" aria-label="Main">
-                <Translate component={Link} to="/" className="is-sr-only is-hidden-mobile" content="header.frontPage"/>
+                <Translate component={Link} to="/" className="sk-reset-filters link is-hidden-mobile is-sr-only" content="header.frontPage"
+                          onFocus={(e: FocusEvent<HTMLElement>) => this.toggleClassOnFocusBlur(e, "is-sr-only")}
+                          onBlur={(e: FocusEvent<HTMLElement>) => this.toggleClassOnFocusBlur(e, "is-sr-only")}/>
                 <Translate component={Link} to="/about" className="sk-reset-filters link is-hidden-mobile" content="about.label"/>
                 <Translate component="a" href="/documentation" className="sk-reset-filters link is-hidden-mobile" content="documentation.label"/>
                 <Translate component="a" href="https://api.tech.cessda.eu/" className="sk-reset-filters link is-hidden-mobile" content="api.label"/>
@@ -173,7 +218,8 @@ export class Header extends Component<Props> {
             <div className="modal-card">
               <div className="modal-card-head">
                 <Translate component="h2" className="modal-card-title" content="filters.summary.label"/>
-                <button className="delete" aria-label="close" onClick={toggleSummary} />
+                <button id="close-filter-summary-top" className="delete" aria-label="close"
+                        onClick={() => {toggleSummary(); this.focusToggleSummary();}} autoFocus/>
               </div>
               <section className="modal-card-body">
                 {filters ?
@@ -190,7 +236,8 @@ export class Header extends Component<Props> {
                 }
               </section>
               <div className="modal-card-foot">
-                <button className="button is-light" onClick={toggleSummary}>
+                <button id="close-filter-summary-bottom" className="button is-light focus-visible"
+                        onClick={() => {toggleSummary(); this.focusToggleSummary();}}>
                   <Translate content="close" />
                 </button>
               </div>

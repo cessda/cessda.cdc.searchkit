@@ -83,6 +83,59 @@ describe('Header component', () => {
     expect(enzymeWrapper.find('.modal.is-active').exists()).toBe(true);
   });
 
+  it('should click target element after pressing enter or space on any filter related button', () => {
+    const linkButtonMockFunction = jest.fn();
+    const { enzymeWrapper } = setup({
+      filters: {
+        'classifications.term': ['Term'],
+        'keywords_term': 'keyword'
+      }
+    });
+    const linkButtonMock = document.createElement('a');
+    linkButtonMock.addEventListener( 'click', () => linkButtonMockFunction());
+    enzymeWrapper.find('#toggle-mobile-filters').simulate('keydown', { preventDefault(){}, stopPropagation(){},
+                                                                      target: linkButtonMock,
+                                                                      key: 'Enter', keyCode: 13, which: 13 })
+    enzymeWrapper.find('#toggle-summary').simulate('keydown', { preventDefault(){}, stopPropagation(){},
+                                                                target: linkButtonMock,
+                                                                key: ' ', keyCode: 32, which: 32 })
+    enzymeWrapper.find('#reset-filters').simulate('keydown', { preventDefault(){}, stopPropagation(){},
+                                                              target: linkButtonMock,
+                                                              key: 'Enter', keyCode: 13, which: 13 })
+    enzymeWrapper.find('#clear-search').simulate('keydown', { preventDefault(){}, stopPropagation(){},
+                                                              target: linkButtonMock,
+                                                              key: ' ', keyCode: 32, which: 32 })
+    expect(linkButtonMockFunction).toBeCalledTimes(4);
+  });
+
+  it('should toggle is-sr-only class for screen reader only elements on focus and blur', () => {
+    const { enzymeWrapper } = setup();
+    const linkMock = document.createElement('a');
+    linkMock.classList.add('is-sr-only');
+    const srOnlyElements = enzymeWrapper.find('.is-sr-only');
+    srOnlyElements.forEach(element => {
+      element.simulate('focus', { target: linkMock });
+      expect(linkMock.classList).not.toContain('is-sr-only');
+      element.simulate('blur', { target: linkMock });
+      expect(linkMock.classList).toContain('is-sr-only');
+    });
+  });
+
+  it('should focus toggle summary element after closing filter summary window', () => {
+    jest.spyOn(React, 'createRef').mockReturnValueOnce({ current: document.createElement('a') });
+    const { enzymeWrapper } = setup({
+      filters: {
+        'classifications.term': ['Term'],
+        'keywords_term': 'keyword'
+      },
+      showFilterSummary: true
+    });
+    const focusToggleSummarySpy = jest.spyOn((enzymeWrapper.instance() as Header), 'focusToggleSummary')
+    enzymeWrapper.find('#close-filter-summary-top').simulate('click', { preventDefault(){}, stopPropagation(){}});
+    enzymeWrapper.find('#close-filter-summary-bottom').simulate('click', { preventDefault(){}, stopPropagation(){}});
+    expect(focusToggleSummarySpy).toBeCalledTimes(2);
+  });
+
   it('should map state to props', () => {
     const { props } = setup();
     expect(

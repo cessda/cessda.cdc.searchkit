@@ -88,7 +88,7 @@ export class SearchPage extends Component<Props> {
       <SearchkitProvider searchkit={searchkit}>
         <Layout className={showMobileFilters ? 'show-mobile-filters' : ''}>
           <Header/>
-          <main className="container">
+          <main id="main" className="container">
           <LayoutBody className="columns">
             <SideBar className="column is-4">
               <div className="float">

@@ -55,6 +55,24 @@ function generateCreatorElements(item: CMMStudy) {
 
 export class Result extends Component<Props, ComponentState> {
 
+  handleKeyDown(event: React.KeyboardEvent, titleStudy: string) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      event.stopPropagation();
+      this.handleAbstractExpansion(titleStudy);
+    }
+  };
+
+  handleAbstractExpansion(titleStudy: string) {
+    // Notify Matomo Analytics of toggling "Read more" for a study.
+    const _paq = getPaq();
+    _paq.push(['trackEvent', 'Search', 'Read more', titleStudy]);
+
+    this.setState(state => ({
+      abstractExpanded: !state.abstractExpanded
+    }));
+  }
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -77,7 +95,7 @@ export class Result extends Component<Props, ComponentState> {
     for (let i = 0; i < item.langAvailableIn.length; i++) {
       languages.push(
         <Link key={i}
-              className="button is-small is-white" 
+              className="button is-small is-white focus-visible"
               to={{
                 pathname: '/detail',
                 query: {
@@ -117,15 +135,9 @@ export class Result extends Component<Props, ComponentState> {
         <div className="result-actions mt-10">
           <div className="is-flex is-hidden-touch">
             {item.abstract.length > 500 &&
-              <a className={bemBlocks.item().mix('button is-small is-white')} onClick={() => {
-              // Notify Matomo Analytics of toggling "Read more" for a study.
-              const _paq = getPaq();
-              _paq.push(['trackEvent', 'Search', 'Read more', item.titleStudy]);
-
-              this.setState(state => ({
-                abstractExpanded: !state.abstractExpanded
-              }));
-              }}>
+              <a className={bemBlocks.item().mix('button is-small is-white focus-visible')} tabIndex={0}
+                onClick={() => this.handleAbstractExpansion(item.titleStudy)}
+                onKeyDown={(e) => this.handleKeyDown(e, item.titleStudy)}>
                 {this.state.abstractExpanded ?
                 <>
                   <span className="icon is-small"><FaAngleUp/></span>
@@ -156,7 +168,7 @@ export class Result extends Component<Props, ComponentState> {
             }
             <span>
               {item.studyUrl &&
-                <a className="button is-small is-white"
+                <a className="button is-small is-white focus-visible"
                   href={item.studyUrl}
                   rel="noreferrer"
                   target="_blank">

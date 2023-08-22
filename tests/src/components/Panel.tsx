@@ -93,6 +93,26 @@ describe('Panel component', () => {
     expect(props.expandMetadataPanels).toBe(false);
   });
 
+  it('should toggle collapsed when pressing enter or space except for exclusions', () => {
+    const { enzymeWrapper } = setup({
+      collapsable: true
+    });
+    const toggleCollapsedSpy = jest.spyOn((enzymeWrapper.instance() as Panel), 'toggleCollapsed')
+    const panelMock = document.createElement('section');
+    enzymeWrapper.find('.sk-panel__container').simulate('keydown', { preventDefault(){}, stopPropagation(){},
+                                                                    target: panelMock,
+                                                                    key: 'Enter', keyCode: 13, which: 13 })
+    enzymeWrapper.find('.sk-panel__container').simulate('keydown', { preventDefault(){}, stopPropagation(){},
+                                                                    target: panelMock,
+                                                                    key: ' ', keyCode: 32, which: 32 })
+    // Pressing enter on a link inside panel shouldn't toggle collapse
+    const linkInsidePanelMock = document.createElement('a');
+    enzymeWrapper.find('.sk-panel__container').simulate('keydown', { preventDefault(){}, stopPropagation(){},
+                                                                    target: linkInsidePanelMock,
+                                                                    key: 'Enter', keyCode: 13, which: 13 })
+    expect(toggleCollapsedSpy).toBeCalledTimes(2);
+  });
+
   it('should map state to props', () => {
     const { props } = setup();
     expect(

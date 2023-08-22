@@ -201,7 +201,8 @@
     "relatedPublications": "Related publications"
   },
   "header": {
-    "frontPage": "Front/search page"
+    "frontPage": "Front/search page",
+    "skipToMain": "Skip to main content"
   },
   "footer": {
     "mainWebsite": "Main website of CESSDA",

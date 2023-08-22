@@ -116,7 +116,7 @@ export class DetailPage extends Component<Props> {
       <SearchkitProvider searchkit={searchkit}>
         <Layout>
           <Header/>
-          <main className="container mb-3">
+          <main id="main" className="container mb-3">
           <LayoutBody className="columns">
             <SideBar className="is-hidden-mobile column is-4">
               <Panel title={<Translate content='similarResults.heading'/>}
@@ -129,12 +129,8 @@ export class DetailPage extends Component<Props> {
             {item ? 
               <>
                 <div className="panel">
-                  <a className="button is-small is-white is-pulled-right" onClick={goBack}>
-                    <FaAngleLeft/><Translate className="ml-5" content="back"/>
-                  </a>
-        
                   {item.studyUrl &&
-                  <a className="button is-small is-white is-pulled-left"
+                  <a className="button is-small is-white is-pulled-left mr-3 focus-visible"
                       href={item.studyUrl}
                       rel="noreferrer"
                       target="_blank">
@@ -143,12 +139,16 @@ export class DetailPage extends Component<Props> {
                   </a>
                   } 
         
-                  <a className="button is-small is-white is-pulled-left"
+                  <a className="button is-small is-white is-pulled-left focus-visible"
                     href={`/api/json/${index}/${encodeURIComponent(item.id)}`}
                     rel="noreferrer"
                     target="_blank">
                   <span className="icon is-small"><FaCode/></span>
                   <Translate content="viewJson"/>
+                  </a>
+
+                  <a className="button is-small is-white is-pulled-right focus-visible" onClick={goBack} tabIndex={0}>
+                    <FaAngleLeft/><Translate className="ml-5" content="back"/>
                   </a>
         
                   <div className="is-clearfix"/>

@@ -128,6 +128,18 @@ describe('Result component', () => {
     ).toBeGreaterThan(0);
   });
 
+  it('should toggle abstract when pressing enter or space', () => {
+    const { enzymeWrapper } = setup();
+    const handleAbstractExpansionSpy = jest.spyOn((enzymeWrapper.instance() as Result), 'handleAbstractExpansion')
+    enzymeWrapper.find('.button').first().simulate('keydown', { preventDefault(){}, stopPropagation(){},
+                                                                key: 'Enter', keyCode: 13, which: 13 },
+                                                              'Study title')
+    enzymeWrapper.find('.button').first().simulate('keydown', { preventDefault(){}, stopPropagation(){},
+                                                                key: ' ', keyCode: 32, which: 32 },
+                                                              'Study title')
+    expect(handleAbstractExpansionSpy).toBeCalledTimes(2);
+  });
+
   it('should change language', () => {
     const { props, enzymeWrapper } = setup();
     expect(props.changeLanguage).not.toHaveBeenCalled();
