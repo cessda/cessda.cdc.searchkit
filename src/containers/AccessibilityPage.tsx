@@ -23,7 +23,7 @@ import counterpart from 'counterpart';
 export class AccessibilityPage extends Component {
 
   componentDidMount() {
-    document.title = `${counterpart.translate('about.label')} - ${counterpart.translate('datacatalogue')}`;
+    document.title = `${counterpart.translate('accessibility.label')} - ${counterpart.translate('datacatalogue')}`;
 
     // Remove the JSON-LD representation if present
     const jsonLDElement = document.getElementById("json-ld");
