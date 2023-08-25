@@ -216,6 +216,30 @@
     "label": "About",
     "content": "<p>This is the CESSDA Data Catalogue (CDC) version 3.4.0, released on 2023-08-29. It contains descriptions of the more than 40,000 data collections held by CESSDA’s Service Providers (SPs). Datasets come from over 20 European countries. It is a one-stop shop for searching and finding European social science data. The data described may be quantitative, qualitative or mixed-modes data, cross-sectional or longitudinal, recently collected or historical data. The metadata (study descriptions) are in whatever language they were provided by the organisations producing the metadata. Some publishers provide study descriptions both in English and in the local language, some only in either English or in the local language. Currently, about 75%% of study descriptions are available in English.</p><p>The <a href=\"/documentation/\">User Guide</a> presents an overview of how to use the data catalogue for searching, including basic search and applying filters as well as advanced search.</p><p>The CDC is a portal for discovering data. Detailed dataset descriptions are provided. For information and procedures to access data, there is a link [“Access data”] from each study to the study information on the website of the data provider (Publisher). Check the information there to see what access conditions apply to data created in that particular study.</p><p>There is also an <a href=\"https://www.openarchives.org/pmh/\">OAI-PMH compliant endpoint</a>, so that data aggregators can easily harvest the entire contents of the data catalogue. Record identifiers are unified with those used in the User Interface. It is located at <a href=\"https://datacatalogue.cessda.eu/oai-pmh/v0/oai?verb=Identify\"> https://datacatalogue.cessda.eu/oai-pmh/v0/oai</a>.</p><p>There is also a search API. Documentation is available at the <a href=\"https://api.tech.cessda.eu/\">public REST APIs for CESSDA Services</a> page.</p><h3>Changes since the last version</h3><ul><li>Add a \"Not Found\" page if a path that is not either /, /about or /detail is requested.</li><li>Add universe descriptions to the study detail page.</li><li>Add related publications to the study detail page.</li><li>Make the search filters \"float\", keeping them onscreen when the search page is scrolled.</li><li>Default to only displaying 12 keywords, add a button to show all keywords.</li><li>Use AND for the search API, reflecting the default behaviour of the user interface.</li><li>Fix the search API returning undefined for the ResultsCount.available field. This was due to Elasticsearch 7 changing the way the total results were returned.</li></ul>"
   },
+  "accessibility": {
+    "label": "Accessibility Statement for CESSDA Data Catalogue",
+    "heading": {
+      "conformance": "Conformance status",
+      "nonAccessible": "Non-Accessible Content",
+      "feedback": "Feedback",
+      "compatibility": "Compatibility with browsers and assistive technology",
+      "assessment": "Assessment approach",
+      "about": "About the accessibility statement"
+    },
+    "content": {
+      "opening": "CESSDA is committed to ensuring digital accessibility for people with disabilities. We are continually improving the user experience for everyone, and applying the relevant accessibility standards.",
+      "conformance": "The <a href=\"https://www.w3.org/WAI/standards-guidelines/wcag/\" target=\"_blank\">Web Content Accessibility Guidelines (WCAG)</a> defines requirements for designers and developers to improve accessibility for people with disabilities. It defines three levels of conformance: Level A, Level AA, and Level AAA. CDC is partially conformant with WCAG 2.1 level AA. Partially conformant means that some parts of the content do not fully conform to the accessibility standard. The identified shortcomings in the accessibility of CDC are described below.",
+      "nonAccessible": {
+        "paragraph": "We acknowledge that despite our diligent efforts, some areas of our website may not be fully accessible. The primary reason for non-accessible content lies in the complexity of upgrading specific third-party libraries. The versions of these libraries do not allow for the necessary accessibility enhancements without substantial modifications, which would be a significant undertaking.",
+        "subheading": "The non-accessible areas include:",
+        "list": "<li>Language select does not have ARIA relationship with select options (1.3.1 Info and Relationships)</li><li>Feedback form does not have autocomplete attributes (1.3.5 Identify Input Purpose)</li><li>Placeholder texts of search filters have low contrast (1.4.3 Contrast)</li><li>Applied filter options cannot be selected by keyboard (2.1.1: Keyboard)</li><li>Some pages do not have a descriptive title (2.4.2: Page Titled)</li><li>Dropdown elements confirm selection on down-event (2.5.2: Pointer Cancellation)</li><li>Some metadata might not have lang attribute despite being different than default (en) (3.1.2: Language of Parts)</li><li>Labels missing from a few elements in third-party library components (4.1.2: Name, Role, Value)</li><li>Status messages are missing status roles (4.1.3: Status Messages)</li>"
+      },
+      "feedback": "For additional assistance or inquiries related to accessibility, please utilise our feedback form.",
+      "compatibility": "CDC's accessibility features are currently undergoing testing primarily on Firefox and Chrome browsers. Screen reader mainly used in testing is NVDA. Other major browsers and screen readers should also be compatible but some aspects of the website may not display optimally, especially if using older versions.",
+      "assessment": "CESSDA assessed the accessibility of CDC by self-evaluation.",
+      "about": "The accessibility statement was first created on August 23rd 2023."
+    }
+  },
   "notFound": {
     "label": "Page Not Found",
     "content": "The page you are trying to access cannot be found."

@@ -384,7 +384,7 @@ padding: 6px 0;
   display: block;
 }
 
-.data-abstract, .about-container, .not-found-container {
+.data-abstract, .about-container, .not-found-container, .accessibility-container {
   p {
     margin-bottom: 10px;
   }
@@ -444,7 +444,8 @@ select::-ms-expand {
 .focus-visible:focus-visible,
 .is-focused:focus-visible,
 .sk-select select:focus-visible,
-.language-picker:focus-within .Select-control {
+.language-picker:focus-within .Select-control,
+.button:focus-visible {
   outline: #fdc29b solid 2px;
 }
 

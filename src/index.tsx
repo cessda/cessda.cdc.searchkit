@@ -20,6 +20,7 @@ import AboutPage from "./containers/AboutPage";
 import DetailPage from "./containers/DetailPage";
 import NotFoundPage from "./containers/NotFoundPage";
 import SearchPage from "./containers/SearchPage";
+import AccessibilityPage from "./containers/AccessibilityPage";
 import App from "./containers/App";
 import { browserHistory, IndexRoute, Route, Router } from "react-router";
 import { routerMiddleware, syncHistoryWithStore } from "react-router-redux";
@@ -93,6 +94,7 @@ if (root instanceof HTMLElement) {
           <Route path="detail" component={DetailPage} />
           <Route path="study/pid/:pid" component={DetailPage} />
           <Route path="about" component={AboutPage} />
+          <Route path="accessibility-statement" component={AccessibilityPage} />
           <Route path='*' component={NotFoundPage}/>
         </Route>
       </Router>

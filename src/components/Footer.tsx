@@ -49,7 +49,7 @@ export default () => (
             </div>
 
             <div className="column is-8 blinks">
-              <a href="/documentation/" target="_blank">User Guide</a> | <Link to="/about/">About</Link> | <a href="https://www.cessda.eu/Privacy-policy" target="_blank" rel="noreferrer"><Translate content="footer.privacy" /></a> | <a href="https://www.cessda.eu/Acceptable-Use-Policy" target="_blank" rel="noreferrer"><Translate content="footer.aup" /></a>
+              <a href="/documentation/" target="_blank" className="is-inline-block">User Guide</a> | <Link to="/about/" className="is-inline-block">About</Link> | <a href="https://www.cessda.eu/Privacy-policy" target="_blank" rel="noreferrer" className="is-inline-block"><Translate content="footer.privacy" /></a> | <a href="https://www.cessda.eu/Acceptable-Use-Policy" target="_blank" rel="noreferrer" className="is-inline-block"><Translate content="footer.aup" /></a> | <Link to="/accessibility-statement/" className="is-inline-block">Accessibility Statement</Link>
             </div>
           </div>
         </div>
