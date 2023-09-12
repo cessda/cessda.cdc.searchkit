@@ -65,6 +65,7 @@ describe('Tooltip component', () => {
     enzymeWrapper.find('.button').simulate('keydown', { preventDefault(){}, stopPropagation(){},
                                                         key: 'Escape', keyCode: 27, which: 27 })
     expect(useRefSpy).toBeCalledTimes(1);
+    useRefSpy.mockRestore();
   });
 
   it('should be closed after pressing escape', () => {

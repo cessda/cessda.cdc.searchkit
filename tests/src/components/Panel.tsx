@@ -106,11 +106,30 @@ describe('Panel component', () => {
                                                                     target: panelMock,
                                                                     key: ' ', keyCode: 32, which: 32 })
     // Pressing enter on a link inside panel shouldn't toggle collapse
-    const linkInsidePanelMock = document.createElement('a');
+    const linkInPanelMock = document.createElement('a');
     enzymeWrapper.find('.sk-panel__container').simulate('keydown', { preventDefault(){}, stopPropagation(){},
-                                                                    target: linkInsidePanelMock,
+                                                                    target: linkInPanelMock,
                                                                     key: 'Enter', keyCode: 13, which: 13 })
+    // Pressing space on an element inside content part shouldn't toggle collapse
+    const contentMock = document.createElement('div');
+    contentMock.classList.add('sk-panel__content');
+    const inputInContentMock = document.createElement('input');
+    contentMock.appendChild(inputInContentMock);
+    // Mock document.querySelectorAll so that it will return an element when looking for .sk-panel__content
+    const originalQuerySelectorAll = document.querySelectorAll;
+    const mockQuerySelectorAll = jest.fn((selector: string) => {
+      if (selector === '.sk-panel__content') {
+        return [contentMock] as unknown as NodeListOf<HTMLElement>;
+      }
+      return [] as unknown as NodeListOf<HTMLElement>;
+    });
+    document.querySelectorAll = mockQuerySelectorAll;
+    enzymeWrapper.find('.sk-panel__container').simulate('keydown', { preventDefault(){}, stopPropagation(){},
+                                                                    target: inputInContentMock,
+                                                                    key: ' ', keyCode: 32, which: 32 })
+    document.querySelectorAll = originalQuerySelectorAll;
     expect(toggleCollapsedSpy).toBeCalledTimes(2);
+    toggleCollapsedSpy.mockRestore();
   });
 
   it('should map state to props', () => {

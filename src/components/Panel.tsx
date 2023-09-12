@@ -63,8 +63,15 @@ export class Panel extends SearchkitPanel {
   }
 
   handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    const contentElements = document.querySelectorAll('.sk-panel__content')
+    const isTargetInContent = Array.from(contentElements).some((contentElement) =>
+      contentElement.contains(event.target as HTMLElement)
+    );
+
     // If panels contain elements that shouldn't toggle collapse for the container, they need to be excluded here (like 'a' and 'button')
-    if ((event.key === 'Enter' || event.key === ' ') && !['a', 'button'].includes((event.target as HTMLElement).tagName.toLowerCase())) {
+    // Not needed for elements in content part since they are excluded anyway
+    if ((event.key === 'Enter' || event.key === ' ') && !isTargetInContent &&
+        !['a', 'button'].includes((event.target as HTMLElement).tagName.toLowerCase())) {
       event.preventDefault();
       event.stopPropagation();
       this.toggleCollapsed();

@@ -138,6 +138,7 @@ describe('Result component', () => {
                                                                 key: ' ', keyCode: 32, which: 32 },
                                                               'Study title')
     expect(handleAbstractExpansionSpy).toBeCalledTimes(2);
+    handleAbstractExpansionSpy.mockRestore();
   });
 
   it('should change language', () => {

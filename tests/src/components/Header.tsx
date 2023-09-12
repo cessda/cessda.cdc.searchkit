@@ -134,6 +134,7 @@ describe('Header component', () => {
     enzymeWrapper.find('#close-filter-summary-top').simulate('click', { preventDefault(){}, stopPropagation(){}});
     enzymeWrapper.find('#close-filter-summary-bottom').simulate('click', { preventDefault(){}, stopPropagation(){}});
     expect(focusToggleSummarySpy).toBeCalledTimes(2);
+    focusToggleSummarySpy.mockRestore();
   });
 
   it('should map state to props', () => {
