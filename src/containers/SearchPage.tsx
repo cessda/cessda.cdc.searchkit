@@ -94,7 +94,7 @@ export class SearchPage extends Component<Props> {
               <div className="float">
                 <RefinementListFilter id="classifications.term"
                                       title={counterpart.translate('filters.topic.label')}
-                                      field={'classifications.term'}
+                                      field={'classifications.term.raw'}
                                       fieldOptions={{
                                         type: 'nested',
                                         options: {path: 'classifications', min_doc_count: 1}
@@ -118,7 +118,11 @@ export class SearchPage extends Component<Props> {
 
                 <RefinementListFilter id="keywords.term"
                                       title={counterpart.translate('filters.keywords.label')}
-                                      field={'keywordsKeywordField'}
+                                      field={'keywords.term.raw'}
+                                      fieldOptions={{
+                                        type: 'nested',
+                                        options: {path: 'keywords', min_doc_count: 1}
+                                      }}
                                       orderKey="_count"
                                       orderDirection="desc"
                                       operator="OR"
