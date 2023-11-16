@@ -45,17 +45,18 @@ Please be aware of *Known Issues* (see bottom) before running.
 
 The application can be configured using the following environment variables.
 
-| Environment Variable               | Default Value                 | Description
-| ---------------------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `PASC_DEBUG_MODE`                  | `false`                       | Enables debug mode which outputs additional debugging information in the user interface and web browser console. |
-| `PASC_PORT`                        | `8088`                        | The port number which will be used to access this web application.                                               |
-| `PASC_ELASTICSEARCH_URL`           | `http://localhost:9200/`      | The web address of the Elasticsearch instance which powers all searches.                                         |
-| `SEARCHKIT_ELASTICSEARCH_USERNAME` | `undefined`                   | The username to use when accessing a secured Elasticsearch cluster.                                              |
-| `SEARCHKIT_ELASTICSEARCH_PASSWORD` | `undefined`                   | The password to use when accessing a secured Elasticsearch cluster.                                              |
-| `SEARCHKIT_LOG_LEVEL`              | `info`                        | The logging level used for server side events.                                                                   |
-| `SEARCHKIT_SKOSMOS_URL`            | `https://thesauri.cessda.eu/` | The URL of the Skosmos instance that hosts ELSST.                                                                |
-| `SEARCHKIT_ELSST_VOCABULARY`       | `elsst-4`                     | The name of the ELSST vocabulary within Skosmos.                                                                 |
-| `SEARCHKIT_USE_JSON_LOGGING`       | `false`                       | Whether to log using JSON rather than plain text.                                                                |
+| Environment Variable               | Default Value                   | Description
+| ---------------------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `PASC_DEBUG_MODE`                  | `false`                         | Enables debug mode which outputs additional debugging information in the user interface and web browser console. |
+| `PASC_PORT`                        | `8088`                          | The port number which will be used to access this web application.                                               |
+| `PASC_ELASTICSEARCH_URL`           | `http://localhost:9200/`        | The web address of the Elasticsearch instance which powers all searches.                                         |
+| `SEARCHKIT_ELASTICSEARCH_USERNAME` | `undefined`                     | The username to use when accessing a secured Elasticsearch cluster.                                              |
+| `SEARCHKIT_ELASTICSEARCH_PASSWORD` | `undefined`                     | The password to use when accessing a secured Elasticsearch cluster.                                              |
+| `SEARCHKIT_LOG_LEVEL`              | `info`                          | The logging level used for server side events.                                                                   |
+| `SEARCHKIT_SKOSMOS_URL`            | `https://thesauri.cessda.eu`    | The URL of the Skosmos instance that hosts ELSST.                                                                |
+| `SEARCHKIT_ELSST_VOCABULARY`       | `elsst-4`                       | The name of the ELSST vocabulary within Skosmos.                                                                 |
+| `SEARCHKIT_ELSST_URI_PREFIX`       | `https://elsst.cessda.eu/id/4/` | The prefix to look for and replace in the result uri to also be able to add clang parameter.                     |
+| `SEARCHKIT_USE_JSON_LOGGING`       | `false`                         | Whether to log using JSON rather than plain text.                                                                |
 
 Set environment variables using the following syntax.
 
