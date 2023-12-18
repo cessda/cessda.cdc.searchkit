@@ -23,8 +23,10 @@ describe('Metadata utilities', () => {
           titleStudyHighlight: 'Study Title',
           abstract: 'Abstract',
           abstractShort: 'Abstract',
+          abstractLong: 'Abstract',
           abstractHighlight: 'Abstract',
           abstractHighlightShort: 'Abstract',
+          abstractHighlightLong: 'Abstract',
           classifications: [
             {
               id: 'UKDS1234',
@@ -111,8 +113,10 @@ describe('Metadata utilities', () => {
         titleStudyHighlight: '',
         abstract: 'Abstract',
         abstractShort: 'Abstract',
+        abstractLong: 'Abstract',
         abstractHighlight: '',
         abstractHighlightShort: '',
+        abstractHighlightLong: '',
         classifications: [
           {
             id: 'UKDS1234',
@@ -207,8 +211,10 @@ describe('Metadata utilities', () => {
         titleStudyHighlight: '',
         abstract: '',
         abstractShort: '',
+        abstractLong: '',
         abstractHighlight: '',
         abstractHighlightShort: '',
+        abstractHighlightLong: '',
         classifications: [],
         code: undefined,
         creators: [],
@@ -258,6 +264,8 @@ describe('Metadata utilities', () => {
           abstractHighlight: '',
           abstractShort: 'Abstract',
           abstractHighlightShort: '',
+          abstractLong: 'Abstract',
+          abstractHighlightLong: '',
           classifications: [
             {
               id: 'UKDS1234',
@@ -395,6 +403,8 @@ describe('Metadata utilities', () => {
           abstractHighlight: '',
           abstractShort: 'Abstract',
           abstractHighlightShort: '',
+          abstractLong: 'Abstract',
+          abstractHighlightLong: '',
           classifications: [
             {
               id: 'UKDS1234',

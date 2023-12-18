@@ -21,6 +21,7 @@ import {
 } from '../../../src/components/Result';
 import { CMMStudy } from '../../../common/metadata';
 import { Language, languages } from '../../../src/utilities/language';
+import Keywords from '../../../src/components/Keywords';
 
 // Mock props and shallow render component for test.
 function setup(item?: Partial<CMMStudy> | false) {
@@ -38,18 +39,21 @@ function setup(item?: Partial<CMMStudy> | false) {
             {
               id: 1,
               titleStudy: 'Study Title',
-              abstract: "Long Abstract.\nAipiscing elit ut aliquam purus sit amet luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus non enim praesent elementum facilisis leo vel fringilla est ullamcorper eget nulla facilisi etiam dignissim diam quis enim lobortis scelerisque fermentum dui faucibus in ornare quam viverra orci sagittis eu volutpat odio facilisis mauris sit amet massa vitae tortor condimentum lacinia quis vel eros donec ac odio tempor orci dapibus ultrices in iaculis nunc sed augue lacus.",
+              abstract: "Full Abstract.\nAipiscing elit ut aliquam purus sit amet luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus non enim praesent elementum facilisis leo vel fringilla est ullamcorper eget nulla facilisi etiam dignissim diam quis enim lobortis scelerisque fermentum dui faucibus in ornare quam viverra orci sagittis eu volutpat odio facilisis mauris sit amet massa vitae tortor condimentum lacinia quis vel eros donec ac odio tempor orci dapibus ultrices in iaculis nunc sed augue lacus.",
               abstractExpanded: false,
               abstractShort: 'Short Abstract',
-              abstractHighlight: 'Long Abstract highlighted',
+              abstractLong: 'Long Abstract',
+              abstractHighlight: 'Full Abstract highlighted',
               abstractHighlightShort: 'Short abstract highlighted',
+              abstractHighlightLong: 'Long abstract highlighted',
               creators: [
                 'Jane Doe',
                 'University of Essex',
                 'John Smith (University of Essex)'
               ],
               langAvailableIn: ['EN'],
-              studyUrl: 'http://example.com'
+              studyUrl: 'http://example.com',
+              keywords: ["1", "2", "3", "4"]
             },
             item || {}
           ),
@@ -150,6 +154,24 @@ describe('Result component', () => {
       .at(2)
       .simulate('click');
     expect(props.changeLanguage).toHaveBeenCalled();
+  });
+
+  it('should shuffle keywords and reshuffle if keywords change', () => {
+    jest.spyOn(global.Math, 'random').mockReturnValue(0.2);
+
+    const { props, enzymeWrapper } = setup();
+    expect(enzymeWrapper.find(Keywords).props().keywords).toEqual(["2", "3", "4", "1"]);
+
+    // Props updated but keywords didn't change so don't reshuffle
+    enzymeWrapper.setProps({props})
+    jest.spyOn(global.Math, 'random').mockReturnValue(0.8);
+    expect(enzymeWrapper.find(Keywords).props().keywords).toEqual(["2", "3", "4", "1"]);
+
+    // Props updated and keywords changed so reshuffle
+    enzymeWrapper.setProps({...props, item: {...props.item, keywords: ["6", "5", "4", "3", "2", "1"]}})
+    expect(enzymeWrapper.find(Keywords).props().keywords).toEqual(["6", "5", "4", "3", "1", "2"]);
+
+    jest.spyOn(global.Math, 'random').mockRestore();
   });
 
   it('should map state to props', () => {

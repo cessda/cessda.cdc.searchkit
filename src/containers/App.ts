@@ -11,13 +11,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Component } from "react";
+import { Component, cloneElement } from "react";
 import { AnyAction, bindActionCreators } from "redux";
 import { connect, Dispatch } from "react-redux";
 import { initSearchkit, updateTotalStudies } from "../actions/search";
 import { initTranslations } from "../actions/language";
 
-interface Props extends ReturnType<typeof mapDispatchToProps> {
+export interface Props extends ReturnType<typeof mapDispatchToProps> {
+  location: {
+    key: string;
+    state?: {
+      requireRefresh?: boolean;
+    };
+  };
   children: JSX.Element
 }
 
@@ -31,7 +37,13 @@ export class App extends Component<Props> {
   }
 
   render() {
-    return this.props.children;
+    // state.requireRefresh is used to make sure page gets updated when location is the same by
+    // adding an updated key for search page (otherwise undefined), e.g. clicking on keywords in search results
+    if(this.props.location.state && this.props.location.state.requireRefresh){
+      return cloneElement(this.props.children, { key: this.props.location.key });
+    } else {
+      return this.props.children;
+    }
   }
 }
 

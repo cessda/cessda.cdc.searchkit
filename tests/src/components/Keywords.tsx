@@ -17,6 +17,7 @@ import Keywords, { Props } from '../../../src/components/Keywords';
 import { TermVocabAttributes } from '../../../common/metadata';
 import { getELSSTTerm } from '../../../src/utilities/elsst';
 import { TermURIResult } from '../../../server/elsst';
+import { Link, browserHistory } from 'react-router';
 
 // Mock out the module that sends requests to the server
 jest.mock('../../../src/utilities/elsst.ts', () => {
@@ -31,6 +32,7 @@ function setup(providedProps: Partial<Props> = {}) {
   const props: Props = {
     keywords: [],
     lang: "en",
+    keywordLimit: 12,
     ...providedProps
   };
   const enzymeWrapper = shallow(<Keywords {...props} />);
@@ -70,7 +72,7 @@ describe('Keywords component', () => {
     expect(tagElements).toHaveLength(4);
 
     // When rendering the component should have requested ELSST terms for the keywords
-    expect(getELSSTTerm).toHaveBeenCalledWith(keywords, props.lang);
+    expect(getELSSTTerm).toHaveBeenCalledWith(keywords, props.lang, expect.anything());
   });
 
   it('should update keywords', () => {
@@ -81,17 +83,18 @@ describe('Keywords component', () => {
     });
 
     // When rendering the component should have requested ELSST terms for the keywords
-    expect(getELSSTTerm).toHaveBeenCalledWith(keywords, props.lang);
+    expect(getELSSTTerm).toHaveBeenCalledWith(keywords, props.lang, expect.anything());
 
     // Update keywords
     const newKeywords = ["5", "6", "7", "8"];
-    enzymeWrapper.setProps({ keywords: newKeywords.map(t => getKeyword(t)) })
+    enzymeWrapper.setProps({ keywords: newKeywords.map(t => getKeyword(t)) });
+    enzymeWrapper.update();
 
     // ELSST terms should be requested for the new keywords
-    expect(getELSSTTerm).toHaveBeenCalledWith(newKeywords, props.lang);
+    expect(getELSSTTerm).toHaveBeenCalledWith(newKeywords, props.lang, expect.anything());
   });
 
-  it('should link ELSST terms', async () => {
+  it('should link ELSST terms and limit fetching according to given keyword limit when expanding is disabled', async () => {
     const linkELSST = "https://elsst.cessda.eu/test/";
 
     let promise: Promise<TermURIResult> = Promise.resolve({});
@@ -113,17 +116,20 @@ describe('Keywords component', () => {
       return promise;
     });
 
-    const keywords = ["1", "2", "3", "4"];
+    const keywords = ["1", "2", "3", "4", "5", "6", "7"];
 
     const { enzymeWrapper, props } = setup({
-      keywords: keywords.map(t => getKeyword(t))
+      keywords: keywords.map(t => getKeyword(t)),
+      keywordLimit: 4,
+      isExpandDisabled: true
     });
 
     // Wait for the promise to be resolved
     await promise;
 
     // When rendering the component should have requested ELSST terms for the keywords
-    expect(getELSSTTerm).toHaveBeenCalledWith(keywords, props.lang);
+    // It should also only request term for the first 4 keywords because of keyword limit and disabled expanding
+    expect(getELSSTTerm).toHaveBeenCalledWith(["1", "2", "3", "4"], props.lang, expect.anything());
 
     // The terms with ELSST link provided should link to ELSST
     const tagsELSSTFound = enzymeWrapper.find(".tag").map((tagElement) => {
@@ -134,7 +140,8 @@ describe('Keywords component', () => {
       }
       return false;
     });
-    expect(tagsELSSTFound).toEqual([true, true, false, true]);
+    // Limit is 4 but 5 elements are found because 'x more' also has .tag class
+    expect(tagsELSSTFound).toEqual([true, true, false, true, false]);
   });
 
   it('should toggle between showing limited number of keywords and showing all keywords', () => {
@@ -152,5 +159,36 @@ describe('Keywords component', () => {
     enzymeWrapper.find('.button').at(0).simulate('click');
     expect(enzymeWrapper.state('isExpanded')).toBe(true);
     expect(enzymeWrapper.find(".tag")).toHaveLength(15);
+  });
+
+  it('should abort ELSST term fetch when unmounting', () => {
+    const keywords = ["1", "2", "3", "4"];
+
+    const { enzymeWrapper, props } = setup({
+      keywords: keywords.map(t => getKeyword(t))
+    });
+
+    const abortSpy = jest.spyOn(AbortController.prototype, 'abort');
+
+    enzymeWrapper.unmount();
+
+    expect(abortSpy).toBeCalledTimes(1);
+    abortSpy.mockRestore();
+  });
+
+  it('should have different search page link props depending on location', () => {
+    const keywords = ["1"];
+
+    // Location already on search page should include variable to require refresh
+    browserHistory.push("/");
+    const { enzymeWrapper, props } = setup({
+      keywords: keywords.map(t => getKeyword(t))
+    });
+    expect(enzymeWrapper.find(Link).props().to).toEqual({pathname: '/', search: `?keywords.term[0]=1`, state: {requireRefresh: true}});
+
+    // Location not on search page should not include variable to require refresh
+    browserHistory.push("/detail");
+    enzymeWrapper.setProps({props})
+    expect(enzymeWrapper.find(Link).props().to).toEqual({pathname: '/', search: `?keywords.term[0]=1`});
   });
 });

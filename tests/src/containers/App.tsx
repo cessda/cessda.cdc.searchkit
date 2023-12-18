@@ -13,15 +13,20 @@
 
 import React from 'react';
 import { shallow } from 'enzyme';
-import { App, mapDispatchToProps } from '../../../src/containers/App';
+import { App, Props, mapDispatchToProps } from '../../../src/containers/App';
 
 // Mock props and shallow render container for test.
-function setup() {
+function setup(providedProps: Partial<Props> = {}) {
   const props = {
     initSearchkit: jest.fn(),
     initTranslations: jest.fn(),
     updateTotalStudies: jest.fn(),
-    children: <div/>
+    location: {
+      key: 'key',
+      state: {}
+    },
+    children: <div key={undefined}/>,
+    ...providedProps
   };
   const enzymeWrapper = shallow(<App {...props} />);
   return {
@@ -34,6 +39,13 @@ describe('App container', () => {
   it('should render', () => {
     const { enzymeWrapper } = setup();
     expect(enzymeWrapper.exists()).toBe(true);
+  });
+
+  it('should add key to children (search page) if page is required to refresh via location state variable', () => {
+    const { enzymeWrapper, props } = setup({
+      location: {key: 'newkey', state: {requireRefresh: true}}
+    });
+    expect(enzymeWrapper.find('div').key()).toEqual('newkey');
   });
 
   it('should map dispatch to props', () => {

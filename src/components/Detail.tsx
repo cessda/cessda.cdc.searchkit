@@ -37,6 +37,7 @@ export interface State {
 export default class Detail extends React.Component<Props, State> {
 
   private static readonly truncatedAbstractLength = 2000;
+  private static readonly truncatedKeywordsLength = 12;
 
   constructor(props: Props) {
     super(props);
@@ -246,7 +247,7 @@ Summary information
           {this.state.abstractExpanded ?
             <div className="data-abstract" lang={lang} dangerouslySetInnerHTML={{ __html: item.abstract }}/>
           :
-            <div className="data-abstract" lang={lang}>{truncate(striptags(item.abstract), { length: Detail.truncatedAbstractLength, separator: ' ' })}</div>
+            <div className="data-abstract" lang={lang} dangerouslySetInnerHTML={{ __html: item.abstractLong }}/>
           }
           {item.abstract.length > Detail.truncatedAbstractLength &&
             <a className="button is-small is-white" onClick={() => {
@@ -294,7 +295,7 @@ Summary information
                             ariaLabel={counterpart.translate("metadata.keywords.tooltip.ariaLabel")}/>}
           collapsable={false}
         >
-          <Keywords keywords={item.keywords} lang={this.props.lang}/>
+          <Keywords keywords={item.keywords} keywordLimit={Detail.truncatedKeywordsLength} lang={this.props.lang}/>
         </Panel>
 
         <Panel

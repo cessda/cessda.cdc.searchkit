@@ -20,8 +20,9 @@ import { Link } from 'react-router';
 import type { State } from '../types';
 import { changeLanguage } from '../actions/language';
 import { push } from 'react-router-redux';
-import { CMMStudy } from '../../common/metadata';
+import { CMMStudy, TermVocabAttributes } from '../../common/metadata';
 import getPaq from '../utilities/getPaq';
+import Keywords from './Keywords';
 
 type Props = {
   bemBlocks: any;
@@ -32,6 +33,7 @@ type Props = {
 
 interface ComponentState {
   abstractExpanded: boolean;
+  shuffledKeywords: TermVocabAttributes[];
 }
 
 function generateCreatorElements(item: CMMStudy) {
@@ -53,7 +55,28 @@ function generateCreatorElements(item: CMMStudy) {
   return creators;
 }
 
+// Randomize array using Durstenfeld shuffle algorithm
+function shuffleArray(array: Array<any>) {
+  if (array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+  return array;
+}
+
 export class Result extends Component<Props, ComponentState> {
+
+  private static readonly truncatedKeywordsLength = 7;
+
+  componentDidUpdate(prevProps: Readonly<Props>): void {
+    if (this.props.item && (!prevProps.item || this.props.item.keywords !== prevProps.item.keywords)) {
+      this.setState({
+        shuffledKeywords: shuffleArray(this.props.item.keywords)
+      });
+    }
+  }
 
   handleKeyDown(event: React.KeyboardEvent, titleStudy: string) {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -76,7 +99,8 @@ export class Result extends Component<Props, ComponentState> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      abstractExpanded: false
+      abstractExpanded: false,
+      shuffledKeywords: props.item ? shuffleArray(props.item.keywords) : []
     };
   }
 
@@ -127,14 +151,18 @@ export class Result extends Component<Props, ComponentState> {
         </div>
         <div className={bemBlocks.item().mix(bemBlocks.container('desc'))} lang={currentLanguage}>
           {this.state.abstractExpanded ? 
-            <span className="abstr" dangerouslySetInnerHTML={{__html: item.abstractHighlight || item.abstract}}/>
+            <span dangerouslySetInnerHTML={{__html: item.abstractHighlightLong || item.abstractLong}}/>
           :
             <span dangerouslySetInnerHTML={{__html: item.abstractHighlightShort || item.abstractShort}}/>
           }
         </div>
+        <div className="is-flex mt-10">
+          <Keywords keywords={this.state.shuffledKeywords} keywordLimit={Result.truncatedKeywordsLength}
+                    lang={currentLanguage} isExpandDisabled={true}/>
+        </div>
         <div className="result-actions mt-10">
           <div className="is-flex is-hidden-touch">
-            {item.abstract.length > 500 &&
+            {item.abstract.length > 380 &&
               <a className={bemBlocks.item().mix('button is-small is-white focus-visible')} tabIndex={0}
                 onClick={() => this.handleAbstractExpansion(item.titleStudy)}
                 onKeyDown={(e) => this.handleKeyDown(e, item.titleStudy)}>

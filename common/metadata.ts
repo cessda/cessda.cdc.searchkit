@@ -47,8 +47,10 @@ export interface CMMStudy {
   /** Abstract */
   abstract: string;
   abstractShort: string;
+  abstractLong: string;
   abstractHighlight: string;
   abstractHighlightShort: string;
+  abstractHighlightLong: string;
   /** Study title */
   titleStudy: string;
   titleStudyHighlight: string;
@@ -141,9 +143,11 @@ export function getStudyModel(source: Partial<CMMStudy> | undefined, highlight?:
     creators: source.creators || [],
     pidStudies: source.pidStudies || [],
     abstract: stripHTMLElements(source.abstract as string),
-    abstractShort: truncateAbstract(striptags(source.abstract as string)),
+    abstractShort: truncateAbstract(striptags(source.abstract as string), 380),
+    abstractLong: truncateAbstract(striptags(source.abstract as string), 2000),
     abstractHighlight: highlight?.abstract ? stripHTMLElements(highlight.abstract.join()) : '',
-    abstractHighlightShort: highlight?.abstract ? truncateAbstract(striptags(highlight.abstract.join())) : '',
+    abstractHighlightShort: highlight?.abstract ? truncateAbstract(striptags(highlight.abstract.join()), 380) : '',
+    abstractHighlightLong: highlight?.abstract ? truncateAbstract(striptags(highlight.abstract.join()), 2000) : '',
     studyAreaCountries: source.studyAreaCountries || [],
     typeOfTimeMethods: source.typeOfTimeMethods || [],
     unitTypes: source.unitTypes || [],
@@ -171,9 +175,9 @@ export function getStudyModel(source: Partial<CMMStudy> | undefined, highlight?:
   });
 }
 
-function truncateAbstract(string: string): string {
+function truncateAbstract(string: string, limit: number): string {
   const trimmedString = string.trim();
-  return truncate(trimmedString, { length: 500, separator: ' ' } );
+  return truncate(trimmedString, { length: limit, separator: ' ' } );
 }
 
 /**

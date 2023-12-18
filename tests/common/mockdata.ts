@@ -7,7 +7,9 @@ export const mockStudy: CMMStudy = {
   abstract: 'This is a mock abstract describing a mock study.\n\nThe key results of this mock study is providing mock data that can be used to validate proper functionality of the application.',
   abstractHighlight: '',
   abstractShort: 'Abstract',
+  abstractLong: 'Abstract',
   abstractHighlightShort: '',
+  abstractHighlightLong: '',
   classifications: [
     {
       id: 'UKDS1234',

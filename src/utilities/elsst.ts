@@ -13,7 +13,7 @@
 
 export interface TermURIResult extends Record<string, string> {}
 
-export async function getELSSTTerm(labels: string[], lang: string): Promise<TermURIResult> {
+export async function getELSSTTerm(labels: string[], lang: string, signal: AbortSignal): Promise<TermURIResult> {
   // Only send a request if the list of labels is not empty
   if (labels.length === 0) {
     return {};
@@ -25,17 +25,25 @@ export async function getELSSTTerm(labels: string[], lang: string): Promise<Term
   };
 
   // Request term from ELSST, the label is encoded
-  const response = await fetch(`${window.location.origin}/api/elsst/_terms`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(body)
-  });
+  try {
+    const response = await fetch(`${window.location.origin}/api/elsst/_terms`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body),
+      signal
+    });
 
-  // Match potentially found - try to extract the URI
-  if (response.ok) {
-    return await response.json() as TermURIResult;
+    // Match potentially found - try to extract the URI
+    if (response.ok) {
+      return await response.json() as TermURIResult;
+    }
+  } catch (error) {
+    // Fetch was aborted
+    if (error instanceof DOMException && error.message === 'The user aborted a request.'){
+      return {};
+    }
   }
 
   // Response not OK
