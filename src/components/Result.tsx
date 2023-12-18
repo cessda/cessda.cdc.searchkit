@@ -56,7 +56,7 @@ function generateCreatorElements(item: CMMStudy) {
 }
 
 // Randomize array using Durstenfeld shuffle algorithm
-function shuffleArray(array: Array<any>) {
+function shuffleArray<T>(array: Array<T>) {
   if (array) {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
