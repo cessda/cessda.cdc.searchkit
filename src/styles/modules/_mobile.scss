@@ -60,6 +60,10 @@ body {
 }
 
 @media screen and (max-width: 768px) {
+  .container {
+    max-width: 100%;
+  }
+
   header {
     background-size: 100% !important;
   }
@@ -102,6 +106,10 @@ body {
   }
 
   .show-mobile-filters {
+    .container {
+      min-width: 100%;
+    }
+
     .sk-layout__body {
       position: relative;
     }

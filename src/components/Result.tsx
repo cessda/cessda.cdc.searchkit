@@ -156,10 +156,12 @@ export class Result extends Component<Props, ComponentState> {
             <span dangerouslySetInnerHTML={{__html: item.abstractHighlightShort || item.abstractShort}}/>
           }
         </div>
-        <div className="is-flex mt-10">
-          <Keywords keywords={this.state.shuffledKeywords} keywordLimit={Result.truncatedKeywordsLength}
-                    lang={currentLanguage} isExpandDisabled={true}/>
-        </div>
+        {this.state.shuffledKeywords.length > 0 &&
+          <div className="is-flex mt-10">
+            <Keywords keywords={this.state.shuffledKeywords} keywordLimit={Result.truncatedKeywordsLength}
+                      lang={currentLanguage} isExpandDisabled={true}/>
+          </div>
+        }
         <div className="result-actions mt-10">
           <div className="is-flex is-hidden-touch">
             {item.abstract.length > 380 &&
@@ -180,7 +182,7 @@ export class Result extends Component<Props, ComponentState> {
               </a>
             }
           </div>
-          <div className="is-flex">
+          <div className="is-flex is-flex-wrap-wrap">
             {languages.length > 0 &&
               <div className="buttons has-addons">
                 <span className="button is-small is-white bg-w pe-none">
