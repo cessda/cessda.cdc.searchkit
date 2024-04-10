@@ -37,13 +37,10 @@ require('./img/cessda_logo_dc.png');
 // Initialise Matomo Analytics.
 const _paq = getPaq();
 const url = 'https://cessda.matomo.cloud/';
-const url2 = 'https://analytics.cessda.eu/';
 const siteId = '2';
-const siteId2 = '2';
 
 _paq.push(['setTrackerUrl', url + 'matomo.php']);
 _paq.push(['setSiteId', siteId]);
-_paq.push(['addTracker', url2 + 'matomo.php', siteId2]);
 
 const element = document.createElement('script');
 const script = document.getElementsByTagName('script')[0];

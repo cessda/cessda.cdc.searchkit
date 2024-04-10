@@ -19,15 +19,25 @@ import { Language, languageMap, languages } from "../../../src/utilities/languag
 import { State } from '../../../src/types';
 import { mockStudy } from '../../common/mockdata';
 import { getStudyModel } from '../../../common/metadata';
-import fetch from 'jest-mock-fetch';
+import { Response } from 'node-fetch';
 
 const mockStore = configureMockStore<Partial<State>, ThunkDispatch<State, never, AnyAction>>([thunk]);
-
-afterEach(() => fetch.reset());
 
 describe('Detail actions', () => {
   describe('UPDATE_STUDY action', () => {
     it('is created when the displayed study is requested', async () => {
+      const fetchMock = jest.fn();
+      fetchMock.mockReturnValueOnce(Promise.resolve(
+        new Response(JSON.stringify({
+          source: mockStudy,
+          similars: [{
+            id: 2,
+            titleStudy: 'Similar Study Title'
+          }]
+        }))
+      ))
+      global.fetch = fetchMock as any;
+
       const enLanguage = languageMap.get("en") as Language;
 
       // Mock Redux store.
@@ -43,16 +53,6 @@ describe('Detail actions', () => {
       const promise = store.dispatch(action);
 
       expect(fetch).toHaveBeenCalledWith(`${window.location.origin}/api/sk/_get/${enLanguage.index}/${encodeURIComponent(mockStudy.id)}`);
-
-      fetch.mockResponse({
-        json: () => ({
-          source: mockStudy,
-          similars: [{
-            id: 2,
-            titleStudy: 'Similar Study Title'
-          }]
-        })
-      });
 
       await promise;
 
@@ -71,6 +71,18 @@ describe('Detail actions', () => {
     });
 
     it('returns a list of alternative languages when 404 occurs', async () => {
+      const fetchMock = jest.fn();
+      fetchMock.mockReturnValueOnce(Promise.resolve(
+        new Response(JSON.stringify(Array.from(languageMap.keys())),
+          {
+            status: 404,
+            statusText: "Not found"
+          }
+        ) 
+      ));
+      global.fetch = fetchMock as any;
+
+
       const enLanguage = languageMap.get("en") as Language;
 
       // Mock Redux store.
@@ -86,13 +98,6 @@ describe('Detail actions', () => {
       const promise = store.dispatch(action);
 
       expect(fetch).toHaveBeenCalledWith(`${window.location.origin}/api/sk/_get/${enLanguage.index}/${encodeURIComponent(mockStudy.id)}`);
-
-      fetch.mockResponse({
-        ok: false,
-        status: 404,
-        statusText: "Not found",
-        json: () => Array.from(languageMap.keys())
-      });
 
       await promise;
 
