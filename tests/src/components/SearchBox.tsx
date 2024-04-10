@@ -13,7 +13,7 @@
 
 import _ from 'lodash';
 import React from 'react';
-import { shallow } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import { mapDispatchToProps, mapStateToProps, SearchBox, Props } from '../../../src/components/SearchBox';
 import searchkit from '../../../src/utilities/searchkit';
 import { Browser, detect } from 'detect-browser';
@@ -30,7 +30,11 @@ function setup(partialProps?: Partial<Props>, browser?: Browser) {
       searchkit: searchkit,
       pathname: '/',
       push: jest.fn(),
-      query: 'search text'
+      replace: jest.fn(),
+      query: 'search text',
+      locationState: {
+        redirected: false
+      }
     },
     partialProps || {}
   );
@@ -129,6 +133,37 @@ describe('SearchBox component', () => {
     expect(props.push).toHaveBeenCalled();
   });
 
+  it('should fix value after redirection when query and input value are not the same', () => {
+    // Simulate user typing 'test' on e.g. /detail page by having query as 't' while
+    // text input field has 'est' and redirected is set to true
+    const { props, enzymeWrapper } = setup(
+      {
+        pathname: '/',
+        query: 't',
+        locationState: {
+          redirected: true
+        }
+      },
+    );
+    const inputField = mount(enzymeWrapper.find('input').first().getElement());
+    inputField.setProps({ value: 'est' });
+    const getElementSpy = jest.spyOn(document, 'getElementsByClassName').mockImplementation(() =>
+      [inputField.getDOMNode()] as unknown as HTMLCollectionOf<Element>
+    )
+
+    // Trigger componentDidUpdate()
+    enzymeWrapper.setProps({ ...props });
+
+    // Check that replace has been called with query 'test'
+    expect(props.replace).toHaveBeenCalledWith({
+      pathname: '/',
+      search: '?q=test',
+      state: { redirected: false }
+    });
+
+    getElementSpy.mockRestore();
+  });
+
   it('should map state to props', () => {
     const { props } = setup();
     expect(
@@ -136,7 +171,8 @@ describe('SearchBox component', () => {
         routing: {
           //@ts-expect-error
           locationBeforeTransitions: {
-            pathname: props.pathname
+            pathname: props.pathname,
+            state: props.locationState
           }
         },
         //@ts-expect-error
@@ -148,13 +184,15 @@ describe('SearchBox component', () => {
       })
     ).toEqual({
       pathname: props.pathname,
+      locationState: props.locationState,
       query: props.query
     });
   });
 
   it('should map dispatch to props', () => {
     expect(mapDispatchToProps(i => i)).toEqual({
-      push: expect.any(Function)
+      push: expect.any(Function),
+      replace: expect.any(Function)
     });
   });
 });

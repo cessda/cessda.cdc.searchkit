@@ -13,7 +13,7 @@
 
 import {SearchBox as SearchkitSearchBox, SearchBoxProps} from 'searchkit';
 import {connect, Dispatch} from 'react-redux';
-import {push} from 'react-router-redux';
+import {push, replace} from 'react-router-redux';
 import {AnyAction, bindActionCreators} from 'redux';
 import type {State} from '../types';
 import {detect} from 'detect-browser';
@@ -41,8 +41,36 @@ export class SearchBox extends SearchkitSearchBox {
     ...SearchkitSearchBox.defaultProps as typeof SearchkitSearchBox.defaultProps & { blurAction: "search"}, 
     pathname: '',
     push,
+    replace,
     query: ''
   };
+
+  componentDidUpdate() {
+    // After redirection, there's a short time window (until page is fully loaded) where next input will
+    // basically overwrite the first character entered before redirection. This way we can add it back.
+    // Could technically always be checked and not just when redirected is true
+    // but it's not really needed in any other case.
+    if(this.props.locationState && this.props.locationState.redirected){
+      const target = document.getElementsByClassName("sk-search-box__text")[0] as HTMLInputElement;
+      if(target && target.value){
+        // Check if value should be fixed
+        if(target.value !== this.props.query){
+          // Fix input field text by updating value and dispatching input event.
+          const valueSetter = (Object.getOwnPropertyDescriptor(target, 'value') || Object.create(null)).set;
+          const prototype = Object.getPrototypeOf(target);
+          const prototypeValueSetter = (Object.getOwnPropertyDescriptor(prototype, 'value') || Object.create(null)).set;
+          if (valueSetter && valueSetter !== prototypeValueSetter) {
+            prototypeValueSetter.call(target, `${this.props.query}${target.value}`);
+          } else {
+            valueSetter.call(target, `${this.props.query}${target.value}`);
+          }
+          target.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        // Reset redirected back to false in any case since fix will only be needed once or not at all.
+        this.props.replace({ pathname: '/', search: `?q=${target.value}`, state: { redirected: false } });
+      }
+    }
+  }
 
   onChange(event: Event): void {
     const {
@@ -62,10 +90,10 @@ export class SearchBox extends SearchkitSearchBox {
       if (detect()?.name === 'ie') {
         // Workaround for legacy Internet Explorer bug where change event is fired multiple times.
         if (target.value !== query) {
-          this.props.push('/');
+          this.props.push({ pathname: '/', state: { redirected: true } });
         }
       } else {
-        this.props.push('/');
+        this.props.push({ pathname: '/', state: { redirected: true } });
       }
     }
 
@@ -86,6 +114,7 @@ export class SearchBox extends SearchkitSearchBox {
 
 export function mapStateToProps(state: State) {
   return {
+    locationState: state.routing.locationBeforeTransitions.state,
     pathname: state.routing.locationBeforeTransitions.pathname,
     query: state.search.state.q
   };
@@ -93,7 +122,8 @@ export function mapStateToProps(state: State) {
 
 export function mapDispatchToProps(dispatch: Dispatch<AnyAction>) {
   return {
-    push: bindActionCreators(push, dispatch)
+    push: bindActionCreators(push, dispatch),
+    replace: bindActionCreators(replace, dispatch)
   };
 }
 
