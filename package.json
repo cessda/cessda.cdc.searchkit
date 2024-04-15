@@ -110,7 +110,7 @@
     "rimraf": "5.0.0",
     "sass": "1.72.0",
     "sass-loader": "14.1.0",
-    "searchkit": "2.4.4",
+    "searchkit": "4.11.2",
     "schema-dts": "1.1.2",
     "style-loader": "3.3.2",
     "ts-jest": "29.1.0",
