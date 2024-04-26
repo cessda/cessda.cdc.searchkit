@@ -74,6 +74,48 @@ export default class Elasticsearch {
     }));
   }
 
+  /**
+   * Gets values from a specific field from all indices (except if excluded) for one study.
+   * @param id the identifier of the study.
+   * @param field the name of the field to return values from.
+   * @param excludeIndex optionally exclude results from an index.
+   */
+  async getStudyFieldAllIndices(id: string, field: keyof CMMStudy, excludeIndex?: string) {
+    const query: any = {
+      size: 1000,
+      _source: [field],
+      index: 'cmmstudy_*',
+      query: {
+        bool: {
+          must: [
+            {
+              match: {
+                _id: id
+              }
+            }
+          ]
+        }
+      }
+    };
+
+    if (excludeIndex) {
+      query.query.bool.must_not = [
+        {
+          term: {
+            _index: excludeIndex
+          }
+        }
+      ];
+    }
+
+    const response = await this.client.search<CMMStudy>(query);
+
+    return response.hits.hits.map(hit => ({
+      values: hit._source?.[field],
+      index: hit._index
+    }));
+  }
+
   async getTotalStudies() {
     const response = await this.client.search({
       size: 0,

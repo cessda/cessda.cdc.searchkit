@@ -403,9 +403,9 @@ Summary information
           {this.generateElements(item.relatedPublications, 'ul', relatedPublication => {
             const relatedPublicationTitle = striptags(relatedPublication.title);
             if (relatedPublication.holdings?.length > 0) {
-              return <a href={relatedPublication.holdings[0]}>{relatedPublicationTitle}</a>;
+              return <span lang={relatedPublication.lang ? relatedPublication.lang : undefined}><a href={relatedPublication.holdings[0]}>{relatedPublicationTitle}</a></span>;
             } else {
-              return relatedPublicationTitle;
+              return <span lang={relatedPublication.lang ? relatedPublication.lang : undefined}>{relatedPublicationTitle}</span>;
             }
           }, true)}
         </Panel>

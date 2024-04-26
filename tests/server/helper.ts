@@ -37,6 +37,7 @@ mockedElasticsearch.mockImplementation(() => {
     client: jest.fn() as unknown as Client,
     getStudy: mockedGetStudy,
     getSimilars: jest.fn(),
+    getStudyFieldAllIndices: jest.fn(),
     getTotalStudies: jest.fn(),
     getListOfMetadataLanguages: jest.fn(),
     getListOfCountries: jest.fn(),

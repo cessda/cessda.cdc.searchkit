@@ -94,6 +94,7 @@ export interface DataCollectionFreeText {
 export interface RelatedPublication {
   title: string;
   holdings: string[];
+  lang?: string;
 }
 
 export interface Pid {

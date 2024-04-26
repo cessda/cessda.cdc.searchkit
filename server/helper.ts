@@ -22,7 +22,7 @@ import compression from 'compression';
 import methodOverride from 'method-override';
 import { ParsedQs } from 'qs';
 import responseTime from 'response-time';
-import { CMMStudy, getJsonLd, getStudyModel } from '../common/metadata';
+import { CMMStudy, RelatedPublication, getJsonLd, getStudyModel } from '../common/metadata';
 import { apiResponseTimeHandler, metricsRequestHandler, observeAPIClientIP, uiResponseTimeHandler } from './metrics';
 import Elasticsearch from './elasticsearch';
 import { errors } from '@elastic/elasticsearch';
@@ -106,6 +106,31 @@ function getSearchkitRouter() {
         similars = await elasticsearch.getSimilars(source?.titleStudy, req.params.id, req.params.index);
       } else {
         similars = [];
+      }
+
+      if(source){
+        // Get related publications from all other indices
+        const relPublValues = await elasticsearch.getStudyFieldAllIndices(req.params.id, 'relatedPublications', req.params.index);
+        const otherLangPublications = relPublValues.flatMap(item => {
+          return (item.values as RelatedPublication[] || []).map(publication => ({
+            title: publication.title,
+            holdings: publication.holdings,
+            lang: item.index ? item.index.split('_')[1] : ''
+          }));
+        });
+
+        const selectedLang = req.params.index.split('_')[1];
+        if(source.relatedPublications){
+          // Add lang to the related publications of selected language
+          source.relatedPublications.forEach(publication => {
+            publication.lang = selectedLang;
+          });
+          // Add related publications in other languages
+          source.relatedPublications.push(...otherLangPublications);
+        } else {
+          // Replace original relatedPublications with related publications found in other languages
+          source.relatedPublications = otherLangPublications;
+        }
       }
 
       // Send the response

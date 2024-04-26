@@ -19,7 +19,8 @@ import { mockStudy } from "../common/mockdata"
 jest.mock('@elastic/elasticsearch', () => ({
   Client: jest.fn(() => ({
     get: jest.fn(() => Promise.resolve({
-      _source: mockStudy
+      _source: mockStudy,
+      _index: 'cmmstudy_en'
     })),
     search: jest.fn(() => Promise.resolve({
       aggregations: {
@@ -30,7 +31,8 @@ jest.mock('@elastic/elasticsearch', () => ({
       hits: {
         hits: [
           {
-            _source: mockStudy
+            _source: mockStudy,
+            _index: 'cmmstudy_en'
           },
           {
             _source: undefined
@@ -56,11 +58,11 @@ describe('elasticsearch utilities', () => {
     it('should return an array of similars', async () => {
       const es = new Elasticsearch("test");
       await expect(es.getSimilars(mockStudy.titleStudy, mockStudy.id, "cmmstudy_en"))
-        .resolves.toStrictEqual([{ 
-          id: mockStudy.id, 
+        .resolves.toStrictEqual([{
+          id: mockStudy.id,
           title: mockStudy.titleStudy
         }]);
-      
+
       // Expect the correct call to have beem made
       expect(es.client.search).toBeCalledWith({
         size: 5,
@@ -80,6 +82,28 @@ describe('elasticsearch utilities', () => {
           }
         }
       });
+    });
+  });
+
+  describe('getStudyFieldAllIndices()', () => {
+    it('should return values for requested study field along with their index', async () => {
+      const es = new Elasticsearch("test");
+      await expect(es.getStudyFieldAllIndices(mockStudy.id, "relatedPublications"))
+        .resolves.toStrictEqual([
+          {
+            values: [{
+              title: "Related Publication 1",
+              holdings: [
+                "First Holding"
+              ]
+            }],
+            index: 'cmmstudy_en'
+          },
+          {
+            values: undefined,
+            index: undefined
+          }
+        ]);
     });
   });
 
