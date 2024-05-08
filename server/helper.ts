@@ -108,12 +108,11 @@ function getSearchkitRouter() {
       }
 
       if(source){
-        let otherLangPublications: Awaited<ReturnType<typeof elasticsearch.getRelatedPublications>>;
+        let otherLangPublications: Awaited<ReturnType<typeof elasticsearch.getRelatedPublications>> = [];
         try {
           // Get related publications from all other indices
           otherLangPublications = await elasticsearch.getRelatedPublications(req.params.id, 1000, req.params.index);
         } catch (e) {
-          otherLangPublications = [];
           elasticsearchErrorHandler(e, res);
         }
 
