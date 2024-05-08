@@ -75,16 +75,16 @@ export default class Elasticsearch {
   }
 
   /**
-   * Gets values from a specific field from all indices (except if excluded) for one study.
+   * Gets related publications from all indices (except excluded) for one study.
    * @param id the identifier of the study.
-   * @param field the name of the field to return values from.
+   * @param sizeMax max number of related publications.
    * @param excludeIndex optionally exclude results from an index.
    */
-  async getStudyFieldAllIndices(id: string, field: keyof CMMStudy, excludeIndex?: string) {
+  async getRelatedPublications(id: string, sizeMax: number, excludeIndex?: string) {
     const query: any = {
-      size: 1000,
-      _source: [field],
-      index: 'cmmstudy_*',
+      size: sizeMax,
+      _source: ['relatedPublications'],
+      index: `${this.indexName}_*`,
       query: {
         bool: {
           must: [
@@ -110,10 +110,18 @@ export default class Elasticsearch {
 
     const response = await this.client.search<CMMStudy>(query);
 
-    return response.hits.hits.map(hit => ({
-      values: hit._source?.[field],
-      index: hit._index
-    }));
+    if (!response.hits.hits) {
+        return [];
+    }
+
+    return response.hits.hits.flatMap(hit => {
+        return (hit._source?.relatedPublications || []).map(publication => ({
+            title: publication.title,
+            holdings: publication.holdings,
+            // Add lang according to the language part of index name
+            lang: hit._index.split('_')[1]
+        }));
+    });
   }
 
   async getTotalStudies() {
@@ -291,7 +299,7 @@ export default class Elasticsearch {
    */
   async getRecordCountByLanguage(lang: string): Promise<number | undefined>{
     const response = await this.client.search({ 
-      index: `cmmstudy_${lang}`,
+      index: `${this.indexName}_${lang}`,
       track_total_hits: true 
     });
     return Elasticsearch.parseTotalHits(response.hits.total);

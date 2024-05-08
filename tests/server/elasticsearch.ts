@@ -85,23 +85,17 @@ describe('elasticsearch utilities', () => {
     });
   });
 
-  describe('getStudyFieldAllIndices()', () => {
-    it('should return values for requested study field along with their index', async () => {
+  describe('getRelatedPublications()', () => {
+    it('should return related publications along with lang added according to index', async () => {
       const es = new Elasticsearch("test");
-      await expect(es.getStudyFieldAllIndices(mockStudy.id, "relatedPublications"))
+      await expect(es.getRelatedPublications(mockStudy.id, 1000))
         .resolves.toStrictEqual([
           {
-            values: [{
-              title: "Related Publication 1",
-              holdings: [
-                "First Holding"
-              ]
-            }],
-            index: 'cmmstudy_en'
-          },
-          {
-            values: undefined,
-            index: undefined
+            title: "Related Publication 1",
+            holdings: [
+              "First Holding"
+            ],
+            lang: "en"
           }
         ]);
     });

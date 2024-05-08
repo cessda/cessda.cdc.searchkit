@@ -109,15 +109,14 @@ function getSearchkitRouter() {
       }
 
       if(source){
-        // Get related publications from all other indices
-        const relPublValues = await elasticsearch.getStudyFieldAllIndices(req.params.id, 'relatedPublications', req.params.index);
-        const otherLangPublications = relPublValues.flatMap(item => {
-          return (item.values as RelatedPublication[] || []).map(publication => ({
-            title: publication.title,
-            holdings: publication.holdings,
-            lang: item.index ? item.index.split('_')[1] : ''
-          }));
-        });
+        let otherLangPublications: Awaited<ReturnType<typeof elasticsearch.getRelatedPublications>>;
+        try {
+          // Get related publications from all other indices
+          otherLangPublications = await elasticsearch.getRelatedPublications(req.params.id, 1000, req.params.index);
+        } catch (e) {
+          otherLangPublications = [];
+          elasticsearchErrorHandler(e, res);
+        }
 
         const selectedLang = req.params.index.split('_')[1];
         if(source.relatedPublications){
