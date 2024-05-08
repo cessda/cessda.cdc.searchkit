@@ -298,9 +298,9 @@ export default class Elasticsearch {
    * @param lang the language of the records.
    */
   async getRecordCountByLanguage(lang: string): Promise<number | undefined>{
-    const response = await this.client.search({ 
+    const response = await this.client.search({
       index: `${this.indexName}_${lang}`,
-      track_total_hits: true 
+      track_total_hits: true
     });
     return Elasticsearch.parseTotalHits(response.hits.total);
   }
