@@ -90,15 +90,15 @@
   <div id='root'></div>
   <% if (metadata.jsonLd) { %>
     <script id="json-ld" type="application/ld+json"><%- JSON.stringify(metadata.jsonLd) %></script>
-  <% } %>  
+  <% } %>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
- 
+
   <button id="zammad-feedback-form" class="button is-info">Send feedback</button>
   <script id="zammad_form_script" src="https://eosc-helpdesk.eosc-portal.eu/assets/form/form.js"></script>
   <script>
     $(function() {
       $('#zammad-feedback-form').ZammadForm({
-    agreementMessage:'  Accept CESSDA <a target="_blank" href="https://www.cessda.eu/Privacy-policy">Data Privacy Policy</a> & <a target="_blank" href="https://www.cessda.eu/Acceptable-Use-Policy">Acceptable Use Policy</a>', 
+    agreementMessage:'  Accept CESSDA <a target="_blank" href="https://www.cessda.eu/Privacy-policy">Data Privacy Policy</a> & <a target="_blank" href="https://www.cessda.eu/Acceptable-Use-Policy">Acceptable Use Policy</a>',
     messageTitle: 'CDC Feedback Form',
     messageSubmit: 'Submit',
     messageThankYou: 'Thank you for your inquiry (#%s)! We\'ll contact you as soon as possible.',

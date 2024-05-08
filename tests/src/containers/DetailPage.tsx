@@ -59,7 +59,7 @@ describe('DetailPage container', () => {
           locationBeforeTransitions: {
             query: {
               q: props.query
-            } 
+            }
           }
         },
         language: {
@@ -89,7 +89,7 @@ describe('DetailPage container', () => {
           locationBeforeTransitions: {
             query: {
               q: props.query
-            } 
+            }
           }
         },
         language: {

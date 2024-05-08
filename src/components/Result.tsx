@@ -126,7 +126,7 @@ export class Result extends Component<Props, ComponentState> {
                   q: item.id,
                   lang: item.langAvailableIn[i].toLowerCase()
                 }
-              }} 
+              }}
               onClick={()=> this.props.changeLanguage(item.langAvailableIn[i])}>
           {item.langAvailableIn[i]}
         </Link>
@@ -134,7 +134,7 @@ export class Result extends Component<Props, ComponentState> {
     }
 
     const creators = generateCreatorElements(item);
-	
+
     return (
       <div className="list_hit" data-qa="hit">
         <h4 className={bemBlocks.item().mix(bemBlocks.container('hith4'))} lang={currentLanguage}>
@@ -150,7 +150,7 @@ export class Result extends Component<Props, ComponentState> {
           {creators}
         </div>
         <div className={bemBlocks.item().mix(bemBlocks.container('desc'))} lang={currentLanguage}>
-          {this.state.abstractExpanded ? 
+          {this.state.abstractExpanded ?
             <span dangerouslySetInnerHTML={{__html: item.abstractHighlightLong || item.abstractLong}}/>
           :
             <span dangerouslySetInnerHTML={{__html: item.abstractHighlightShort || item.abstractShort}}/>

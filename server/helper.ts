@@ -16,11 +16,9 @@ import path from 'path';
 import _ from 'lodash';
 import proxy from 'express-http-proxy';
 import express, { RequestHandler } from 'express';
-import bodybuilder, { Bodybuilder } from 'bodybuilder';
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import methodOverride from 'method-override';
-import { ParsedQs } from 'qs';
 import responseTime from 'response-time';
 import { CMMStudy, RelatedPublication, getJsonLd, getStudyModel } from '../common/metadata';
 import { apiResponseTimeHandler, metricsRequestHandler, observeAPIClientIP, uiResponseTimeHandler } from './metrics';
@@ -35,6 +33,7 @@ import fetch, { Request } from 'node-fetch';
 import { Agent } from 'http';
 import IPinfoWrapper, { ApiLimitError } from "node-ipinfo";
 import { getELSSTRouter } from './elsst';
+import { QueryDslBoolQuery, QueryDslNestedQuery, QueryDslQueryContainer, Sort } from '@elastic/elasticsearch/lib/api/types';
 
 
 // Defaults to localhost if unspecified
@@ -292,27 +291,41 @@ function externalApiV2() {
     }
 
     //Prepare body for ElasticSearch
-    const bodyQuery = bodybuilder();
+    let sort: Sort | undefined = undefined;
 
     //Implementing Sorting Options
     switch (sortBy) {
       case undefined: //if no sorting option is provided, sort by default Relevance - as UI
-        bodyQuery.sort('_score', 'desc');
+        sort = {
+          _score: {
+            order: 'desc'
+          }
+        };
         break;
       case "titleAscending":
-        bodyQuery.sort('titleStudy.raw', 'asc');
+        sort = {
+          'titleStudy.raw': 'asc'
+        };
         break;
       case "titleDescending":
-        bodyQuery.sort('titleStudy.raw', 'desc');
+        sort = {
+          'titleStudy.raw': 'desc'
+        };
         break;
       case "dateOfCollectionOldest":
-        bodyQuery.sort('dataCollectionPeriodEnddate', 'asc');
+        sort = {
+          'dataCollectionPeriodEnddate': 'asc'
+        };
         break;
       case "dateOfCollectionNewest":
-        bodyQuery.sort('dataCollectionPeriodEnddate', 'desc');
+        sort = {
+          'dataCollectionPeriodEnddate': 'desc'
+        };
         break;
       case "dateOfPublicationNewest":
-        bodyQuery.sort('publicationYear', 'desc');
+        sort = {
+          publicationYear: 'desc'
+        };
         break;
       default:
         res.status(400).send({ message: 'Please provide a proper sorting option. Available: titleAscending, titleDescending, dateOfCollectionOldest, dateOfCollectionNewest, dateOfPublicationNewest'});
@@ -335,8 +348,6 @@ function externalApiV2() {
       limit = 10;
     }
 
-    bodyQuery.size(limit);
-
     // Validate the offset parameter
     let offset = 0;
     if (req.query.offset !== undefined) {
@@ -344,35 +355,57 @@ function externalApiV2() {
       if (req.query.offset === '' || !Number.isInteger(offset) || offset < 0) {
         res.status(400).send({ message: 'offset must be a positive integer'});
         return;
-      } else {
-        bodyQuery.from(offset);
       }
     }
 
-    //create json body for ElasticSearchClient - search query
-    if (_.isString(q)) {
-      bodyQuery.query('simple_query_string', {
-        query: q,
-        lenient: true,
-        default_operator: "AND",
-        fields: [
-          "titleStudy^4",
-          "abstract^2",
-          "creators^2",
-          "keywords.term^1.5",
-          "*"
-        ],
-        flags: "AND|OR|NOT|PHRASE|PRECEDENCE|PREFIX"
+    // Container for the overall query
+    const boolQuery: QueryDslBoolQuery = {};
+
+    // Holds the main simple_query_string and nested queries
+    const mustQuery: QueryDslQueryContainer[] = [];
+
+    if (req.query.keywords) {
+      // create keywords query
+      mustQuery.push({
+        simple_query_string: {
+          query: (req.query.keywords as string),
+          fields: ["keywordsSearchField"]
+        }
+      });
+    } else if (_.isString(q)) {
+      //create json body for ElasticSearchClient - search query
+      mustQuery.push({
+        simple_query_string: {
+          query: q,
+          lenient: true,
+          default_operator: "AND",
+          fields: [
+            "titleStudy^4",
+            "abstract^2",
+            "creators^2",
+            "keywords.term^1.5",
+            "*"
+          ],
+          flags: "AND|OR|NOT|PHRASE|PRECEDENCE|PREFIX"
+        }
       });
     }
 
     // Create json body for ElasticSearchClient - nested post-filters
-    buildNestedFilters(bodyQuery, req.query.classifications, 'classifications', 'classifications.term');
-    buildNestedFilters(bodyQuery, req.query.studyAreaCountries, 'studyAreaCountries', 'studyAreaCountries.searchField');
-    buildNestedFilters(bodyQuery, req.query.publishers, 'publisherFilter', 'publisherFilter.publisher');
+    if (req.query.classifications) {
+      mustQuery.push({ nested: buildNestedFilters(req.query.classifications, 'classifications', 'classifications.term') });
+    }
 
-    if (req.query.keywords) {
-      bodyQuery.query('simple_query_string', { query: req.query.keywords, fields: ["keywordsSearchField"] });
+    if (req.query.studyAreaCountries) {
+      mustQuery.push({ nested: buildNestedFilters(req.query.studyAreaCountries, 'studyAreaCountries', 'studyAreaCountries.searchField') });
+    }
+
+    if (req.query.publishers) {
+      mustQuery.push({ nested: buildNestedFilters(req.query.publishers, 'publisherFilter', 'publisherFilter.publisher') })
+    }
+
+    if (mustQuery.length > 0) {
+      boolQuery.must = mustQuery;
     }
 
     //Create json body for ElasticSearchClient - date-filters
@@ -385,7 +418,14 @@ function externalApiV2() {
       if (!Number.isInteger(dataCollectionYearMax)) {
         dataCollectionYearMax = undefined;
       }
-      bodyQuery.filter('range', 'dataCollectionYear', { gte: dataCollectionYearMin, lte: dataCollectionYearMax });
+      boolQuery.filter = {
+        range: {
+          dataCollectionYear: {
+            gte: dataCollectionYearMin,
+            lte: dataCollectionYearMax
+          }
+        }
+      };
     }
 
 
@@ -394,8 +434,13 @@ function externalApiV2() {
     try {
       const response = await elasticsearch.client.search<CMMStudy>({
         index: `cmmstudy_${metadataLanguage}`,
-        body: bodyQuery.build(),
-        track_total_hits: true
+        track_total_hits: true,
+        query: {
+          bool: boolQuery
+        },
+        sort: sort,
+        size: limit,
+        from: offset
       });
 
       // Calculate the total hits
@@ -460,14 +505,27 @@ function externalApiV2() {
  * @param path the path to the nested document.
  * @param nestedPath the path to use in the nested document
  */
-function buildNestedFilters(bodyQuery: Bodybuilder, query: string | string[] | ParsedQs | ParsedQs[] | undefined, path: string, nestedPath: string) {
+function buildNestedFilters(query: unknown, path: string, nestedPath: string): QueryDslNestedQuery {
   if (Array.isArray(query)) {
-    bodyQuery.query('nested', { path: path }, (q: Bodybuilder) => {
-      query.forEach(value => q.orQuery('term', nestedPath, value));
-      return q;
-    });
-  } else if (_.isString(query)) {
-    bodyQuery.query('nested', { path: path }, (q: Bodybuilder) => q.addQuery('term', nestedPath, query));
+    return {
+      path: path,
+      query: {
+        terms: {
+          [nestedPath]: query
+        }
+      }
+    };
+  } else {
+    return {
+      path: path,
+      query: {
+        term: {
+          [nestedPath]: {
+            value: query
+          }
+        }
+      }
+    };
   }
 }
 

@@ -13,19 +13,19 @@
 
 import {CMMStudy} from '../../common/metadata';
 import type {Action} from '../actions';
-import { 
-  INIT_SEARCHKIT, 
-  RESET_SEARCH, 
-  SearchkitState, 
-  TOGGLE_ADVANCED_SEARCH, 
-  TOGGLE_LOADING, 
+import {
+  INIT_SEARCHKIT,
+  RESET_SEARCH,
+  SearchkitState,
+  TOGGLE_ADVANCED_SEARCH,
+  TOGGLE_LOADING,
   TOGGLE_METADATA_PANELS,
-  TOGGLE_MOBILE_FILTERS, 
-  TOGGLE_SUMMARY, 
-  UPDATE_DISPLAYED, 
-  UPDATE_QUERY, 
+  TOGGLE_MOBILE_FILTERS,
+  TOGGLE_SUMMARY,
+  UPDATE_DISPLAYED,
+  UPDATE_QUERY,
   UPDATE_STATE,
-  UPDATE_TOTAL_STUDIES 
+  UPDATE_TOTAL_STUDIES
 } from '../actions/search';
 
 

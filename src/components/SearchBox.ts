@@ -25,7 +25,7 @@ export type Props = SearchBoxProps & DispatchAndState
 
 // Extend the Searchkit SearchBox component to limit maximum characters and provide redirection.
 export class SearchBox extends SearchkitSearchBox {
-  
+
   props: Props;
 
   constructor(props: Props) {
@@ -38,7 +38,7 @@ export class SearchBox extends SearchkitSearchBox {
   }
 
   static defaultProps = {
-    ...SearchkitSearchBox.defaultProps as typeof SearchkitSearchBox.defaultProps & { blurAction: "search"}, 
+    ...SearchkitSearchBox.defaultProps as typeof SearchkitSearchBox.defaultProps & { blurAction: "search"},
     pathname: '',
     push,
     replace,

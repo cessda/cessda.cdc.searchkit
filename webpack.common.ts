@@ -64,6 +64,6 @@ const config: Configuration = {
       process: 'process/browser',
     })
   ]
-} 
+}
 
 export default config;

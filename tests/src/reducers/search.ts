@@ -138,7 +138,7 @@ describe('Search reducer', () => {
     });
 
     const emptyStudy = getStudyModel({});
-    
+
     expect(
       search(
         initialState,

@@ -62,7 +62,7 @@ export function initTranslations(): Thunk {
     searchkit.translateFunction = (key: string): string | undefined => {
       const numberOfResults = process.env.PASC_DEBUG_MODE === 'true' ? 'numberOfResultsWithTime' : 'numberOfResults';
       switch (key) {
-        case 'searchbox.placeholder': 
+        case 'searchbox.placeholder':
           return counterpart.translate('search.placeholder');
         case 'hitstats.results_found': {
           const state = getState();
@@ -73,17 +73,17 @@ export function initTranslations(): Thunk {
             time: searchkit.getTime()
           });
         }
-        case 'NoHits.NoResultsFound': 
+        case 'NoHits.NoResultsFound':
           return counterpart.translate('noHits.noResultsFound', {
             query: searchkit.getQueryAccessor().state.value
           });
-        case 'NoHits.SearchWithoutFilters': 
+        case 'NoHits.SearchWithoutFilters':
           return counterpart.translate('noHits.searchWithoutFilters', {
             query: searchkit.getQueryAccessor().state.value
           });
-        case 'NoHits.Error': 
+        case 'NoHits.Error':
           return counterpart.translate('noHits.error');
-        case 'NoHits.ResetSearch': 
+        case 'NoHits.ResetSearch':
           return counterpart.translate('noHits.resetSearch');
         default:
           return undefined;
@@ -151,7 +151,7 @@ export function changeLanguage(code: string): Thunk {
       code,
       label
     });
-    
+
     if (state.routing.locationBeforeTransitions.pathname === "/detail" && state.routing.locationBeforeTransitions.query.q) {
       dispatch(updateStudy(state.routing.locationBeforeTransitions.query.q.toString()));
     }

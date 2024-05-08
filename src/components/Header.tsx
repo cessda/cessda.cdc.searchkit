@@ -211,7 +211,7 @@ export class Header extends Component<Props> {
             </div>
           </div>
         </div>
-		
+
          {showFilterSummary &&
           <div className="modal is-active">
             <div className="modal-background"/>
@@ -275,8 +275,8 @@ export class Header extends Component<Props> {
                               unsafe/>
               </section>
               <div className="modal-card-foot">
-                <Translate component="button" className="button is-light" 
-                              onClick={toggleAdvancedSearch} 
+                <Translate component="button" className="button is-light"
+                              onClick={toggleAdvancedSearch}
                               content="close"/>
               </div>
             </div>

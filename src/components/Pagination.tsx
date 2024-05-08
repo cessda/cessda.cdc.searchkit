@@ -51,7 +51,7 @@ export default class Pagination extends AbstractItemList {
                href={'/?p=' + items[i].page}
                aria-label={counterpart.translate('pagination.page') + items[i].page}
                onClick={(e) => {
-                 e.preventDefault(); 
+                 e.preventDefault();
                  setItems([items[i].page]);
                 }}>
               {items[i].label}
@@ -68,7 +68,7 @@ export default class Pagination extends AbstractItemList {
            href={'/?p=' + items[0].page}
            aria-label={counterpart.translate('pagination.previous') + items[0].page}
            onClick={(e) => {
-             e.preventDefault(); 
+             e.preventDefault();
              setItems([items[0].page]);
             }}>
           <FaChevronLeft/>
@@ -80,7 +80,7 @@ export default class Pagination extends AbstractItemList {
            href={'/?p=' + items[items.length - 1].page}
            aria-label={counterpart.translate('pagination.next') + items[items.length - 1].page}
            onClick={(e) => {
-             e.preventDefault(); 
+             e.preventDefault();
              setItems([items[items.length - 1].page]);
             }}>
           <FaChevronRight/>

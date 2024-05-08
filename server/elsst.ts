@@ -30,7 +30,7 @@ export interface TermURIResult extends Record<string, string> {}
 /**
  * Cache for ELSST terms
  */
-const termCache = new Map<string, string | undefined>();
+const termCache = new Map<string, string | null>();
 
 async function getELSSTTerm(labels: string[], lang: string): Promise<TermURIResult> {
 
@@ -71,7 +71,7 @@ async function getELSSTTerm(labels: string[], lang: string): Promise<TermURIResu
       }
     } else if (response.status === 404) {
       // If a 404 response is returned, the term doesn't exist in ELSST
-      termCache.set(normalisedLabel, undefined);
+      termCache.set(normalisedLabel, null);
     }
 
     // Match not found

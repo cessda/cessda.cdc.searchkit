@@ -20,7 +20,7 @@
   //   label  : The English label for this language.
   //   index  : The Elasticsearch index containing data for this language.
   // }
-export const languages: readonly Language[] = 
+export const languages: readonly Language[] =
   [{
     code: 'cs',
     label: 'Czech',

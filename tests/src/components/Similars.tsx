@@ -34,7 +34,7 @@ function setup(partialProps?: Partial<Props>) {
     ],
     currentLanguage: "en",
     push: jest.fn(),
-    ...partialProps 
+    ...partialProps
   };
 
   // Manually initialise searchkit history.

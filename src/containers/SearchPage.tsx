@@ -218,7 +218,7 @@ export class SearchPage extends Component<Props> {
                     hitsPerPage={30}
                     customHighlight={{
                       fields: {
-                        titleStudy: { number_of_fragments: 0 }, 
+                        titleStudy: { number_of_fragments: 0 },
                         abstract: { number_of_fragments: 0 }
                       }
                     }}

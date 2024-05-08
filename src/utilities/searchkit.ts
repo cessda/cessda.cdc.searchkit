@@ -14,7 +14,7 @@
 import { QueryDslQueryContainer } from '@elastic/elasticsearch/lib/api/types';
 import {SearchkitManager} from 'searchkit';
 
-/** 
+/**
  * Query builder used to create the query going to Elasticsearch (for search page).
  */
 export function queryBuilder(query: string): QueryDslQueryContainer {
@@ -39,7 +39,7 @@ export function queryBuilder(query: string): QueryDslQueryContainer {
   };
 }
 
-/** 
+/**
  * Query used to retrieve a single record by its ID (for detail page).
  * @param id the document to retrieve.
  */
@@ -51,7 +51,7 @@ export function detailQuery(id: string): QueryDslQueryContainer {
   };
 }
 
-/** 
+/**
  * Query used to retrieve a single record by its pid (for detail page).
  */
 export function pidQuery(pid: string): QueryDslQueryContainer {
@@ -68,7 +68,7 @@ export function pidQuery(pid: string): QueryDslQueryContainer {
 
 /**
  * Match all query
- */ 
+ */
 export function matchAllQuery(): QueryDslQueryContainer {
   return {
     match_all: {}

@@ -67,7 +67,7 @@ describe('elasticsearch utilities', () => {
       expect(es.client.search).toBeCalledWith({
         size: 5,
         index: "cmmstudy_en",
-        query: { 
+        query: {
           bool: {
             must: {
               match: {

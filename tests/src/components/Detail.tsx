@@ -199,7 +199,7 @@ describe('Detail component', () => {
   });
 
   it('should handle a related publication with no holdings', () => {
-    const { enzymeWrapper } = setup({ 
+    const { enzymeWrapper } = setup({
       relatedPublications: [
         {
           title: "Related publications title",

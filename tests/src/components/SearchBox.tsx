@@ -41,7 +41,7 @@ function setup(partialProps?: Partial<Props>, browser?: Browser) {
 
   // Mock detect-browser detect() to return custom browser type.
   (detect as jest.MockedFunction<typeof detect>).mockImplementation(() =>  ({
-    name: browser || "chrome", 
+    name: browser || "chrome",
     version: (browser === "ie") ? "11" : "90",
     os: null,
     type: "browser"

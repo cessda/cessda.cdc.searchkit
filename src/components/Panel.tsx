@@ -35,7 +35,7 @@ export class Panel extends SearchkitPanel {
   props: Props;
 
   static readonly defaultProps = {
-    ...SearchkitPanel.defaultProps, 
+    ...SearchkitPanel.defaultProps,
     expandMetadataPanels: false,
     toggleMetadataPanels
   };

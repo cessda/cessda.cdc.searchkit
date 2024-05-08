@@ -54,7 +54,7 @@ describe('Header component', () => {
   it('should navigate to home from logo', () => {
     const { enzymeWrapper } = setup();
     enzymeWrapper.find('.cessda-eric').simulate('click');
-    
+
   });
 
   it('should show hide button when mobile filters visible', () => {
