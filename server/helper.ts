@@ -20,7 +20,7 @@ import bodyParser from 'body-parser';
 import compression from 'compression';
 import methodOverride from 'method-override';
 import responseTime from 'response-time';
-import { CMMStudy, RelatedPublication, getJsonLd, getStudyModel } from '../common/metadata';
+import { CMMStudy, getJsonLd, getStudyModel } from '../common/metadata';
 import { apiResponseTimeHandler, metricsRequestHandler, observeAPIClientIP, uiResponseTimeHandler } from './metrics';
 import Elasticsearch from './elasticsearch';
 import { errors } from '@elastic/elasticsearch';
