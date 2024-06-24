@@ -200,7 +200,10 @@
         "ariaLabel": "Tooltip button for Keywords"
       }
     },
-    "relatedPublications": "Related publications"
+    "relatedPublications": "Related publications",
+    "funding": "Funding information",
+    "funder": "Funder",
+    "grantNumber": "Grant Number"
   },
   "header": {
     "frontPage": "Front/search page",

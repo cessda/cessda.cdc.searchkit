@@ -47,6 +47,12 @@ describe('Metadata utilities', () => {
           dataCollectionPeriodEnddate: '',
           dataCollectionPeriodStartdate: '2001',
           fileLanguages: ['en'],
+          funding: [
+            {
+              grantNumber: '123456',
+              agency: 'Some Agency'
+            }
+          ],
           keywords: [
             {
               id: 'UKDS1234',
@@ -138,6 +144,12 @@ describe('Metadata utilities', () => {
         dataCollectionPeriodStartdate: '2001',
         dataCollectionYear: undefined,
         fileLanguages: ['en'],
+        funding: [
+          {
+            grantNumber: '123456',
+            agency: 'Some Agency'
+          }
+        ],
         keywords: [
           {
             id: 'UKDS1234',
@@ -224,6 +236,7 @@ describe('Metadata utilities', () => {
         dataCollectionPeriodStartdate: '',
         dataCollectionYear: undefined,
         fileLanguages: [],
+        funding: [],
         keywords: [],
         langAvailableIn: [],
         lastModified: '',
@@ -286,6 +299,7 @@ describe('Metadata utilities', () => {
           dataCollectionPeriodEnddate: '',
           dataCollectionPeriodStartdate: '2001',
           fileLanguages: ['en'],
+          funding: [],
           keywords: [
             {
               id: 'UKDS1234',
@@ -425,6 +439,7 @@ describe('Metadata utilities', () => {
           dataCollectionPeriodEnddate: '',
           dataCollectionPeriodStartdate: '2001',
           fileLanguages: ['en'],
+          funding: [],
           keywords: [],
           langAvailableIn: ['EN'],
           lastModified: '2001-01-01T12:00:00Z',

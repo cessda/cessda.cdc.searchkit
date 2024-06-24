@@ -38,6 +38,12 @@ export const mockStudy: CMMStudy = {
   dataCollectionPeriodStartdate: '2001',
   dataCollectionYear: 2001,
   fileLanguages: ['en'],
+  funding: [
+    {
+      grantNumber: '123456',
+      agency: 'Some Agency'
+    }
+  ],
   keywords: [
     {
       id: '',

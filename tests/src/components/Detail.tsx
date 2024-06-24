@@ -210,4 +210,39 @@ describe('Detail component', () => {
     const detail = enzymeWrapper.find('article.w-100');
     expect(detail.exists()).toBe(true);
   })
+
+  it('should add funding information if it exists', () => {
+    const fundingData = [
+      {
+        agency: "Some Agency",
+        grantNumber: "ID000"
+      },
+      {
+        agency: "Another Agency",
+        grantNumber: "1234"
+      },
+      {
+        grantNumber: "IdButNoAgency"
+      }
+    ];
+
+    const { enzymeWrapper } = setup({ funding: fundingData });
+
+    const fundingPanel = enzymeWrapper.find('#funding-information');
+    expect(fundingPanel.exists()).toBe(true);
+
+    fundingData.forEach((funding) => {
+      expect(fundingPanel.contains(<p lang="en">{funding.agency}</p>)).toBe(funding.agency ? true : false);
+      expect(fundingPanel.contains(<p lang="en">{funding.grantNumber}</p>)).toBe(true);
+    });
+  })
+
+  it('should not add funding information if it does not exist', () => {
+    const { enzymeWrapper } = setup({
+      funding: []
+    });
+
+    const fundingPanel = enzymeWrapper.find('#funding-information');
+    expect(fundingPanel.exists()).toBe(false);
+  })
 });

@@ -78,6 +78,8 @@ export interface CMMStudy {
   universe?: Universe;
   /** Related publications */
   relatedPublications: RelatedPublication[];
+  /** Funding */
+  funding: Funding[];
 }
 
 export interface Country {
@@ -127,6 +129,11 @@ export interface Universe {
   exclusion?: string;
 }
 
+export interface Funding {
+  grantNumber: string;
+  agency?: string;
+}
+
 /**
  * Creates a model to store/display study metadata in the user interface.
  *
@@ -172,7 +179,8 @@ export function getStudyModel(source: Partial<CMMStudy> | undefined, highlight?:
     studyXmlSourceUrl: source.studyXmlSourceUrl as string,
     langAvailableIn: (source.langAvailableIn || []).map(i => i.toUpperCase()).sort(),
     universe: source.universe,
-    relatedPublications: source.relatedPublications || []
+    relatedPublications: source.relatedPublications || [],
+    funding: source.funding || []
   });
 }
 

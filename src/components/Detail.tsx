@@ -364,6 +364,42 @@ Summary information
           {this.generateElements(item.typeOfModeOfCollections, 'div', method => method.term)}
         </Panel>
 
+        {item.funding.length > 0 &&
+          <Panel
+            id="funding-information"
+            className="section-header"
+            title={<Translate component="h2" content='metadata.funding'/>}
+            collapsable={false}
+          >
+            {item.funding.map(funding => (
+              <React.Fragment key={`${funding.grantNumber}${funding.agency || ''}`}>
+                {funding.agency &&
+                  <>
+                    <Translate
+                      className="data-label"
+                      component="h3"
+                      content="metadata.funder"
+                    />
+                    <p lang={lang}>
+                      {funding.agency}
+                    </p>
+                  </>
+                }
+                <>
+                  <Translate
+                    className={`data-label${funding.agency ? ' mt-1' : ''}`}
+                    component="h3"
+                    content="metadata.grantNumber"
+                  />
+                  <p lang={lang}>
+                    {funding.grantNumber}
+                  </p>
+                </>
+              </React.Fragment>
+            ))}
+          </Panel>
+        }
+
         <Panel
           className="section-header"
           title={<Translate component="h2" content='metadata.access'/>}
