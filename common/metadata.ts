@@ -142,7 +142,7 @@ export interface Universe {
 }
 
 export interface Funding {
-  grantNumber: string;
+  grantNumber?: string;
   agency?: string;
 }
 

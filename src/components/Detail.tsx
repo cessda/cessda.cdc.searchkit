@@ -378,7 +378,7 @@ Summary information
             collapsable={false}
           >
             {item.funding.map(funding => (
-              <React.Fragment key={`${funding.grantNumber}${funding.agency || ''}`}>
+              <React.Fragment key={`${funding.agency || ''}${funding.grantNumber || ''}`}>
                 {funding.agency &&
                   <>
                     <Translate
@@ -391,16 +391,18 @@ Summary information
                     </p>
                   </>
                 }
-                <>
-                  <Translate
-                    className={`data-label${funding.agency ? ' mt-1' : ''}`}
-                    component="h3"
-                    content="metadata.grantNumber"
-                  />
-                  <p lang={lang}>
-                    {funding.grantNumber}
-                  </p>
-                </>
+                {funding.grantNumber &&
+                  <>
+                    <Translate
+                      className={`data-label${funding.agency ? ' mt-1' : ''}`}
+                      component="h3"
+                      content="metadata.grantNumber"
+                    />
+                    <p lang={lang}>
+                      {funding.grantNumber}
+                    </p>
+                  </>
+                }
               </React.Fragment>
             ))}
           </Panel>

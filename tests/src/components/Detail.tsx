@@ -223,6 +223,9 @@ describe('Detail component', () => {
       },
       {
         grantNumber: "IdButNoAgency"
+      },
+      {
+        agency: "Finnish Agency"
       }
     ];
 
@@ -233,7 +236,7 @@ describe('Detail component', () => {
 
     fundingData.forEach((funding) => {
       expect(fundingPanel.contains(<p lang="en">{funding.agency}</p>)).toBe(funding.agency ? true : false);
-      expect(fundingPanel.contains(<p lang="en">{funding.grantNumber}</p>)).toBe(true);
+      expect(fundingPanel.contains(<p lang="en">{funding.grantNumber}</p>)).toBe(funding.grantNumber ? true : false);
     });
   })
 
