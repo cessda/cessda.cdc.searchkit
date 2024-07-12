@@ -58,6 +58,14 @@ describe('Metadata utilities', () => {
               agency: 'Some Agency'
             }
           ],
+          generalDataFormats: [
+            {
+              id: '',
+              term: 'Numeric',
+              vocab: 'GeneralDataFormat',
+              vocabUri: 'urn:ddi:int.ddi.cv:GeneralDataFormat:2.0.3'
+            }
+          ],
           keywords: [
             {
               id: 'UKDS1234',
@@ -160,6 +168,14 @@ describe('Metadata utilities', () => {
             agency: 'Some Agency'
           }
         ],
+        generalDataFormats: [
+          {
+            id: '',
+            term: 'Numeric',
+            vocab: 'GeneralDataFormat',
+            vocabUri: 'urn:ddi:int.ddi.cv:GeneralDataFormat:2.0.3'
+          }
+        ],
         keywords: [
           {
             id: 'UKDS1234',
@@ -248,6 +264,7 @@ describe('Metadata utilities', () => {
         dataKindFreeTexts: [],
         fileLanguages: [],
         funding: [],
+        generalDataFormats: [],
         keywords: [],
         langAvailableIn: [],
         lastModified: '',
@@ -312,6 +329,7 @@ describe('Metadata utilities', () => {
           dataKindFreeTexts: [],
           fileLanguages: ['en'],
           funding: [],
+          generalDataFormats: [],
           keywords: [
             {
               id: 'UKDS1234',
@@ -453,6 +471,7 @@ describe('Metadata utilities', () => {
           dataKindFreeTexts: [],
           fileLanguages: ['en'],
           funding: [],
+          generalDataFormats: [],
           keywords: [],
           langAvailableIn: ['EN'],
           lastModified: '2001-01-01T12:00:00Z',

@@ -80,8 +80,10 @@ export interface CMMStudy {
   relatedPublications: RelatedPublication[];
   /** Funding */
   funding: Funding[];
-  /** Data Kind free text */
+  /** Data kind free text */
   dataKindFreeTexts: DataKindFreeText[];
+  /** General data format */
+  generalDataFormats: TermVocabAttributes[];
 }
 
 export interface Creator {
@@ -200,7 +202,8 @@ export function getStudyModel(source: Partial<CMMStudy> | undefined, highlight?:
     universe: source.universe,
     relatedPublications: source.relatedPublications || [],
     funding: source.funding || [],
-    dataKindFreeTexts: source.dataKindFreeTexts || []
+    dataKindFreeTexts: source.dataKindFreeTexts || [],
+    generalDataFormats: source.generalDataFormats || []
   });
 }
 

@@ -49,6 +49,14 @@ export const mockStudy: CMMStudy = {
       agency: 'Some Agency'
     }
   ],
+  generalDataFormats: [
+    {
+      id: '',
+      term: 'Numeric',
+      vocab: 'GeneralDataFormat',
+      vocabUri: 'urn:ddi:int.ddi.cv:GeneralDataFormat:2.0.3'
+    }
+  ],
   keywords: [
     {
       id: '',

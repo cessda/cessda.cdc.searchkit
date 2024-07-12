@@ -18,7 +18,7 @@ import Tooltip from './Tooltip';
 import Panel from "./Panel";
 import Translate from "react-translate-component";
 import { upperFirst } from "lodash";
-import { CMMStudy, DataCollectionFreeText, DataKindFreeText, Universe } from "../../common/metadata";
+import { CMMStudy, DataCollectionFreeText, DataKindFreeText, TermVocabAttributes, Universe } from "../../common/metadata";
 import { ChronoField, DateTimeFormatter, DateTimeFormatterBuilder } from "@js-joda/core";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import striptags from "striptags";
@@ -196,21 +196,24 @@ export default class Detail extends React.Component<Props, State> {
   }
 
   /**
-   * Transforms the given dataKindFreeTexts from DataKindFreeText[] to string[] with
-   * all free texts and types combined into the same array with types before free texts
-   * and duplicates removed.
+   * Transforms the given dataKindFreeTexts and generalDataFormats to an array with
+   * all free texts, types and formats combined into the same array with
+   * duplicates also removed and placing types first, formats second and free texts last.
    *
    * @param dataKindFreeTexts the data kind free texts and types to transform
-   * @returns the transformed data kind free texts and types in one array
+   * @param generalDataFormats the general data formats to transform
+   * @returns the transformed free texts, types and formats in one array
    */
-  transformDataKindFreeTexts(dataKindFreeTexts: DataKindFreeText[]): string[] {
+  transformDataKind(dataKindFreeTexts: DataKindFreeText[], generalDataFormats: TermVocabAttributes[]): string[] {
     const types = new Set<string>();
     const freeTexts = new Set<string>();
+    const formats = new Set<string>();
     dataKindFreeTexts.forEach(({ dataKindFreeText, type }) => {
       if (type) types.add(type);
       if (dataKindFreeText) freeTexts.add(dataKindFreeText);
     });
-    return [...types, ...freeTexts];
+    generalDataFormats.forEach(item => formats.add(item.term));
+    return [...types, ...formats, ...freeTexts];
   }
 
   render() {
@@ -385,7 +388,7 @@ Summary information
             component="h3"
             content="metadata.dataKind"
           />
-          {item.dataKindFreeTexts ? this.generateElements(this.transformDataKindFreeTexts(item.dataKindFreeTexts), 'div', text =>
+          {item.dataKindFreeTexts || item.generalDataFormats ? this.generateElements(this.transformDataKind(item.dataKindFreeTexts, item.generalDataFormats), 'div', text =>
             <div className="data-abstract" dangerouslySetInnerHTML={{__html: text}}/>
           ) : <Translate content="language.notAvailable.field" lang={lang} /> }
 

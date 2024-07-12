@@ -251,17 +251,26 @@ describe('Detail component', () => {
 
   it('should transform data kind free texts', () => {
     const { detailInstance } = setup();
-    const input = [
-      { dataKindFreeText: "Numeric", },
+    const dataKindFreeTexts = [
+      { dataKindFreeText: "Software", },
       { dataKindFreeText: "Text", type: "Quantitative" },
       { dataKindFreeText: "Other" },
     ];
+    const generalDataFormats = [
+      {
+        id: '',
+        term: 'Numeric',
+        vocab: 'GeneralDataFormat',
+        vocabUri: 'urn:ddi:int.ddi.cv:GeneralDataFormat:2.0.3'
+      }
+    ]
     const expectedOutput = [
       "Quantitative",
       "Numeric",
+      "Software",
       "Text",
       "Other"
     ];
-    expect(detailInstance.transformDataKindFreeTexts(input)).toEqual(expectedOutput);
+    expect(detailInstance.transformDataKind(dataKindFreeTexts, generalDataFormats)).toEqual(expectedOutput);
   });
 });
