@@ -18,7 +18,7 @@ import Tooltip from './Tooltip';
 import Panel from "./Panel";
 import Translate from "react-translate-component";
 import { upperFirst } from "lodash";
-import { CMMStudy, DataCollectionFreeText, Universe } from "../../common/metadata";
+import { CMMStudy, DataCollectionFreeText, DataKindFreeText, Universe } from "../../common/metadata";
 import { ChronoField, DateTimeFormatter, DateTimeFormatterBuilder } from "@js-joda/core";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import striptags from "striptags";
@@ -195,6 +195,24 @@ export default class Detail extends React.Component<Props, State> {
     }
   }
 
+  /**
+   * Transforms the given dataKindFreeTexts from DataKindFreeText[] to string[] with
+   * all free texts and types combined into the same array with types before free texts
+   * and duplicates removed.
+   *
+   * @param dataKindFreeTexts the data kind free texts and types to transform
+   * @returns the transformed data kind free texts and types in one array
+   */
+  transformDataKindFreeTexts(dataKindFreeTexts: DataKindFreeText[]): string[] {
+    const types = new Set<string>();
+    const freeTexts = new Set<string>();
+    dataKindFreeTexts.forEach(({ dataKindFreeText, type }) => {
+      if (type) types.add(type);
+      if (dataKindFreeText) freeTexts.add(dataKindFreeText);
+    });
+    return [...types, ...freeTexts];
+  }
+
   render() {
     const { item, lang } = this.props;
 
@@ -361,6 +379,15 @@ Summary information
           {this.generateElements(item.samplingProcedureFreeTexts, 'div', text =>
             <div className="data-abstract" dangerouslySetInnerHTML={{__html: text}}/>
           )}
+
+          <Translate
+            className="data-label"
+            component="h3"
+            content="metadata.dataKind"
+          />
+          {item.dataKindFreeTexts ? this.generateElements(this.transformDataKindFreeTexts(item.dataKindFreeTexts), 'div', text =>
+            <div className="data-abstract" dangerouslySetInnerHTML={{__html: text}}/>
+          ) : <Translate content="language.notAvailable.field" lang={lang} /> }
 
           <Translate
             className="data-label"

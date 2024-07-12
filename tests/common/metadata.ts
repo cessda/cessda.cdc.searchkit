@@ -46,6 +46,11 @@ describe('Metadata utilities', () => {
           dataCollectionFreeTexts: [],
           dataCollectionPeriodEnddate: '',
           dataCollectionPeriodStartdate: '2001',
+          dataKindFreeTexts: [
+            { dataKindFreeText: "Numeric", type: "Quantitative" },
+            { dataKindFreeText: "Text", type: "Quantitative" },
+            { dataKindFreeText: "Other" },
+          ],
           fileLanguages: ['en'],
           funding: [
             {
@@ -143,6 +148,11 @@ describe('Metadata utilities', () => {
         dataCollectionPeriodEnddate: '',
         dataCollectionPeriodStartdate: '2001',
         dataCollectionYear: undefined,
+        dataKindFreeTexts: [
+          { dataKindFreeText: "Numeric", type: "Quantitative" },
+          { dataKindFreeText: "Text", type: "Quantitative" },
+          { dataKindFreeText: "Other" },
+        ],
         fileLanguages: ['en'],
         funding: [
           {
@@ -235,6 +245,7 @@ describe('Metadata utilities', () => {
         dataCollectionPeriodEnddate: '',
         dataCollectionPeriodStartdate: '',
         dataCollectionYear: undefined,
+        dataKindFreeTexts: [],
         fileLanguages: [],
         funding: [],
         keywords: [],
@@ -298,6 +309,7 @@ describe('Metadata utilities', () => {
           dataCollectionFreeTexts: [],
           dataCollectionPeriodEnddate: '',
           dataCollectionPeriodStartdate: '2001',
+          dataKindFreeTexts: [],
           fileLanguages: ['en'],
           funding: [],
           keywords: [
@@ -438,6 +450,7 @@ describe('Metadata utilities', () => {
           dataCollectionFreeTexts: [],
           dataCollectionPeriodEnddate: '',
           dataCollectionPeriodStartdate: '2001',
+          dataKindFreeTexts: [],
           fileLanguages: ['en'],
           funding: [],
           keywords: [],

@@ -203,7 +203,8 @@
     "relatedPublications": "Related publications",
     "funding": "Funding information",
     "funder": "Funder",
-    "grantNumber": "Grant Number"
+    "grantNumber": "Grant number",
+    "dataKind": "Kind of data"
   },
   "header": {
     "frontPage": "Front/search page",

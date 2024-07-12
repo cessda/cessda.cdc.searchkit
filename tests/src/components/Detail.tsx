@@ -248,4 +248,20 @@ describe('Detail component', () => {
     const fundingPanel = enzymeWrapper.find('#funding-information');
     expect(fundingPanel.exists()).toBe(false);
   })
+
+  it('should transform data kind free texts', () => {
+    const { detailInstance } = setup();
+    const input = [
+      { dataKindFreeText: "Numeric", },
+      { dataKindFreeText: "Text", type: "Quantitative" },
+      { dataKindFreeText: "Other" },
+    ];
+    const expectedOutput = [
+      "Quantitative",
+      "Numeric",
+      "Text",
+      "Other"
+    ];
+    expect(detailInstance.transformDataKindFreeTexts(input)).toEqual(expectedOutput);
+  });
 });
