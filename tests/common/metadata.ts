@@ -46,11 +46,24 @@ describe('Metadata utilities', () => {
           dataCollectionFreeTexts: [],
           dataCollectionPeriodEnddate: '',
           dataCollectionPeriodStartdate: '2001',
+          dataKindFreeTexts: [
+            { dataKindFreeText: "Numeric", type: "Quantitative" },
+            { dataKindFreeText: "Text", type: "Quantitative" },
+            { dataKindFreeText: "Other" },
+          ],
           fileLanguages: ['en'],
           funding: [
             {
               grantNumber: '123456',
               agency: 'Some Agency'
+            }
+          ],
+          generalDataFormats: [
+            {
+              id: '',
+              term: 'Numeric',
+              vocab: 'GeneralDataFormat',
+              vocabUri: 'urn:ddi:int.ddi.cv:GeneralDataFormat:2.0.3'
             }
           ],
           keywords: [
@@ -143,11 +156,24 @@ describe('Metadata utilities', () => {
         dataCollectionPeriodEnddate: '',
         dataCollectionPeriodStartdate: '2001',
         dataCollectionYear: undefined,
+        dataKindFreeTexts: [
+          { dataKindFreeText: "Numeric", type: "Quantitative" },
+          { dataKindFreeText: "Text", type: "Quantitative" },
+          { dataKindFreeText: "Other" },
+        ],
         fileLanguages: ['en'],
         funding: [
           {
             grantNumber: '123456',
             agency: 'Some Agency'
+          }
+        ],
+        generalDataFormats: [
+          {
+            id: '',
+            term: 'Numeric',
+            vocab: 'GeneralDataFormat',
+            vocabUri: 'urn:ddi:int.ddi.cv:GeneralDataFormat:2.0.3'
           }
         ],
         keywords: [
@@ -235,8 +261,10 @@ describe('Metadata utilities', () => {
         dataCollectionPeriodEnddate: '',
         dataCollectionPeriodStartdate: '',
         dataCollectionYear: undefined,
+        dataKindFreeTexts: [],
         fileLanguages: [],
         funding: [],
+        generalDataFormats: [],
         keywords: [],
         langAvailableIn: [],
         lastModified: '',
@@ -298,8 +326,10 @@ describe('Metadata utilities', () => {
           dataCollectionFreeTexts: [],
           dataCollectionPeriodEnddate: '',
           dataCollectionPeriodStartdate: '2001',
+          dataKindFreeTexts: [],
           fileLanguages: ['en'],
           funding: [],
+          generalDataFormats: [],
           keywords: [
             {
               id: 'UKDS1234',
@@ -438,8 +468,10 @@ describe('Metadata utilities', () => {
           dataCollectionFreeTexts: [],
           dataCollectionPeriodEnddate: '',
           dataCollectionPeriodStartdate: '2001',
+          dataKindFreeTexts: [],
           fileLanguages: ['en'],
           funding: [],
+          generalDataFormats: [],
           keywords: [],
           langAvailableIn: ['EN'],
           lastModified: '2001-01-01T12:00:00Z',

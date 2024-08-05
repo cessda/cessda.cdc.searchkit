@@ -80,6 +80,10 @@ export interface CMMStudy {
   relatedPublications: RelatedPublication[];
   /** Funding */
   funding: Funding[];
+  /** Data kind free text */
+  dataKindFreeTexts: DataKindFreeText[];
+  /** General data format */
+  generalDataFormats: TermVocabAttributes[];
 }
 
 export interface Creator {
@@ -146,6 +150,11 @@ export interface Funding {
   agency?: string;
 }
 
+export interface DataKindFreeText {
+  dataKindFreeText?: string;
+  type?: string;
+}
+
 /**
  * Creates a model to store/display study metadata in the user interface.
  *
@@ -192,7 +201,9 @@ export function getStudyModel(source: Partial<CMMStudy> | undefined, highlight?:
     langAvailableIn: (source.langAvailableIn || []).map(i => i.toUpperCase()).sort(),
     universe: source.universe,
     relatedPublications: source.relatedPublications || [],
-    funding: source.funding || []
+    funding: source.funding || [],
+    dataKindFreeTexts: source.dataKindFreeTexts || [],
+    generalDataFormats: source.generalDataFormats || []
   });
 }
 

@@ -248,4 +248,29 @@ describe('Detail component', () => {
     const fundingPanel = enzymeWrapper.find('#funding-information');
     expect(fundingPanel.exists()).toBe(false);
   })
+
+  it('should transform data kind free texts', () => {
+    const { detailInstance } = setup();
+    const dataKindFreeTexts = [
+      { dataKindFreeText: "Software", },
+      { dataKindFreeText: "Text", type: "Quantitative" },
+      { dataKindFreeText: "Other" },
+    ];
+    const generalDataFormats = [
+      {
+        id: '',
+        term: 'Numeric',
+        vocab: 'GeneralDataFormat',
+        vocabUri: 'urn:ddi:int.ddi.cv:GeneralDataFormat:2.0.3'
+      }
+    ]
+    const expectedOutput = [
+      "Quantitative",
+      "Numeric",
+      "Software",
+      "Text",
+      "Other"
+    ];
+    expect(detailInstance.transformDataKind(dataKindFreeTexts, generalDataFormats)).toEqual(expectedOutput);
+  });
 });
