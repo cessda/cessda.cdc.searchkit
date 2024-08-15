@@ -196,24 +196,24 @@ export default class Detail extends React.Component<Props, State> {
   }
 
   /**
-   * Transforms the given dataKindFreeTexts and generalDataFormats to an array with
-   * all free texts, types and formats combined into the same array with
-   * duplicates also removed and placing types first, formats second and free texts last.
+   * Formats the given dataKindFreeTexts and generalDataFormats into the same array
+   * with all free texts, types and formats combined while removing duplicates.
+   * Array contains types first, general data formats second and free texts last.
    *
-   * @param dataKindFreeTexts the data kind free texts and types to transform
-   * @param generalDataFormats the general data formats to transform
-   * @returns the transformed free texts, types and formats in one array
+   * @param dataKindFreeTexts the data kind free texts and types to format
+   * @param generalDataFormats the general data formats to format
+   * @returns the formatted data kind free texts, types and formats in one array
    */
-  transformDataKind(dataKindFreeTexts: DataKindFreeText[], generalDataFormats: TermVocabAttributes[]): string[] {
-    const types = new Set<string>();
-    const freeTexts = new Set<string>();
-    const formats = new Set<string>();
-    dataKindFreeTexts.forEach(({ dataKindFreeText, type }) => {
-      if (type) types.add(type);
-      if (dataKindFreeText) freeTexts.add(dataKindFreeText);
+  formatDataKind(dataKindFreeTexts: DataKindFreeText[], generalDataFormats: TermVocabAttributes[]): string[] {
+    const uniqueValues = new Set<string>();
+    dataKindFreeTexts.forEach(({ type }) => {
+      if (type) uniqueValues.add(type);
     });
-    generalDataFormats.forEach(item => formats.add(item.term));
-    return [...types, ...formats, ...freeTexts];
+    generalDataFormats.forEach(item => uniqueValues.add(item.term));
+    dataKindFreeTexts.forEach(({ dataKindFreeText }) => {
+      if (dataKindFreeText) uniqueValues.add(dataKindFreeText);
+    });
+    return Array.from(uniqueValues);
   }
 
   render() {
@@ -388,7 +388,7 @@ Summary information
             component="h3"
             content="metadata.dataKind"
           />
-          {item.dataKindFreeTexts || item.generalDataFormats ? this.generateElements(this.transformDataKind(item.dataKindFreeTexts, item.generalDataFormats), 'div', text =>
+          {item.dataKindFreeTexts || item.generalDataFormats ? this.generateElements(this.formatDataKind(item.dataKindFreeTexts, item.generalDataFormats), 'div', text =>
             <div className="data-abstract" dangerouslySetInnerHTML={{__html: text}}/>
           ) : <Translate content="language.notAvailable.field" lang={lang} /> }
 

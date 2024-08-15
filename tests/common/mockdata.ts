@@ -38,9 +38,10 @@ export const mockStudy: CMMStudy = {
   dataCollectionPeriodStartdate: '2001',
   dataCollectionYear: 2001,
   dataKindFreeTexts: [
-    { dataKindFreeText: "Text" },
-    { dataKindFreeText: "Software" },
+    { dataKindFreeText: "Software", },
+    { dataKindFreeText: "Text", type: "Quantitative" },
     { dataKindFreeText: "Other" },
+    { type: "Numeric" }
   ],
   fileLanguages: ['en'],
   funding: [

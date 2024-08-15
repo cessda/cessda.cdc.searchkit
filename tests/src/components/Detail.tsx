@@ -249,21 +249,8 @@ describe('Detail component', () => {
     expect(fundingPanel.exists()).toBe(false);
   })
 
-  it('should transform data kind free texts', () => {
+  it('should format data kind values from free texts, types and general data formats into one array', () => {
     const { detailInstance } = setup();
-    const dataKindFreeTexts = [
-      { dataKindFreeText: "Software", },
-      { dataKindFreeText: "Text", type: "Quantitative" },
-      { dataKindFreeText: "Other" },
-    ];
-    const generalDataFormats = [
-      {
-        id: '',
-        term: 'Numeric',
-        vocab: 'GeneralDataFormat',
-        vocabUri: 'urn:ddi:int.ddi.cv:GeneralDataFormat:2.0.3'
-      }
-    ]
     const expectedOutput = [
       "Quantitative",
       "Numeric",
@@ -271,6 +258,6 @@ describe('Detail component', () => {
       "Text",
       "Other"
     ];
-    expect(detailInstance.transformDataKind(dataKindFreeTexts, generalDataFormats)).toEqual(expectedOutput);
+    expect(detailInstance.formatDataKind(mockStudy.dataKindFreeTexts, mockStudy.generalDataFormats)).toEqual(expectedOutput);
   });
 });
