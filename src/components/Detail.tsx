@@ -18,9 +18,9 @@ import Tooltip from './Tooltip';
 import Panel from "./Panel";
 import Translate from "react-translate-component";
 import { upperFirst } from "lodash";
-import { CMMStudy, DataCollectionFreeText, Universe } from "../../common/metadata";
+import { CMMStudy, Creator, DataCollectionFreeText, Universe } from "../../common/metadata";
 import { ChronoField, DateTimeFormatter, DateTimeFormatterBuilder } from "@js-joda/core";
-import { FaAngleDown, FaAngleUp } from "react-icons/fa";
+import { FaAngleDown, FaAngleUp, FaExternalLinkAlt } from "react-icons/fa";
 import striptags from "striptags";
 import counterpart from "counterpart";
 import Keywords from "./Keywords";
@@ -195,6 +195,40 @@ export default class Detail extends React.Component<Props, State> {
     }
   }
 
+  /**
+   * Formats the given creator inside span element with as much information as possible, preferably
+   * creator name, creator affiliation and research identifier. Research identifier will also include
+   * the specific type and hyperlink for uri when they available. Hyperlink text is usually id but can
+   * be uri if id is empty but uri still exists. Minimum value for creator is the creator name.
+   *
+   * @param creator the creator to format
+   * @returns formatted creator in span element
+   */
+  formatCreator(creator: Creator) {
+    const creatorFormatted = (
+      <span>
+        {creator.name}
+        {creator.affiliation && ` (${creator.affiliation})`}
+        {creator.identifier && (
+          <>
+            {" - "}
+            {creator.identifier.type ? creator.identifier.type : "Research Identifier"}
+            {": "}
+            {creator.identifier.uri ? (
+              <a href={creator.identifier.uri} target="_blank" rel="noreferrer">
+                <span className="icon"><FaExternalLinkAlt/></span>
+                {creator.identifier.id ? creator.identifier.id : creator.identifier.uri}
+              </a>
+            ) : (
+              creator.identifier.id
+            )}
+          </>
+        )}
+      </span>
+    );
+    return creatorFormatted;
+  }
+
   render() {
     const { item, lang } = this.props;
 
@@ -220,11 +254,7 @@ Summary information
             content="metadata.creator"
           />
           {this.generateElements(item.creators, 'div', creator => {
-            if (creator.affiliation) {
-              return `${creator.name} (${creator.affiliation})`;
-            } else {
-              return creator.name;
-            }
+            return this.formatCreator(creator);
           })}
         </section>
 

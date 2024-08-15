@@ -248,4 +248,29 @@ describe('Detail component', () => {
     const fundingPanel = enzymeWrapper.find('#funding-information');
     expect(fundingPanel.exists()).toBe(false);
   })
+
+  it('should format creators', () => {
+    const { detailInstance } = setup();
+
+    mockStudy.creators.forEach((creator) => {
+      const formattedCreator = shallow(detailInstance.formatCreator(creator));
+      const expectedAffiliation = creator.affiliation ? ` (${creator.affiliation})` : '';
+      // Also includes expected punctuation marks before and after identifier type / default text
+      const expectedIdentifierType = creator.identifier
+        ? ` - ${creator.identifier.type || "Research Identifier"}: `
+        : '';
+      const expectedIdentifier = creator.identifier?.id;
+      const expectedLinkText = creator.identifier?.id || creator.identifier?.uri;
+      const expectedLinkHref = creator.identifier?.uri;
+
+      expect(formattedCreator.text()).toContain(creator.name);
+      if (expectedAffiliation) expect(formattedCreator.text()).toContain(expectedAffiliation);
+      if (expectedIdentifierType) expect(formattedCreator.text()).toContain(expectedIdentifierType);
+      if (expectedIdentifier) expect(formattedCreator.text()).toContain(expectedIdentifier);
+      if (expectedLinkHref) {
+        expect(formattedCreator.find('a').prop('href')).toEqual(expectedLinkHref);
+        expect(formattedCreator.find('a').text()).toContain(expectedLinkText);
+      }
+    });
+  });
 });

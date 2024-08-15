@@ -22,7 +22,9 @@ export const mockStudy: CMMStudy = {
     { name: 'Jane Doe' },
     { name: 'University of Essex' },
     { name: 'John Smith', affiliation: 'University of Essex', identifier: { id: "0", type: "Test", uri: "http://localhost/0" } },
-    { name: 'Joe Bloggs, University of Essex' }
+    { name: 'Joe Bloggs, University of Essex' },
+    { name: 'Matti Meikäläinen', identifier: { id: "", type: "ORCID", uri: "http://localhost/0" } },
+    { name: 'Maija Meikäläinen', affiliation: 'Tampere University', identifier: { id: "1" } }
   ],
   code: 'UKDS',
   dataAccessFreeTexts: [
