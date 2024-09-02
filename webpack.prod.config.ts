@@ -53,6 +53,7 @@ export default merge(common, {
     new DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production')
     }),
+    // @ts-expect-error - incorrect types
     new EnvironmentPlugin({
       PASC_DEBUG_MODE: false,
       PASC_PORT: 8088,

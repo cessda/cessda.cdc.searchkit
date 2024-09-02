@@ -249,6 +249,18 @@ describe('Detail component', () => {
     expect(fundingPanel.exists()).toBe(false);
   })
 
+  it('should format data kind values from free texts, types and general data formats into one array', () => {
+    const { detailInstance } = setup();
+    const expectedOutput = [
+      "Quantitative",
+      "Numeric",
+      "Software",
+      "Text",
+      "Other"
+    ];
+    expect(detailInstance.formatDataKind(mockStudy.dataKindFreeTexts, mockStudy.generalDataFormats)).toEqual(expectedOutput);
+  });
+
   it('should format creators', () => {
     const { detailInstance } = setup();
 
@@ -272,5 +284,5 @@ describe('Detail component', () => {
         expect(formattedCreator.find('a').text()).toContain(expectedLinkText);
       }
     });
-  });
+  })
 });

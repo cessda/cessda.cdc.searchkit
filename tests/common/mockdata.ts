@@ -39,11 +39,25 @@ export const mockStudy: CMMStudy = {
   dataCollectionPeriodEnddate: '',
   dataCollectionPeriodStartdate: '2001',
   dataCollectionYear: 2001,
+  dataKindFreeTexts: [
+    { dataKindFreeText: "Software", },
+    { dataKindFreeText: "Text", type: "Quantitative" },
+    { dataKindFreeText: "Other" },
+    { type: "Numeric" }
+  ],
   fileLanguages: ['en'],
   funding: [
     {
       grantNumber: '123456',
       agency: 'Some Agency'
+    }
+  ],
+  generalDataFormats: [
+    {
+      id: '',
+      term: 'Numeric',
+      vocab: 'GeneralDataFormat',
+      vocabUri: 'urn:ddi:int.ddi.cv:GeneralDataFormat:2.0.3'
     }
   ],
   keywords: [
