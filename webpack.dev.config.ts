@@ -38,7 +38,6 @@ export default merge(common, {
       template: '!!html-loader!server/views/index.ejs',
       filename: 'index.dev.ejs'
     }),
-    // @ts-expect-error - incorrect types
     new EnvironmentPlugin({
       PASC_DEBUG_MODE: false,
       PASC_PORT: 8088,
