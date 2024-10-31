@@ -2,6 +2,7 @@
   "language": {
     "notAvailable": {
       "field": "Ikke tilgængelig",
+      "information": "Information er ikke tilgængelig",
       "heading": "De ønskede data blev ikke fundet.",
       "content": "Data findes muligvis ikke eller er ikke tilgængelige på det valgte sprog. Vælg et alternativt sprog eller start en ny søgning."
     }

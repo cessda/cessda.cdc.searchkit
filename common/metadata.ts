@@ -30,6 +30,8 @@ export interface CMMStudy {
   dataCollectionYear?: number;
   /** Data collection free text */
   dataCollectionFreeTexts: DataCollectionFreeText[];
+  /** Data access Open/Restricted */
+  dataAccess?: string;
   /** Terms of data access */
   dataAccessFreeTexts: string[];
   /** Data access url */
@@ -190,6 +192,7 @@ export function getStudyModel(source: Partial<CMMStudy> | undefined, highlight?:
     fileLanguages: source.fileLanguages || [],
     publisher: source.publisher as Publisher,
     publicationYear: source.publicationYear || '',
+    dataAccess: source.dataAccess,
     dataAccessFreeTexts: (source.dataAccessFreeTexts || []).map(text => stripHTMLElements(text)),
     dataAccessUrl: source.dataAccessUrl,
     studyNumber: source.studyNumber || '',

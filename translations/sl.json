@@ -2,6 +2,7 @@
   "language": {
     "notAvailable": {
       "field": "Ni na voljo",
+      "information": "Informacije niso na voljo",
       "heading": "Zahtevanih podatkov ni bilo mogoče najti.",
       "content": "Morda ne obstaja ali ni na voljo v izbranem jeziku. Izberite drug jezik ali začnite novo iskanje."
     }

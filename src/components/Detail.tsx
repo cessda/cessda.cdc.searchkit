@@ -299,6 +299,17 @@ export default class Detail extends React.Component<Props, State> {
           <Translate
             className="data-label"
             component="h2"
+            content="metadata.dataAccess"
+          />
+          <p>
+            {item.dataAccess || <Translate content="language.notAvailable.information" />}
+          </p>
+        </section>
+
+        <section>
+          <Translate
+            className="data-label"
+            component="h2"
             content="metadata.abstract"
           />
           {this.state.abstractExpanded ?

@@ -2,6 +2,7 @@
   "language": {
     "notAvailable": {
       "field": "Ej tillgängligt",
+      "information": "Information är inte tillgänglig",
       "heading": "Den begärda informationen hittades ej.",
       "content": "Den finns ej, eller är ej tillgänglig i det valda språket. Välj ett alternativt språk eller gör en ny sökning."
     }
