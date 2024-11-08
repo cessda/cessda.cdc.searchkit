@@ -1,7 +1,8 @@
 {
   "language": {
     "notAvailable": {
-      "field": "Não disponível"
+      "field": "Não disponível",
+      "information": "Informação não disponível"
     }
   }
 }

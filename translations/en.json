@@ -5,6 +5,7 @@
     "notAvailable": {
       "title": "Not found",
       "field": "Not available",
+      "information": "Information not available",
       "heading": "The requested data was not found.",
       "content": "It may not exist or is not available in the selected language. Choose an alternative language or start a new search.",
       "alternateLanguage": "The study description is available in the following languages"
@@ -205,6 +206,7 @@
     "funder": "Funder",
     "grantNumber": "Grant number",
     "dataKind": "Kind of data",
+    "dataAccess": "Data access",
     "series": "Series"
   },
   "header": {

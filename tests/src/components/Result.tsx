@@ -174,6 +174,31 @@ describe('Result component', () => {
     jest.spyOn(global.Math, 'random').mockRestore();
   });
 
+  it('should display "Open" when data access is Open', () => {
+    const { enzymeWrapper } = setup({
+      dataAccess: 'Open'
+    });
+
+    expect(enzymeWrapper.text()).toContain('Open');
+  })
+
+  it('should display "Restricted" when data access is Restricted', () => {
+    const { enzymeWrapper } = setup({
+      dataAccess: 'Restricted'
+    });
+
+    expect(enzymeWrapper.text()).toContain('Restricted');
+  })
+
+  it('should not display data access when it is undefined', () => {
+    const { enzymeWrapper } = setup({
+      dataAccess: undefined
+    });
+
+    expect(enzymeWrapper.text()).not.toContain('Open');
+    expect(enzymeWrapper.text()).not.toContain('Restricted');
+  })
+
   it('should map state to props', () => {
     const { props } = setup();
     expect(

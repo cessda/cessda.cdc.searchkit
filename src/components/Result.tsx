@@ -12,7 +12,7 @@
 // limitations under the License.
 
 import React, { Component } from 'react';
-import { FaAngleDown, FaAngleUp, FaExternalLinkAlt, FaLanguage } from 'react-icons/fa';
+import { FaAngleDown, FaAngleUp, FaExternalLinkAlt, FaLanguage, FaLock, FaLockOpen } from 'react-icons/fa';
 import Translate from 'react-translate-component';
 import { connect, Dispatch } from 'react-redux';
 import { AnyAction, bindActionCreators } from 'redux';
@@ -128,7 +128,7 @@ export class Result extends Component<Props, ComponentState> {
     for (let i = 0; i < item.langAvailableIn.length; i++) {
       languages.push(
         <Link key={i}
-              className="button is-small is-white focus-visible"
+              className="button is-small is-white focus-visible mln-5"
               to={{
                 pathname: '/detail',
                 query: {
@@ -194,7 +194,7 @@ export class Result extends Component<Props, ComponentState> {
           <div className="is-flex is-flex-wrap-wrap">
             {languages.length > 0 &&
               <div className="buttons has-addons">
-                <span className="button is-small is-white bg-w pe-none">
+                <span className="button is-small is-white bg-w pe-none mrn-5">
                   <span className="icon is-small">
                     <FaLanguage/>
                   </span>
@@ -202,6 +202,25 @@ export class Result extends Component<Props, ComponentState> {
                 </span>
                 <span>
                   {languages}
+                </span>
+              </div>
+            }
+            {item.dataAccess &&
+              <div>
+                <span className="button is-small is-white bg-w pe-none mrn-5">
+                  {item.dataAccess === "Open" ? (
+                    <span className="icon is-small">
+                      <FaLockOpen/>
+                    </span>
+                  ) : (
+                    <span className="icon is-small">
+                      <FaLock/>
+                    </span>
+                  )}
+                  <span><Translate content="metadata.dataAccess" />:</span>
+                </span>
+                <span className="button is-small is-white bg-w pe-none mln-5">
+                  {item.dataAccess}
                 </span>
               </div>
             }

@@ -2,6 +2,7 @@
   "language": {
     "notAvailable": {
       "field": "Nie je k dispozícii",
+      "information": "Informácie nie sú k dispozícii",
       "heading": "Nie je k dispozícii",
       "content": "Dáta neexistujú alebo nie sú k dispozícii v zvolenom jazyku. Zvoľte iný jazyk, alebo začnite nové vyhľadávanie."
     }

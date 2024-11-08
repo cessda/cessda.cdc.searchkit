@@ -1,7 +1,8 @@
 {
   "language": {
     "notAvailable": {
-      "field": "Niet beschikbaar"
+      "field": "Niet beschikbaar",
+      "information": "Informatie niet beschikbaar"
     }
   }
 }

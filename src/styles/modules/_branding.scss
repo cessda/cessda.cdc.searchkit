@@ -37,7 +37,7 @@ padding-bottom: 5px;
   background: $light_grey;
   border-radius: 3px;
 }
-.data-abstract, article .sk-panel__content > div, .sk-panel__content > p, .sk-panel__content > span, article > section > div, article > p {
+article > .data-abstract, article .sk-panel__content > div, .sk-panel__content > p, .sk-panel__content > span, article > section > div, article > p, article > section > p {
   padding-left: 3px;
 }
 body .sk-layout {
