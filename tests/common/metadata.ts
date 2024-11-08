@@ -90,6 +90,7 @@ describe('Metadata utilities', () => {
           samplingProcedureFreeTexts: [
             'Sampling Procedure<script></script>'
           ],
+          series: [],
           studyAreaCountries: [
             {
               abbr: 'EN',
@@ -201,6 +202,7 @@ describe('Metadata utilities', () => {
         samplingProcedureFreeTexts: [
           'Sampling Procedure'
         ],
+        series: [],
         studyAreaCountries: [
           {
             abbr: 'EN',
@@ -273,6 +275,7 @@ describe('Metadata utilities', () => {
         publisher: undefined,
         relatedPublications: [],
         samplingProcedureFreeTexts: [],
+        series: [],
         studyAreaCountries: [],
         studyNumber: '',
         studyUrl: undefined,
@@ -353,6 +356,7 @@ describe('Metadata utilities', () => {
           },
           relatedPublications: [],
           samplingProcedureFreeTexts: [],
+          series: [],
           studyAreaCountries: [
             {
               abbr: 'EN',
@@ -483,6 +487,7 @@ describe('Metadata utilities', () => {
           },
           relatedPublications: [],
           samplingProcedureFreeTexts: [],
+          series: [],
           studyAreaCountries: [
             {
               abbr: 'EN',

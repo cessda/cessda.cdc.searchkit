@@ -93,6 +93,10 @@ export const mockStudy: CMMStudy = {
     "Sampling Procedure 1",
     "Sampling Procedure 2"
   ],
+  series: [
+    { names: ['Series 1'], uris: ['http://example.com/1'], descriptions: ["Series 1 Description"] },
+    { names: ['Series 2'], uris: ['http://example.com/2'], descriptions: ["Series 2 Description"] },
+  ],
   studyAreaCountries: [
     {
       abbr: 'EN',

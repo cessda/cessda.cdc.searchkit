@@ -24,6 +24,7 @@ import { FaAngleDown, FaAngleUp, FaExternalLinkAlt } from "react-icons/fa";
 import striptags from "striptags";
 import counterpart from "counterpart";
 import Keywords from "./Keywords";
+import SeriesList from './SeriesList';
 
 export interface Props {
   item: CMMStudy;
@@ -293,6 +294,15 @@ export default class Detail extends React.Component<Props, State> {
 
             return <p>{pidStudy.pid}</p>;
           }, true)}
+        </section>
+
+        <section>
+          <Translate
+            className="data-label"
+            component="h2"
+            content="metadata.series"
+          />
+          <SeriesList seriesList={item.series} lang={lang} />
         </section>
 
         <section>

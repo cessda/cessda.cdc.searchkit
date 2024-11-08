@@ -84,6 +84,8 @@ export interface CMMStudy {
   dataKindFreeTexts: DataKindFreeText[];
   /** General data format */
   generalDataFormats: TermVocabAttributes[];
+  /** Series / Study group */
+  series: Series[];
 }
 
 export interface Creator {
@@ -155,6 +157,12 @@ export interface DataKindFreeText {
   type?: string;
 }
 
+export interface Series {
+  names?: string[];
+  descriptions?: string[];
+  uris?: string[];
+}
+
 /**
  * Creates a model to store/display study metadata in the user interface.
  *
@@ -172,11 +180,11 @@ export function getStudyModel(source: Partial<CMMStudy> | undefined, highlight?:
     creators: source.creators || [],
     pidStudies: source.pidStudies || [],
     abstract: stripHTMLElements(source.abstract as string),
-    abstractShort: truncateAbstract(striptags(source.abstract as string), 380),
-    abstractLong: truncateAbstract(striptags(source.abstract as string), 2000),
+    abstractShort: truncateText(striptags(source.abstract as string), 380),
+    abstractLong: truncateText(striptags(source.abstract as string), 2000),
     abstractHighlight: highlight?.abstract ? stripHTMLElements(highlight.abstract.join()) : '',
-    abstractHighlightShort: highlight?.abstract ? truncateAbstract(striptags(highlight.abstract.join()), 380) : '',
-    abstractHighlightLong: highlight?.abstract ? truncateAbstract(striptags(highlight.abstract.join()), 2000) : '',
+    abstractHighlightShort: highlight?.abstract ? truncateText(striptags(highlight.abstract.join()), 380) : '',
+    abstractHighlightLong: highlight?.abstract ? truncateText(striptags(highlight.abstract.join()), 2000) : '',
     studyAreaCountries: source.studyAreaCountries || [],
     typeOfTimeMethods: source.typeOfTimeMethods || [],
     unitTypes: source.unitTypes || [],
@@ -203,11 +211,12 @@ export function getStudyModel(source: Partial<CMMStudy> | undefined, highlight?:
     relatedPublications: source.relatedPublications || [],
     funding: source.funding || [],
     dataKindFreeTexts: source.dataKindFreeTexts || [],
-    generalDataFormats: source.generalDataFormats || []
+    generalDataFormats: source.generalDataFormats || [],
+    series: source.series || []
   });
 }
 
-function truncateAbstract(string: string, limit: number): string {
+export function truncateText(string: string, limit: number): string {
   const trimmedString = string.trim();
   return truncate(trimmedString, { length: limit, separator: ' ' } );
 }

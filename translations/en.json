@@ -204,7 +204,8 @@
     "funding": "Funding information",
     "funder": "Funder",
     "grantNumber": "Grant number",
-    "dataKind": "Kind of data"
+    "dataKind": "Kind of data",
+    "series": "Series"
   },
   "header": {
     "frontPage": "Front/search page",
