@@ -452,6 +452,11 @@ padding: 6px 0;
   margin-bottom: 5px;
 }
 
+.orcid-logo {
+  transform: translateY(-2px);
+  vertical-align: middle;
+}
+
 select::-ms-expand {
   display: none;
 }

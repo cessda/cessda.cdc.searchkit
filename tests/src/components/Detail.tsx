@@ -265,11 +265,10 @@ describe('Detail component', () => {
     const { detailInstance } = setup();
 
     mockStudy.creators.forEach((creator) => {
-      const formattedCreator = shallow(detailInstance.formatCreator(creator));
+      const formattedCreator = mount(detailInstance.formatCreator(creator));
       const expectedAffiliation = creator.affiliation ? ` (${creator.affiliation})` : '';
-      // Also includes expected punctuation marks before and after identifier type / default text
       const expectedIdentifierType = creator.identifier
-        ? ` - ${creator.identifier.type || "Research Identifier"}: `
+        ? (creator.identifier.type?.toLowerCase() === "orcid" ? null : `${creator.identifier.type || "Research Identifier"}: `)
         : '';
       const expectedIdentifier = creator.identifier?.id;
       const expectedLinkText = creator.identifier?.id || creator.identifier?.uri;
@@ -277,12 +276,17 @@ describe('Detail component', () => {
 
       expect(formattedCreator.text()).toContain(creator.name);
       if (expectedAffiliation) expect(formattedCreator.text()).toContain(expectedAffiliation);
-      if (expectedIdentifierType) expect(formattedCreator.text()).toContain(expectedIdentifierType);
+      // Check for identifier type or ORCID logo
+      if (expectedIdentifierType) {
+        expect(formattedCreator.text()).toContain(expectedIdentifierType);
+      } else if (creator.identifier?.type?.toLowerCase() === "orcid") {
+        expect(formattedCreator.html()).toContain('ORCID logo');
+      }
       if (expectedIdentifier) expect(formattedCreator.text()).toContain(expectedIdentifier);
       if (expectedLinkHref) {
         expect(formattedCreator.find('a').prop('href')).toEqual(expectedLinkHref);
         expect(formattedCreator.find('a').text()).toContain(expectedLinkText);
       }
     });
-  })
+  });
 });
