@@ -40,13 +40,13 @@ export default () => (
             }, {
               label: counterpart.translate('sorting.titleAscending'),
               key: 'title-ascending',
-              field: 'titleStudy.raw',
+              field: 'titleStudy.normalized',
               order: 'asc',
               defaultOption: false
             }, {
               label: counterpart.translate('sorting.titleDescending'),
               key: 'title-descending',
-              field: 'titleStudy.raw',
+              field: 'titleStudy.normalized',
               order: 'desc',
               defaultOption: false
             }, {
