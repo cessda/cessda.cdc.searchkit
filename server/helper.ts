@@ -303,12 +303,12 @@ function externalApiV2() {
         break;
       case "titleAscending":
         sort = {
-          'titleStudy.raw': 'asc'
+          'titleStudy.normalized': 'asc'
         };
         break;
       case "titleDescending":
         sort = {
-          'titleStudy.raw': 'desc'
+          'titleStudy.normalized': 'desc'
         };
         break;
       case "dateOfCollectionOldest":
@@ -372,7 +372,7 @@ function externalApiV2() {
         }
       });
     } else if (_.isString(q)) {
-      //create json body for ElasticSearchClient - search query
+      // Create json body for ElasticSearchClient - search query
       mustQuery.push({
         simple_query_string: {
           query: q,
@@ -381,8 +381,8 @@ function externalApiV2() {
           fields: [
             "titleStudy^4",
             "abstract^2",
-            "creators.name^2",
-            "keywords.term^1.5",
+            "creatorsSearchField^2",
+            "keywordsSearchField^1.5",
             "*"
           ],
           flags: "AND|OR|NOT|PHRASE|PRECEDENCE|PREFIX"

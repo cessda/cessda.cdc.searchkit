@@ -33,14 +33,14 @@ function setup() {
         translation: 'sorting.titleAscending',
         label: '',
         key: 'title-ascending',
-        field: 'titleStudy.raw',
+        field: 'titleStudy.normalized',
         order: 'asc'
       },
       {
         translation: 'sorting.titleDescending',
         label: '',
         key: 'title-descending',
-        field: 'titleStudy.raw',
+        field: 'titleStudy.normalized',
         order: 'desc'
       },
       {
