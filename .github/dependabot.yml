@@ -33,7 +33,7 @@ updates:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
       # Ignore major ES version updates, these typically need manual upgrade work
-      - depencency-name: "@elastic/elasticsearch"
+      - dependency-name: "@elastic/elasticsearch"
         update-types: ["version-update:semver-major"]
       - dependency-name: "eslint"
         versions: [">=9.0.0"]
