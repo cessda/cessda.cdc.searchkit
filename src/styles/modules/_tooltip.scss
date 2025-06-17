@@ -18,13 +18,25 @@
     }
   }
 
-  .dropdown-menu {
+  .tooltip-content {
     min-width: 14rem;
+    pointer-events: auto;
+  }
+
+  .tooltip-icon {
+    pointer-events: all;
+  }
+
+  .tooltip-below {
+    top: calc(100% - 28px);
+    bottom: unset;
+    padding-top: 16px;
   }
 
   .tooltip-above {
-    bottom: 100%;
+    bottom: calc(100% - 28px);
     top: unset;
+    padding-bottom: 16px;
   }
 
   .dropdown-content .dropdown-item a {
