@@ -62,7 +62,7 @@ describe('elasticsearch utilities', () => {
         }]);
       
       // Expect the correct call to have beem made
-      expect(es.client.search).toBeCalledWith({
+      expect(es.client.search).toHaveBeenCalledWith({
         query: {
           bool: {
             must: {

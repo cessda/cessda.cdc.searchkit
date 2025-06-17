@@ -143,7 +143,7 @@ describe('Keywords component', () => {
       keywords: keywords.map(t => getKeyword(t))
     });
 
-    expect(abortSpy).toBeCalledTimes(0);
+    expect(abortSpy).toHaveBeenCalledTimes(0);
 
     // Await the promise - needed because otherwise setState() could be called on the unmounted component
     // See https://github.com/enzymejs/enzyme/issues/2278 for a description of the issue
@@ -152,7 +152,7 @@ describe('Keywords component', () => {
     // Unmount the component
     renderResult.unmount();
 
-    expect(abortSpy).toBeCalledTimes(1);
+    expect(abortSpy).toHaveBeenCalledTimes(1);
 
     // Restore the original implementation
     abortSpy.mockRestore();
