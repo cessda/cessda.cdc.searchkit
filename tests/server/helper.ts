@@ -162,7 +162,7 @@ describe('helper utilities', () => {
 
       // Status code should be 404
       expect(response.statusCode).toBe(404);
-      expect(mockedGetStudy).toBeCalledWith("test", "cmmstudy_en");
+      expect(mockedGetStudy).toHaveBeenCalledWith("test", "cmmstudy_en");
       expect(response._getRenderData()).toEqual({ metadata: {}});
     });
 
@@ -202,7 +202,7 @@ describe('helper utilities', () => {
       checkBuildDirectory();
 
       // Expect process.exit() to have not been called
-      expect(mockExit).toBeCalledTimes(0);
+      expect(mockExit).toHaveBeenCalledTimes(0);
     });
 
     it('should fail if ../dist does not exist', () => {
@@ -212,7 +212,7 @@ describe('helper utilities', () => {
       checkBuildDirectory();
 
       // Expect the correct exit code
-      expect(mockExit).toBeCalledWith(16);
+      expect(mockExit).toHaveBeenCalledWith(16);
     });
 
     // Restore the original process.exit() function
