@@ -30,8 +30,8 @@ it('should render', () => {
 
 it('should display content on hover', async () => {
   render(<Tooltip {...baseProps} />);
-  const tooltipContainer = screen.getByTestId('tooltip-container');
-  userEvent.hover(tooltipContainer);
+  const tooltipIcon = screen.getByTestId('tooltip-icon');
+  userEvent.hover(tooltipIcon);
 
   // Wait for the tooltip content to appear
   await waitFor(() => {
@@ -44,16 +44,15 @@ it('should display content on hover', async () => {
 it('should hide content on mouse leave', async () => {
   render(<Tooltip {...baseProps} />);
   
-  const tooltipButton = screen.getByTestId('tooltip-button');
-  userEvent.hover(tooltipButton);
+  const tooltipIcon = screen.getByTestId('tooltip-icon');
+  userEvent.hover(tooltipIcon);
   
   // Wait for the tooltip content to appear
   await waitFor(() => {
     expect(screen.getByTestId('tooltip-content')).toBeInTheDocument();
   });
 
-  const tooltipContainer = screen.getByTestId('tooltip-container');
-  userEvent.unhover(tooltipContainer);
+  userEvent.unhover(tooltipIcon);
   
   // Wait for tooltip content to disappear
   await waitFor(() => {
@@ -109,7 +108,13 @@ it('should hide content on Escape key press', async () => {
 });
 
 it('should hide content on blur', async () => {
-  render(<Tooltip {...baseProps} />);
+  render(
+    <>
+      <Tooltip {...baseProps} />
+      <button data-testid="after-tooltip">Next</button>
+    </>
+  );
+
   const tooltipButton = screen.getByTestId('tooltip-button');
 
   // Ensure the tooltip button is focused
@@ -123,12 +128,15 @@ it('should hide content on blur', async () => {
     expect(screen.getByTestId('tooltip-content')).toBeInTheDocument();
   });
 
-  // Simulate blur event (by focusing on another element)
+  // First tab: focus moves to tooltip content
+  userEvent.tab();
+
+  // Second tab: focus moves to the next button, triggering blur
   userEvent.tab();
 
   // Wait for the tooltip content to disappear
   await waitFor(() => {
-    expect(screen.queryByTestId('tooltip-content')).toBeNull();
+    expect(screen.queryByTestId('tooltip-content')).not.toBeInTheDocument();
   });
 });
 

@@ -27,43 +27,51 @@ const Tooltip = ({ content, id, classNames, ariaLabel }: TooltipProps) => {
   const tooltipButtonRef = useRef<HTMLButtonElement>(null);
   const minDistanceFromBottom = 200;
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleBlur = (event: React.FocusEvent) => {
+    const nextFocused = event.relatedTarget as HTMLElement | null;
+    if (!containerRef.current?.contains(nextFocused)) {
+      deactivateTooltip();
+    }
+  };
+
   const calculatePosition = () => {
     if (tooltipButtonRef.current) {
       const rect = tooltipButtonRef.current.getBoundingClientRect();
-      const nearBottom = window.innerHeight - rect.bottom < minDistanceFromBottom;
-      setIsNearBottom(nearBottom);
+      setIsNearBottom(window.innerHeight - rect.bottom < minDistanceFromBottom);
     }
   };
 
-  const handleClick = (event: React.MouseEvent) => {
+  const activateTooltip = () => {
+    calculatePosition();
+    setIsActive(true);
+  };
+
+  const deactivateTooltip = () => {
+    setIsActive(false);
+  };
+
+  const toggleTooltip = (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
-
-    // Toggle visibility based on current state
-    if (!isActive) {
-      calculatePosition();
-    }
+    if (!isActive) calculatePosition();
     setIsActive(!isActive);
   };
 
-  // Focus and press Enter or Space to toggle tooltip
-  // Mouse click to toggle tooltip
-  // Hover to open tooltip
-  // Unfocus, Unhover or Escape to close tooltip
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Escape' && isActive) {
       event.preventDefault();
       event.stopPropagation();
-      setIsActive(false);
+      deactivateTooltip();
     }
   };
 
   return (
     <div
-      className={`dropdown is-right ${classNames?.container || ''}${isActive ? ' is-active' : ''}`}
-      onBlur={() => setIsActive(false)}
-      onMouseEnter={() => { calculatePosition(); setIsActive(true); }}
-      onMouseLeave={() => setIsActive(false)}
+      ref={containerRef}
+      className={`dropdown pe-none is-right ${classNames?.container || ''}${isActive ? ' is-active' : ''}`}
+      onBlur={handleBlur}
       data-testid="tooltip-container"
     >
       <div className="dropdown-trigger">
@@ -72,15 +80,23 @@ const Tooltip = ({ content, id, classNames, ariaLabel }: TooltipProps) => {
           className={`button focus-visible ${classNames?.button || ''}`}
           aria-haspopup="true"
           {...(isActive ? { 'aria-describedby': id } : { 'aria-label': ariaLabel })}
-          onClick={(e) => handleClick(e)}
-          onKeyDown={(e) => handleKeyDown(e)}
-          data-testid='tooltip-button'
+          onClick={toggleTooltip}
+          onKeyDown={handleKeyDown}
+          data-testid="tooltip-button"
         >
-          <FaQuestionCircle className="tooltip-icon" aria-hidden="true" />
+          <FaQuestionCircle className="tooltip-icon" aria-hidden="true" data-testid="tooltip-icon"
+            onMouseEnter={activateTooltip}
+            onMouseLeave={deactivateTooltip} />
         </button>
       </div>
+
       {isActive && (
-        <div className={`dropdown-menu ${isNearBottom ? ' tooltip-above' : ''}`} data-testid="tooltip-content">
+        <div
+          className={`dropdown-menu tooltip-content ${isNearBottom ? 'tooltip-above' : 'tooltip-below'}`}
+          data-testid="tooltip-content"
+          onMouseEnter={activateTooltip}
+          onMouseLeave={deactivateTooltip}
+        >
           <div className={`dropdown-content ${classNames?.content || ''}`}>
             <div
               id={id}
