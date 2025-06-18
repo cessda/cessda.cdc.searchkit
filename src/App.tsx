@@ -108,9 +108,10 @@ const Root = () => {
           query: indexUiState.query,
           classifications: indexUiState.refinementList?.classifications,
           keywords: indexUiState.refinementList?.keywords,
-          publisher: indexUiState.refinementList?.publisher,
+          dataAccess: indexUiState.refinementList?.dataAccess,
           collectionYear: indexUiState.range?.collectionYear,
           country: indexUiState.refinementList?.country,
+          publisher: indexUiState.refinementList?.publisher,
           timeMethod: indexUiState.refinementList?.timeMethod,
           timeMethodCV: indexUiState.refinementList?.timeMethodCV,
           resultsPerPage: indexUiState.hitsPerPage,
@@ -129,8 +130,9 @@ const Root = () => {
             refinementList: {
               classifications: routeState.classifications || [],
               keywords: routeState.keywords || [],
-              publisher: routeState.publisher || [],
+              dataAccess: routeState.dataAccess || [],
               country: routeState.country || [],
+              publisher: routeState.publisher || [],
               timeMethod: routeState.timeMethod || [],
               timeMethodCV: routeState.timeMethodCV || []
             },
