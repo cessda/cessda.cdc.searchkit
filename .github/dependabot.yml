@@ -36,10 +36,16 @@ updates:
       babel:
         patterns:
         - "@babel/*"
+      # Group Jest dependencies together
+      jest:
+        patterns:
+          - "*jest*"
+      # Group Instantsearch dependencies together
+      instansearch:
+        patterns:
+          - "*instantsearch*"
       # Group @typescript-eslint dependencies together
       typescript-eslint:
         patterns:
         - "@typescript-eslint/*"
-      jest:
-        patterns:
-          - "*jest*"
+
