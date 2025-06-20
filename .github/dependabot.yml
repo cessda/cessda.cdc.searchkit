@@ -44,6 +44,10 @@ updates:
       instansearch:
         patterns:
           - "*instantsearch*"
+      # Group redux depedencies together
+      redux:
+        patterns:
+          - "*redux*"
       # Group @typescript-eslint dependencies together
       typescript-eslint:
         patterns:
