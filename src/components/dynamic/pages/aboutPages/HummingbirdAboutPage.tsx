@@ -12,7 +12,7 @@
 // limitations under the License.
 
 import React from "react";
-import { Await } from "react-router-dom";
+import { Await } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { Metrics } from "../../../../../common/metadata";

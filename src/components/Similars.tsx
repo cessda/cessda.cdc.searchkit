@@ -12,11 +12,11 @@
 // limitations under the License.
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Similar } from "../../common/metadata";
 import { useAppSelector } from "../hooks";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 
 export interface Props {
   similars: Similar[];

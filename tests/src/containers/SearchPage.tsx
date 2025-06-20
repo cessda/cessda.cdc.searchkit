@@ -15,7 +15,7 @@ import '../../mocks/reacti18nMock';
 import React from "react";
 import { render, screen } from "../../testutils";
 import userEvent from '@testing-library/user-event';
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import SearchPage from "../../../src/containers/SearchPage";
 import { ThematicView, thematicViews, EsIndex } from "../../../common/thematicViews";
 import { useAppDispatch, useAppSelector } from "../../../src/hooks";
@@ -60,9 +60,9 @@ jest.mock("react-instantsearch", () => ({
   useInstantSearch: jest.fn(() => ({})),
 }));
 
-// Mock react-router-dom module
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+// Mock react-router module
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useSearchParams: jest.fn(),
   useLocation: () => ({
     pathname: "/",

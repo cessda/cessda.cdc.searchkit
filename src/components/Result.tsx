@@ -13,7 +13,7 @@
 
 import React, { useEffect, useState } from "react";
 import { FaAngleDown, FaAngleUp, FaExternalLinkAlt,  FaLock, FaLockOpen } from 'react-icons/fa';
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router";
 import { CMMStudy, TermVocabAttributes } from "../../common/metadata";
 import { useTranslation } from "react-i18next";
 import { useAppSelector } from "../hooks";

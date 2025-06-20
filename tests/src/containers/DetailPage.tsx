@@ -20,8 +20,8 @@ import userEvent from '@testing-library/user-event';
 
 const mockNavigate = jest.fn();
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useLoaderData: () => ({
     data: {
       payload: {
@@ -99,7 +99,7 @@ it("renders JSON-LD script for the study", async () => {
 it("renders available languages if no study found with selected language", async () => {
   // Override the mock for this specific test using jest.spyOn
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const useLoaderDataSpy = jest.spyOn(require('react-router-dom'), 'useLoaderData');
+  const useLoaderDataSpy = jest.spyOn(require('react-router'), 'useLoaderData');
   
   // Mock the return value for this test
   useLoaderDataSpy.mockReturnValueOnce({

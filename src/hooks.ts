@@ -14,7 +14,7 @@
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "./store";
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { useInstantSearch } from "react-instantsearch";
 import getPaq from "./utilities/getPaq";
 

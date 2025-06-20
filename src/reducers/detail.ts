@@ -29,45 +29,44 @@ const initialState: DetailState = {
   similars: [],
 };
 
-export const updateStudy = createAsyncThunk('search/updateStudy', async ({id, lang}: {id: string, lang: string},  { getState }) => {
- 
+export const updateStudy = createAsyncThunk('search/updateStudy', async ({ id, lang }: { id: string, lang: string }, { getState }) => {
 
-    const { thematicView } = getState() as { thematicView: ThematicViewState };
-    let study = undefined;
-    let similars: Similar[] = [];
-    const availableLanguages: Language[] = [];
-    const currentLang = thematicView.currentIndex.indexName.split("_")[1];
 
-   let fetchIndex = thematicView.currentIndex.indexName;
+  const { thematicView } = getState() as { thematicView: ThematicViewState };
+  let study = undefined;
+  let similars: Similar[] = [];
+  const availableLanguages: Language[] = [];
+  const currentLang = thematicView.currentIndex.indexName.split("_")[1];
 
-   if (lang && lang != currentLang) {
+  let fetchIndex = thematicView.currentIndex.indexName;
+
+  if (lang && lang != currentLang) {
     fetchIndex = thematicView.currentIndex.indexName.split("_")[0] + "_" + lang;
-   }
-   //console.log(fetchIndex);
-    const response = await fetch(`${window.location.origin}/api/sk/_get/${fetchIndex}/${encodeURIComponent(id)}`);
-   
-    if (response.ok) {
+  }
+  
+  const response = await fetch(`${window.location.origin}/api/sk/_get/${fetchIndex}/${encodeURIComponent(id)}`);
 
-      // Get the study model from the hit.
-      const json = await response.json() as { source: CMMStudy, similars: Similar[] };
-      study = getStudyModel(json.source);
-      similars = json.similars
+  if (response.ok) {
 
-    } else if(response.status === 404) {
-      // If 404, get the languages that the study is available in
-      const languageCodes = await response.json() as string[];
+    // Get the study model from the hit.
+    const json = await response.json() as { source: CMMStudy, similars: Similar[] };
+    study = getStudyModel(json.source);
+    similars = json.similars
 
-      for (const code of languageCodes) {
-        const lang = languageMap.get(code);
-        if (lang) {
-          availableLanguages.push(lang);
-        }
+  } else if (response.status === 404) {
+    // If 404, get the languages that the study is available in
+    const languageCodes = await response.json() as string[];
+
+    for (const code of languageCodes) {
+      const lang = languageMap.get(code);
+      if (lang) {
+        availableLanguages.push(lang);
       }
     }
-   // console.log(availableLanguages);
-    return {study: study, similars: similars, availableLanguages: availableLanguages};
   }
-);
+
+  return { study: study, similars: similars, availableLanguages: availableLanguages };
+});
 
 const detailSlice = createSlice({
   name: "detail",

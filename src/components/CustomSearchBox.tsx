@@ -14,7 +14,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useInstantSearch, useSearchBox, UseSearchBoxProps } from 'react-instantsearch';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router';
 import { useAppSelector, useAppDispatch } from "../hooks";
 import { Helmet } from "react-helmet-async";
 import { clearSearchFormReset } from "../reducers/search";
