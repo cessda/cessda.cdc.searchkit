@@ -13,7 +13,7 @@
 
 import React from "react";
 import { render } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import { useMatomoTracking, useSearchTracking } from "../../src/hooks";
 import { useInstantSearch } from "react-instantsearch";
 import getPaq from "../../src/utilities/getPaq";

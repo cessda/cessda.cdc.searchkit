@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router";
 import { store } from "../store";
 import { updateMetrics } from "../reducers/search";
 import { useAppSelector } from "../hooks";

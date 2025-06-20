@@ -14,7 +14,7 @@
 
 import React, { FocusEvent } from "react";
 import ThematicViewSwitcher from "./ThematicViewSwitcher";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useAppSelector, useAppDispatch } from "../hooks";
 import { useClearRefinements, useHitsPerPage, usePagination, useSearchBox } from "react-instantsearch";

@@ -20,9 +20,9 @@ import { useAppDispatch, useAppSelector } from "../../../src/hooks";
 import '@testing-library/jest-dom';
 
 
-// Mock react-router-dom module
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+// Mock react-router module
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useSearchParams: jest.fn(),
   useLocation: () => ({
     pathname: "/",

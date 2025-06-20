@@ -15,7 +15,7 @@ import React, { useEffect } from "react";
 import Detail from "../components/Detail"
 import { useTranslation } from "react-i18next";
 import { updateStudy } from "../reducers/detail";
-import { Await, Link, LoaderFunction, useLoaderData, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { Await, Link, LoaderFunctionArgs, useLoaderData, useLocation, useNavigate, useSearchParams } from "react-router";
 import { store } from "../store";
 import { Funding, getJsonLd } from '../../common/metadata';
 import Similars from "../components/Similars";
@@ -33,7 +33,7 @@ export type HeadingEntry = {
   [key: string]: Heading
 };
 
-export const studyLoader: LoaderFunction = async ({ request, params }) => {
+export const studyLoader = async ({ request, params }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const lang = url.searchParams.get("lang");
 
@@ -47,7 +47,7 @@ const DetailPage = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  const { data } = useLoaderData() as ReturnType<typeof studyLoader>;
+  const { data } = useLoaderData<typeof studyLoader>();
 
   useEffect(() => {
     // Update the JSON-LD representation
@@ -129,7 +129,7 @@ const DetailPage = () => {
     { sampProc: { id: 'sampling-procedure', level: 'subtitle', translation: t("metadata.samplingProcedure") } },
     { dataKind: { id: 'data-kind', level: 'subtitle', translation: t("metadata.dataKind") } },
     { collMode: { id: 'data-collection-mode', level: 'subtitle', translation: t("metadata.dataCollectionMethod") } },
-    ...addFundingEntries(data?.payload?.study?.funding.length > 0 ? data.payload.study.funding : []),
+    ...addFundingEntries((data.payload?.study && (data.payload.study.funding.length > 0)) ? data.payload.study.funding : []),
     { access: { id: 'access', level: 'title', translation: t("metadata.access") } },
     { publisher: { id: 'publisher', level: 'subtitle', translation: t("metadata.publisher") } },
     { publicationYear: { id: 'publication-year', level: 'subtitle', translation: t("metadata.yearOfPublication") } },
@@ -186,13 +186,15 @@ const DetailPage = () => {
               else {
                 const languageLinks: React.JSX.Element[] = [];
 
-                for (let i = 0; i < resolvedData?.payload?.availableLanguages.length; i++) {
-                  const lang = resolvedData.payload.availableLanguages[i];
-                  languageLinks.push(
-                    <Link key={lang.code} to={`${location.pathname}?lang=${lang.code}`}>
-                      {lang.label}
-                    </Link>
-                  );
+                if (resolvedData.payload) {
+                  for (let i = 0; i < resolvedData.payload.availableLanguages.length; i++) {
+                    const lang = resolvedData.payload.availableLanguages[i];
+                    languageLinks.push(
+                      <Link key={lang.code} to={`${location.pathname}?lang=${lang.code}`}>
+                        {lang.label}
+                      </Link>
+                    );
+                  }
                 }
 
                 return (

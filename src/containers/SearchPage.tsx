@@ -30,7 +30,7 @@ import { useAppDispatch, useAppSelector } from "../hooks";
 import { toggleMobileFilters, toggleSummary } from "../reducers/search";
 import Panel from "../components/Panel";
 import Tooltip from "../components/Tooltip";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import { TFunction } from "i18next";
 import { Hit } from "instantsearch.js";
 import { CMMStudy } from "../../common/metadata";

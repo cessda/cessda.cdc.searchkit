@@ -12,7 +12,7 @@
 // limitations under the License.
 
 import React, { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router";
 import { truncate, upperFirst } from "lodash";
 import {
   CMMStudy,

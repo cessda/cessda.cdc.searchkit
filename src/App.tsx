@@ -12,7 +12,7 @@
 // limitations under the License.
 
 import React, { useEffect, useRef, useState } from "react";
-import { createBrowserRouter, Outlet, RouterProvider, useLocation, ScrollRestoration, RouteObject } from "react-router-dom";
+import { createBrowserRouter, Outlet, RouterProvider, useLocation, ScrollRestoration, RouteObject } from "react-router";
 import SearchPage, { getSortByItems } from "./containers/SearchPage";
 import DetailPage, { studyLoader } from "./containers/DetailPage";
 import AboutPage, { metricsLoader } from "./containers/AboutPage";
