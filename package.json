@@ -90,7 +90,7 @@
     "jest-environment-jsdom": "30.0.0",
     "jest-junit": "16.0.0",
     "jest-mock-fetch": "2.0.5",
-    "node-mocks-http": "1.12.1",
+    "node-mocks-http": "1.17.2",
     "process": "0.11.10",
     "react": "18.2.0",
     "react-dom": "18.2.0",
