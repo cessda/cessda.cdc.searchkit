@@ -72,7 +72,7 @@
     "@typescript-eslint/parser": "8.34.1",
     "autoprefixer": "10.4.20",
     "babel-jest": "30.0.0",
-    "babel-loader": "9.1.2",
+    "babel-loader": "10.0.0",
     "babel-plugin-transform-react-remove-prop-types": "0.4.24",
     "bulma": "0.9.4",
     "bulma-switch": "2.0.4",
