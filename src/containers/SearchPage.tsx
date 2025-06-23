@@ -45,7 +45,7 @@ const hitsPerPageItems = [
   { value: 150, label: 'Show 150' },
 ]
 
-const getSortByItems = (index: string, t: TFunction<"translation", undefined, "translation">) => {
+const getSortByItems = (index: string, t: TFunction<"translation", undefined>) => {
   return [
     { value: `${index}`, label: t("sorting.relevance") },
     { value: `${index}_title_asc`, label: t("sorting.titleAscending") },
