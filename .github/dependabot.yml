@@ -40,6 +40,11 @@ updates:
       jest:
         patterns:
           - "*jest*"
+      # Group i18next depedencies together
+      i18next:
+        patterns:
+          - "i18next"
+          - "react-i18next"
       # Group Instantsearch dependencies together
       instansearch:
         patterns:
