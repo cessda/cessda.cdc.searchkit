@@ -57,7 +57,7 @@
     "@types/elasticsearch": "5.0.41",
     "@types/express": "4.17.17",
     "@types/jest": "30.0.0",
-    "@types/lodash": "4.14.191",
+    "@types/lodash": "4.17.18",
     "@types/method-override": "0.0.32",
     "@types/mini-css-extract-plugin": "2.5.0",
     "@types/node": "18.19.112",
