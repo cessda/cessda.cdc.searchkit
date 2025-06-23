@@ -29,7 +29,7 @@ import {
 import Elasticsearch from "./elasticsearch";
 import { estypes } from "@elastic/elasticsearch";
 import { errors } from "@elastic/transport";
-import { Response } from "express-serve-static-core";
+import { Response } from "express";
 import { logger } from "./logger";
 import cors from "cors";
 import { WithContext, Dataset } from "schema-dts";
@@ -894,16 +894,16 @@ export function startListening(app: express.Express, handler: RequestHandler) {
       if (!v2) {
         v2 = await swaggerSearchApiV2(elasticsearch);
       }
-      return res.json(v2);
+      res.json(v2);
     } catch (e) {
       logger.error(`Cannot communicate with Elasticsearch: ${e}`);
-      return res.sendStatus(500);
+      res.sendStatus(500);
     }
   });
 
   app.use("/metrics", metricsRequestHandler(elasticsearch));
 
-  app.get("*", handler);
+  app.get(/(.*)/, handler);
 
   const server = app.listen(port, () =>
     logger.info("Data Catalogue is running at http://localhost:%s/", port)

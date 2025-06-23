@@ -28,40 +28,27 @@ export function start() {
   app.set('views', path.join(__dirname, '../dist'));
 
   const indexRegex = new RegExp("index.dev.ejs");
-    app.use(webpackMiddleware(compiler, {
-      publicPath: config.output?.publicPath,
-      index: 'src',
-      stats: {
-        colors: true,
-        hash: false,
-        timings: true,
-        chunks: false,
-        chunkModules: false,
-        modules: false
-      },
-      // Write the index.ejs file to disk so that ejs can access it
-      writeToDisk: (filePath) => indexRegex.test(filePath)
-    }));
+  app.use(webpackMiddleware(compiler, {
+    publicPath: config.output?.publicPath,
+    index: 'src',
+    stats: {
+      colors: true,
+      hash: false,
+      timings: true,
+      chunks: false,
+      chunkModules: false,
+      modules: false
+    },
+    // Write the index.ejs file to disk so that ejs can access it
+    writeToDisk: (filePath) => indexRegex.test(filePath)
+  }));
 
-    app.use(webpackHotMiddleware(compiler));
-
-    app.use('*', async (req, res, next) => {
-      // If the request is for the API, skip the fallback and proceed to the next middleware
-      if (req.originalUrl.startsWith('/api') ||
-          req.originalUrl.startsWith('/swagger') ||
-          req.originalUrl.startsWith('/metrics')) {
-        return next(); // Pass control to the next middleware in the chain
-      }
-
-      const ejsTemplate = 'index.dev.ejs';
-      res.setHeader('Cache-Control', 'no-store');
-      await renderResponse(req, res, ejsTemplate);
-    });
-    
-    // Start listening
-    startListening(app, async (req, res) => {
-      const ejsTemplate = 'index.dev.ejs';
-      res.setHeader('Cache-Control', 'no-store');
-      await renderResponse(req, res, ejsTemplate);
-    });
+  app.use(webpackHotMiddleware(compiler));
+  
+  // Start listening
+  startListening(app, async (req, res) => {
+    const ejsTemplate = 'index.dev.ejs';
+    res.setHeader('Cache-Control', 'no-store');
+    await renderResponse(req, res, ejsTemplate);
+  });
 }
