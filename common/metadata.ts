@@ -14,7 +14,7 @@
 import striptags from "striptags";
 import { Dataset, Organization, Person, WithContext } from "schema-dts";
 import { truncate, upperFirst } from "lodash";
-import { SearchHit } from "@elastic/elasticsearch/lib/api/types";
+import { estypes } from "@elastic/elasticsearch";
 
 export interface CMMStudy {
   /** The internal ID of the study */
@@ -170,7 +170,7 @@ export interface Series {
  *
  * The comments indicate the label displayed in the UI for each property (it is not always obvious).
  */
-export function getStudyModel(source: Partial<CMMStudy> | undefined, highlight?: SearchHit["highlight"]): CMMStudy {
+export function getStudyModel(source: Partial<CMMStudy> | undefined, highlight?: estypes.SearchHit["highlight"]): CMMStudy {
   if (typeof(source) !== "object") {
     throw TypeError("_source is not an object");
   }
