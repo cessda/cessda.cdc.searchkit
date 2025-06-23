@@ -12,13 +12,7 @@
 // limitations under the License.
 
 import { Client, ClientOptions } from '@elastic/elasticsearch'
-import {
-  AggregationsCardinalityAggregate,
-  AggregationsNestedAggregate,
-  AggregationsStringTermsAggregate,
-  QueryDslBoolQuery,
-  SearchHitsMetadata
-} from "@elastic/elasticsearch/lib/api/types";
+import { estypes } from "@elastic/elasticsearch";
 import _ from "lodash";
 import { CMMStudy, Metrics } from "../common/metadata";
 import { logger } from "./logger";
@@ -81,7 +75,7 @@ export default class Elasticsearch {
    * @param index exclude results from given index and use first part of name to query from all others with the same name.
    */
   async getRelatedPublications(id: string, sizeMax: number, index: string) {
-    const boolQuery: QueryDslBoolQuery = {
+    const boolQuery: estypes.QueryDslBoolQuery = {
       must: [
         {
           match: {
@@ -136,7 +130,7 @@ export default class Elasticsearch {
     });
 
     // Assert the type as AggregationsCardinalityAggregate, then return the value
-    return (response.aggregations?.unique_id as AggregationsCardinalityAggregate).value;
+    return (response.aggregations?.unique_id as estypes.AggregationsCardinalityAggregate).value;
   }
 
   /**
@@ -146,12 +140,12 @@ export default class Elasticsearch {
    */
   async getAboutMetrics(index = `${this.indexName}_*`): Promise<Metrics> {
     const response = await this.client.search<unknown, { 
-      unique_id: AggregationsCardinalityAggregate, 
-      total_creators: AggregationsNestedAggregate & {
-        unique_creators: AggregationsCardinalityAggregate;
+      unique_id: estypes.AggregationsCardinalityAggregate, 
+      total_creators: estypes.AggregationsNestedAggregate & {
+        unique_creators: estypes.AggregationsCardinalityAggregate;
       },
-      total_countries: AggregationsNestedAggregate & {
-        unique_countries: AggregationsCardinalityAggregate;
+      total_countries: estypes.AggregationsNestedAggregate & {
+        unique_countries: estypes.AggregationsCardinalityAggregate;
       }
     }>({
       size: 0,
@@ -231,8 +225,8 @@ export default class Elasticsearch {
     });
 
     // Unwrap the aggregations
-    const aggregation = res.aggregations?.publishers as AggregationsNestedAggregate;
-    const publisherBuckets = (aggregation.publisher as AggregationsStringTermsAggregate).buckets;
+    const aggregation = res.aggregations?.publishers as estypes.AggregationsNestedAggregate;
+    const publisherBuckets = (aggregation.publisher as estypes.AggregationsStringTermsAggregate).buckets;
 
     if (Array.isArray(publisherBuckets)) {
       return publisherBuckets.map(b => b.key);
@@ -263,8 +257,8 @@ export default class Elasticsearch {
     });
 
     // Unwrap the aggregations
-    const aggregation = res.aggregations?.studyAreaCountries as AggregationsNestedAggregate;
-    const countryBuckets = (aggregation.country as AggregationsStringTermsAggregate).buckets;
+    const aggregation = res.aggregations?.studyAreaCountries as estypes.AggregationsNestedAggregate;
+    const countryBuckets = (aggregation.country as estypes.AggregationsStringTermsAggregate).buckets;
 
     if (Array.isArray(countryBuckets)) {
       return countryBuckets.map(b => b.key);
@@ -296,8 +290,8 @@ export default class Elasticsearch {
     });
 
     // Unwrap the aggregations
-    const aggregation = res.aggregations?.classifications as AggregationsNestedAggregate;
-    const topicBuckets = (aggregation.term as AggregationsStringTermsAggregate).buckets;
+    const aggregation = res.aggregations?.classifications as estypes.AggregationsNestedAggregate;
+    const topicBuckets = (aggregation.term as estypes.AggregationsStringTermsAggregate).buckets;
 
     if (Array.isArray(topicBuckets)) {
       return topicBuckets.map(b => b.key);
@@ -347,7 +341,7 @@ export default class Elasticsearch {
       },
       track_total_hits: false
     });
-    const elasticAggs = res.aggregations?.aggregationResults as AggregationsStringTermsAggregate;
+    const elasticAggs = res.aggregations?.aggregationResults as estypes.AggregationsStringTermsAggregate;
     const buckets = elasticAggs.buckets;
     if (Array.isArray(buckets)) {
       return buckets;
@@ -372,7 +366,7 @@ export default class Elasticsearch {
    * Extract the total hits from the hits metadata.
    * @returns the total hits, or undefined if not present.
    */
-  static parseTotalHits(totalHits: SearchHitsMetadata["total"]) {
+  static parseTotalHits(totalHits: estypes.SearchHitsMetadata["total"]) {
     // Calculate the total hits
     switch (typeof totalHits) {
       case "object":
