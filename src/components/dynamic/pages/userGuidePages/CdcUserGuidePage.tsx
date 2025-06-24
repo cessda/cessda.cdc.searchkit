@@ -19,7 +19,7 @@ const DynamicUserGuidePage = () => {
       <div className="column p-6">
         <div className="text-container">
           <h1 className="main-title mb-4">User Guide - CESSDA Data Catalogue</h1>
-          <p>Brief usage instructions follow below. For detailed documentation and examples, see the complete <a href="https://datacatalogue.cessda.eu/documentation/" target="_blank" rel="noreferrer"><strong>user documentation</strong></a>.</p>
+          <p>Brief usage instructions follow below. For detailed documentation and examples, see the complete <a href="/documentation/" target="_blank" rel="noreferrer"><strong>user documentation</strong></a>.</p>
           <h2>Searching</h2>
           <p>Use the search bar at the top to find studies with descriptions in the selected language (English is the default). Use the dropdown beside the search field to select another language.</p>
 
