@@ -19,7 +19,7 @@ const DynamicUserGuidePage = () => {
       <div className="column p-6">
         <div className="text-container">
           <h1 className="main-title mb-4">User Guide - HumMingBird</h1>
-          <p>Brief usage instructions follow below. For detailed documentation and examples, see the complete <a href="https://datacatalogue.cessda.eu/documentation/" target="_blank" rel="noreferrer"><strong>user documentation</strong></a>.</p>
+          <p>Brief usage instructions follow below. For detailed documentation and examples, see the complete <a href="/documentation/" target="_blank" rel="noreferrer"><strong>user documentation</strong></a>.</p>
 
           <h2>Scope</h2>
           <p>The HumMingBird collection contains a subset of the study descriptions available in the CESSDA Data Catalogue (CDC), on the topics of the nature of migration flows and the drivers of migration.</p>
