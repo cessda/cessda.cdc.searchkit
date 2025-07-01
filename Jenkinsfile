@@ -98,7 +98,7 @@ pipeline {
 		}
 		stage('Check Requirements and Deployments') {
 			steps {
-				build job: 'cessda.cdc.deploy/coordinate-portal', parameters: [string(name: 'coordiante_portal_image_tag', value: "${env.BRANCH_NAME}-${env.BUILD_NUMBER}")], wait: false
+				build job: 'cessda.cdc.deploy/main', parameters: [string(name: 'coordiante_portal_image_tag', value: "${env.BRANCH_NAME}-${env.BUILD_NUMBER}")], wait: false
 			}
 			when { branch 'main' }
 		}
