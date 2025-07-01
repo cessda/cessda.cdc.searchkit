@@ -19,7 +19,7 @@ const DynamicUserGuidePage = () => {
       <div className="column p-6">
         <div className="text-container">
           <h1 className="main-title mb-4">User Guide - COORDINATE Portal</h1>
-          <p>Brief usage instructions follow below. For detailed documentation and examples, see the complete <a href="https://datacatalogue.cessda.eu/documentation/" target="_blank" rel="noreferrer"><strong>user documentation</strong></a>.</p>
+          <p>Brief usage instructions follow below. For detailed documentation and examples, see the complete <a href="/documentation/" target="_blank" rel="noreferrer"><strong>user documentation</strong></a>.</p>
 
           <h2>Scope</h2>
           <p>The COORDINATE Portal contains a subset of the study descriptions available in the CESSDA Data Catalogue (CDC), on the topics of child and youth wellbeing.</p>
@@ -36,16 +36,15 @@ const DynamicUserGuidePage = () => {
           </p>
           <h2>Study details</h2>
           <p>
-          Clicking on a study title (highlighted in blue) within the results list will take you to the study view with more detailed information and links.
+            Clicking on a study title (highlighted in blue) within the results list will take you to the study view with more detailed information and links.
           </p>
-<p>
-          Below the abstract section, you will often find associated topics and keywords. Selecting one of these will perform a search on that particular term.
+          <p>
+            Below the abstract section, you will often find associated topics and keywords. Selecting one of these will perform a search on that particular term.
           </p>
           <h2>Other collections</h2>
           <p>
-           Beside the logo at top left there is a dropdown for selecting a specific collection of studies. These are a subset of the studies available in the CDC, selected according to a thematic set of criteria. See the <a href="collections">Collections</a> page for a description of available thematic views.
+            Beside the logo at top left there is a dropdown for selecting a specific collection of studies. These are a subset of the studies available in the CDC, selected according to a thematic set of criteria. See the <a href="collections">Collections</a> page for a description of available thematic views.
           </p>
-
         </div>
       </div>
     </div>
