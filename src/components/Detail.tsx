@@ -737,31 +737,36 @@ const Detail = (props: Props) => {
             </section>
 
             <section className="metadata-section">
-
               {!currentThematicView.excludeFields.includes('relatedPublications') &&
                 <>
                   {generateHeading('relPub')}
                   {generateElements(
-                    item.relatedPublications,
+                    // Sort related publications by publication date, descending
+                    [...item.relatedPublications]
+                      .sort((a, b) => {
+                        const parseDate = (d: string) => d ? new Date(d) : null;
+                        const dateA = parseDate(a.publicationDate);
+                        const dateB = parseDate(b.publicationDate);
+
+                        if (!dateA && !dateB) return 0;
+                        if (!dateA) return 1;
+                        if (!dateB) return -1;
+                        return dateB.getTime() - dateA.getTime();
+                      }),
                     "ul",
                     (relatedPublication) => {
-                      const relatedPublicationTitle = striptags(
-                        relatedPublication.title
+                      const relatedPublicationTitle = striptags(relatedPublication.title);
+                      const holdingUrl = relatedPublication.holdings?.find(h => h.startsWith('http'));
+
+                      return holdingUrl ? (
+                        <a href={holdingUrl}>{relatedPublicationTitle}</a>
+                      ) : (
+                        relatedPublicationTitle
                       );
-                      if (relatedPublication.holdings?.length > 0) {
-                        return (
-                          <a href={relatedPublication.holdings[0]}>
-                            {relatedPublicationTitle}
-                          </a>
-                        );
-                      } else {
-                        return relatedPublicationTitle;
-                      }
                     }
                   )}
                 </>
               }
-
             </section>
 
 

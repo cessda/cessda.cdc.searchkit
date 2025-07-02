@@ -33,7 +33,8 @@ const baseProps: Props = {
     { collPeriod: { id: 'data-collection-period', level: 'subtitle', translation: ("Data collection period") } },
     { country: { id: 'country', level: 'subtitle', translation: ("Country") } },
     { universe: { id: 'universe', level: 'subtitle', translation: ("Universe") } },
-    { publicationYear: { id: 'publication-year', level: 'subtitle', translation: ("Publication year") } }
+    { publicationYear: { id: 'publication-year', level: 'subtitle', translation: ("Publication year") } },
+    { relPub: { id: 'related-publications', level: 'subtitle', translation: ("Related publications") } }
   ]
 };
 
@@ -152,16 +153,34 @@ it("should handle formatting dates as a range with valid second date but undefin
   checkValueAfterHeading('Data collection period', 'language.notAvailable.field');
 });
 
-it("should handle formatting dates as a range with invalid first date", () => {
+it("should render related publications sorted by publication date", () => {
   renderDetailWithModifiedProps({
     relatedPublications: [
       {
-        title: "Related publications title",
+        title: "Oldest related publication",
         holdings: [],
+        publicationDate: "2015"
+      },
+      {
+        title: "Newest related publication",
+        holdings: [],
+        publicationDate: "2023"
+      },
+      {
+        title: "Undated related publication",
+        holdings: [],
+        publicationDate: ""
       }
     ]
   });
-  expect(screen.getByRole('article')).toBeInTheDocument();
+
+  const newest = screen.getByText("Newest related publication");
+  const oldest = screen.getByText("Oldest related publication");
+  const undated = screen.getByText("Undated related publication");
+
+  // Assert order: newest -> oldest -> undated
+  expect(newest.compareDocumentPosition(oldest) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  expect(oldest.compareDocumentPosition(undated) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 });
 
 it("should handle no universe exclusion provided", () => {

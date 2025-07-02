@@ -87,7 +87,8 @@ export const mockStudy: CMMStudy = {
       title: "Related Publication 1",
       holdings: [
         "First Holding"
-      ]
+      ],
+      publicationDate: "2001"
     }
   ],
   samplingProcedureFreeTexts: [

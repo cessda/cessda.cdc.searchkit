@@ -116,6 +116,7 @@ export interface DataCollectionFreeText {
 export interface RelatedPublication {
   title: string;
   holdings: string[];
+  publicationDate: string;
   lang?: string;
 }
 
