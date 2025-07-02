@@ -109,6 +109,7 @@ export default class Elasticsearch {
         return (hit._source?.relatedPublications || []).map(publication => ({
             title: publication.title,
             holdings: publication.holdings,
+            publicationDate: publication.publicationDate,
             // Add lang according to the language part of index name
             lang: hit._index.split('_')[1]
         }));
