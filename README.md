@@ -3,7 +3,7 @@
 [![Build Status](https://jenkins.cessda.eu/buildStatus/icon?job=cessda.cdc.searchkit%2Fmain)](https://jenkins.cessda.eu/job/cessda.cdc.searchkit/job/main/)
 [![Quality Gate Status](https://sonarqube.cessda.eu/api/project_badges/measure?project=eu.cessda.pasc%3Apasc-searchkit&metric=alert_status)](https://sonarqube.cessda.eu/dashboard?id=eu.cessda.pasc%3Apasc-searchkit)
 [![Coverage](https://sonarqube.cessda.eu/api/project_badges/measure?project=eu.cessda.pasc%3Apasc-searchkit&metric=coverage)](https://sonarqube.cessda.eu/dashboard?id=eu.cessda.pasc%3Apasc-searchkit)
-[![SQAaaS badge shields.io](https://img.shields.io/badge/sqaaas%20software-bronze-e6ae77)](https://api.eu.badgr.io/public/assertions/CeKfNy5qR-CD4OqJuTUt8w "SQAaaS bronze badge achieved")
+[![SQAaaS badge shields.io](https://img.shields.io/badge/sqaaas%20software-silver-lightgrey)](https://api.eu.badgr.io/public/assertions/cI-g3_ygR761NNKsJTvTzQ "SQAaaS silver badge achieved")
 
 This repository contains all source code for the CESSDA Data Catalogue web application.
 
@@ -15,7 +15,7 @@ CESSDA's repositories are used for harvesting and indexing with very minimal cha
 
 [Node.js](https://nodejs.org/) version 18 (LTS) is required to install and run this application.
 
-You will need an existing local or remote Elasticsearch version 8 instance setup and running.
+An instance of Elasticsearch 8 populated using the [CDC Indexer](https://github.com/cessda/cessda.cdc.osmh-indexer.cmm/) is required.
 
 ## Quick Start
 
@@ -23,14 +23,14 @@ Please be aware of *Known Issues* (see bottom) before running.
 
 1. Check *Prerequisites* and install any required software.
 2. Clone the repository to your local workspace.
-3. Open a Command Prompt/Terminal window and navigate to the project root directory.
-4. Enter `npm install` to install the application and all required dependencies.
+3. Open a terminal window and navigate to the project root directory.
+4. Run `npm install` to install all required dependencies of the application.
 5. Set the required environment variables (see *Configuration* below).
 6. Run the application using one of the following commands.
     * Development: `npm run startdev`
     * Production: `npm run startprod` (Requires the application to be built. See *Building* below.)
 
-> **Building:** In order to run the application in production, it must first be built using the `npm run build` command. This will compile assets into the `/dist` directory. This is not needed if the application is started with `npm run startdev`.  
+> **Building:** In order to run the application in production it must first be built using the `npm run build` command. This will compile assets into the `/dist` directory. This is not needed if the application is started with `npm run startdev`.  
 > **Updating:** When fetching/pulling new builds it is recommended to run `npm install` again. This will ensure all locally installed dependencies match their development environment counterparts.  
 > **Testing:** Tests can be run using `npm run test`. Code coverage will be reported in the `/coverage` directory.
 
@@ -38,19 +38,19 @@ Please be aware of *Known Issues* (see bottom) before running.
 
 The application can be configured using the following environment variables.
 
-| Variable                     | Default Value | Description
-| ---------------------------- | ------------- | -----------
-| `PASC_DEBUG_MODE`            | `false`       | Enables debug mode which outputs additional debugging information in the user interface and web browser console.
-| `PASC_PORT`                  | `8088`        | The port number which will be used to access this web application.
-| `PASC_ELASTICSEARCH_URL`     | `http://localhost:9200/` | The web address of the Elasticsearch instance which powers all searches.
-| `SEARCHKIT_ELASTICSEARCH_USERNAME` | `undefined` | The username to use when accessing a secured Elasticsearch cluster.
-| `SEARCHKIT_ELASTICSEARCH_PASSWORD` | `undefined` | The password to use when accessing a secured Elasticsearch cluster.
-| `SEARCHKIT_LOG_LEVEL`        | `info`        | The logging level used for server side events.
-| `SEARCHKIT_USE_JSON_LOGGING` | `false`       | Whether to log using JSON rather than plain text.
+| Variable                           | Default Value            | Description
+| ---------------------------------- | ------------------------ | -----------
+| `PASC_DEBUG_MODE`                  | `false`                  | Enables debug mode which outputs additional debugging information in the user interface and web browser console.
+| `PASC_PORT`                        | `8088`                   | The port number which will be used to access this web application.
+| `PASC_ELASTICSEARCH_URL`           | `http://localhost:9200/` | The web address of the Elasticsearch instance which powers all searches.
+| `SEARCHKIT_ELASTICSEARCH_USERNAME` | `undefined`              | The username to use when accessing a secured Elasticsearch cluster.
+| `SEARCHKIT_ELASTICSEARCH_PASSWORD` | `undefined`              | The password to use when accessing a secured Elasticsearch cluster.
+| `SEARCHKIT_LOG_LEVEL`              | `info`                   | The logging level used for server side events.
+| `SEARCHKIT_USE_JSON_LOGGING`       | `false`                  | Enables logging using JSON rather than plain text.
 
 Set environment variables using the following syntax.
 
-* Windows: `set PASC_PORT=80`
+* Windows: `set PASC_PORT=80` (CMD) / `$Env:PASC_PORT='80'` (PowerShell)
 * macOS/Linux: `export PASC_PORT=80`
 * Dockerfile: `ENV PASC_PORT=80`
 
@@ -83,22 +83,22 @@ This project follows a best practice structure for React+Redux applications. [Re
 
 Several frameworks are used in this application.
 
-The primary programming language is Flow and JSX in ECMAScript 6. See *Tooling* (below) for compatible IDEs.
+The primary programming language is TypeScript. See *Tooling* (below) for compatible IDEs.
 
-| Framework/Technology                                 | Description                                              |
-| ---------------------------------------------------- | -------------------------------------------------------- |
-| JavaScript/[JSX](https://facebook.github.io/jsx/)    | ECMAScript with XML-like syntax extensions.              |
-| [React](https://reactjs.org/)                        | JavaScript library for building web applications.        |
-| [Redux](https://redux.js.org/)                       | Predictable state container for JavaScript applications. |
-| [Searchkit](http://www.searchkit.co/)                | React component library for Elasticsearch.               |
-| [Babel](https://babeljs.io/)                         | JavaScript compiler for ECMAScript 6.                    |
-| [TypeScript](https://www.typescriptlang.org/)        | Static type checker for JavaScript.                      |
-| [Webpack](https://webpack.js.org/)                   | JavaScript module bundler.                               |
-| [Sass](http://sass-lang.com/)                        | CSS extension language.                                  |
-| [Bulma](https://bulma.io/)                           | CSS framework based on Flexbox.                          |
-| [Jest](https://jestjs.io/)                           | JavaScript testing framework.                            |
-| [React Testing Library](https://testing-library.com/)| JavaScript testing utility for React Components.         |
-| [Winston](https://github.com/winstonjs/winston)      | JavaScript logging framework.                            |
+| Framework/Technology                                 | Description
+| ---------------------------------------------------- | --------------------------------------------------------
+| JavaScript/[JSX](https://facebook.github.io/jsx/)    | ECMAScript with XML-like syntax extensions.
+| [React](https://reactjs.org/)                        | JavaScript library for building web applications.
+| [Redux](https://redux.js.org/)                       | Predictable state container for JavaScript applications.
+| [Searchkit](http://www.searchkit.co/)                | React component library for Elasticsearch.
+| [Babel](https://babeljs.io/)                         | JavaScript compiler for ECMAScript 6.
+| [TypeScript](https://www.typescriptlang.org/)        | Static type checker for JavaScript.
+| [Webpack](https://webpack.js.org/)                   | JavaScript module bundler.
+| [Sass](http://sass-lang.com/)                        | CSS extension language.
+| [Bulma](https://bulma.io/)                           | CSS framework based on Flexbox.
+| [Jest](https://jestjs.io/)                           | JavaScript testing framework.
+| [React Testing Library](https://testing-library.com/)| JavaScript testing utility for React Components.
+| [Winston](https://github.com/winstonjs/winston)      | JavaScript logging framework.
 
 See [`package.json`](package.json) in the root directory for a full list of third party libraries used.
 
@@ -107,7 +107,6 @@ See [`package.json`](package.json) in the root directory for a full list of thir
 For development, the following software tools are recommended and have full support for the technologies/languages used in this project.
 
 * [JetBrains WebStorm](https://www.jetbrains.com/webstorm/)
-* [Atom](https://atom.io/) with [Nuclide](https://nuclide.io/) (EOL Announced) package
 * [Visual Studio Code](https://code.visualstudio.com/)
 
 ## How To
@@ -146,7 +145,7 @@ All search filters are created in `/src/containers/SearchPage.jsx` and their Ela
 
 Example of [RefinementList](https://www.algolia.com/doc/api-reference/widgets/refinement-list/react/) from InstantSearch:
 
-```json
+```js
 {
   attribute: "country",
   field: "searchField",
@@ -164,15 +163,15 @@ Example of [RefinementList](https://www.algolia.com/doc/api-reference/widgets/re
                 }}/>
 ```
 
-High `limit` can be used here because of the `ais-CustomRefinementList` class that makes the values horizontally scrollable. Usually lower `limit`, e.g. 16, is recommended, along with `showMore` set to false. Setting searchable is always recommended for any filter that supports it.
+A high `limit` can be used here because the `ais-CustomRefinementList` class makes the values horizontally scrollable. Usually, a lower `limit` (e.g. 16) is recommended in the absence of the `ais-CustomRefinementList` class, along with setting `showMore` to false. Setting `searchable` is always recommended for any filter that supports it.
 
 ### Modify sorting fields
 
-The list of available fields for sorting can be modified in the `/server/helper.ts` and then set in `/src/containers/SearchPage.jsx`.
+The list of available fields for sorting can be modified in `/server/helper.ts` and `/src/containers/SearchPage.jsx`.
 
 ### Modify Elasticsearch queries
 
-Queries performed against Elasticsearch are defined in `/server/helper.ts` and `/server/elasticsearch.ts`. Client being used is set in `/src/utilities/searchkit.js` but also defined in `/server/helper.ts` like most of the queries.
+Queries performed against Elasticsearch are defined in `/server/helper.ts` and `/server/elasticsearch.ts`. The browser client is configured in in `/src/utilities/searchkit.js` and the server-side client is configured in `/server/helper.ts`.
 
 ### Modify Schema.org JSON-LD (used by Google Dataset search)
 
