@@ -744,9 +744,8 @@ const Detail = (props: Props) => {
                     // Sort related publications by publication date, descending
                     [...item.relatedPublications]
                       .sort((a, b) => {
-                        const parseDate = (d: string) => d ? new Date(d) : null;
-                        const dateA = parseDate(a.publicationDate);
-                        const dateB = parseDate(b.publicationDate);
+                        const dateA = a.publicationDate ? new Date(a.publicationDate) : undefined;
+                        const dateB = b.publicationDate ? new Date(b.publicationDate) : undefined;
 
                         if (!dateA && !dateB) return 0;
                         if (!dateA) return 1;
