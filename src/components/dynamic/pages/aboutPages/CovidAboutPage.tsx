@@ -33,7 +33,7 @@ const DynamicAboutPage: React.FC<DynamicAboutPageProps> = ({ metrics }) => {
 
   const MetricsCircle: React.FC<MetricsCircleProps> = ({ amount, description }) => {
     return (
-      <div className="columns is-flex is-flex-direction-column is-vcentered mb-0">
+      <div className="columns is-flex is-flex-direction-column is-vcentered mt-15 mb-0">
         <div className="metrics-circle m-2">
           <span className="metrics-circle-text">{amount}</span>
         </div>
@@ -41,23 +41,23 @@ const DynamicAboutPage: React.FC<DynamicAboutPageProps> = ({ metrics }) => {
       </div>
     );
   };
- const currentThematicView = useAppSelector((state) => state.thematicView.currentThematicView);
+  const currentThematicView = useAppSelector((state) => state.thematicView.currentThematicView);
   return (
     <div className="columns is-flex is-flex-direction-column is-vcentered pb-6">
-          <Helmet>
-                    <title>{currentThematicView.title} - About</title>
-                    </Helmet>
+      <Helmet>
+        <title>{currentThematicView.title} - About</title>
+      </Helmet>
       <div className="column is-flex is-flex-wrap-wrap is-justify-content-space-around is-8">
         <React.Suspense fallback={<></>}>
           <Await resolve={metrics} errorElement={<></>}>
             {(metrics: Awaited<ReturnType<typeof metricsLoader>>) => {
-              if(metrics.meta.requestStatus === "fulfilled"){
+              if (metrics.meta.requestStatus === "fulfilled") {
                 const payload = metrics.payload as Metrics;
                 return (
                   <>
-                    <MetricsCircle amount={payload.studies} description={t("about.metrics.studies")} />
-                    <MetricsCircle amount={payload.creators} description={t("about.metrics.creators")} />
-                    <MetricsCircle amount={payload.countries} description={t("about.metrics.countries")} />
+                    {payload.studies > 0 && <MetricsCircle amount={payload.studies} description={t("about.metrics.studies")} />}
+                    {payload.creators > 0 && <MetricsCircle amount={payload.creators} description={t("about.metrics.creators")} />}
+                    {payload.countries > 0 && <MetricsCircle amount={payload.countries} description={t("about.metrics.countries")} />}
                   </>
                 );
               }
@@ -72,16 +72,14 @@ const DynamicAboutPage: React.FC<DynamicAboutPageProps> = ({ metrics }) => {
         <h1 className="main-title mb-4">About the By-COVID Project</h1>
         <div className="text-container">
           <p>
-          In an unprecedented and unique interdisciplinary effort, BY-COVID has brought together 53 partners from 19 countries and stakeholders from the biomedical field, hospitals, public health, social sciences and humanities.
-            </p>
-            <p>
-          The BY-COVID collection in the CESSDA Data Catalogue contains descriptions of studies on the impact of SARS-CoV-2 and other infectious diseases across scientific, medical, public health and policy domains.
-            </p>
+            In an unprecedented and unique interdisciplinary effort, BY-COVID has brought together 53 partners from 19 countries and stakeholders from the biomedical field, hospitals, public health, social sciences and humanities.
+          </p>
+          <p>
+            The BY-COVID collection in the CESSDA Data Catalogue contains descriptions of studies on the impact of SARS-CoV-2 and other infectious diseases across scientific, medical, public health and policy domains.
+          </p>
         </div>
       </div>
-
     </div>
-
   );
 };
 

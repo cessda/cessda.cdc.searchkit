@@ -195,7 +195,7 @@ export const thematicViews: readonly ThematicView[] = [
           excludeFilters: []
         }
       ],
-      excludeFields: ["publisher"],
+      excludeFields: [""],
       excludeFilters: ["publisher"]
   },
   {

@@ -37,10 +37,10 @@ const DynamicFooter = () => {
 
   return (
     <footer data-testid="footer" className="footer">
-    <div className="container">
-      <div className="columns">
-        <div className="column pt-1">
+      <div className="container">
+        <div className="columns">
 
+          <div className="column pt-1">
             <a href="https://www.cessda.eu" target="_blank" rel="noreferrer">
               <svg id="footerlogo" viewBox="0 0 2386 652" xmlns="http://www.w3.org/2000/svg" aria-label="CESSDA Home Page">
                 <path d="M993.333 498.333h-92.5c-52.5 0-95-42.5-95-94.583V249.167c0-52.084 42.5-94.584 95-94.584l92.5-.416c9.584 0 17.5 7.916 17.5 17.5 0 9.583-7.916 17.5-17.5 17.916l-92.5.417c-32.916 0-59.583 26.667-59.583 59.583v154.584c0 32.916 26.667 59.583 59.583 59.583h92.5c9.584 0 17.5 7.917 17.5 17.5.417 9.167-7.5 17.083-17.5 17.083" fill="#3E4C59"></path>
@@ -55,46 +55,37 @@ const DynamicFooter = () => {
               Consortium of European<br />Social Science Data Archives
             </p>
           </div>
-          <div className="column has-text-centered pt-0 pb-2">
 
+          <div className="column has-text-centered pt-0 pb-2">
             <a href="https://www.cessda.eu/Privacy-policy" target="_blank" rel="noreferrer" className="is-inline-block">{t("footer.privacy")}</a> <br />
             <a href="https://www.cessda.eu/Acceptable-Use-Policy" target="_blank" rel="noreferrer" className="is-inline-block">{t("footer.aup")}</a> <br />
             <Link to={currentThematicView.path !== '/' ? `${currentThematicView.path}/accessibility-statement` : "/accessibility-statement"}
               className="is-inline-block">{t("footer.accessibility")}</Link>
-
-
           </div>
+
           <div className="column has-text-right-tablet p-0">
-
-              <Link to={currentThematicView.path !== '/' ? `${currentThematicView.path}/collections` : "/collections"}>
-                Collections
-              </Link> <br />
-              <Link to={currentThematicView.path !== '/' ? `${currentThematicView.path}/documentation` : "/documentation"}>
-                {t("documentation.label")}
-              </Link> <br />
-              <Link to={currentThematicView.path !== '/' ? `${currentThematicView.path}/about` : "/about"}>
-                {t("about.label")}
-              </Link> <br />
-
-          
+            <Link to={currentThematicView.path !== '/' ? `${currentThematicView.path}/collections` : "/collections"}>
+              Collections
+            </Link> <br />
+            <Link to={currentThematicView.path !== '/' ? `${currentThematicView.path}/documentation` : "/documentation"}>
+              {t("documentation.label")}
+            </Link> <br />
+            <Link to={currentThematicView.path !== '/' ? `${currentThematicView.path}/about` : "/about"}>
+              {t("about.label")}
+            </Link> <br />
           </div>
         </div>
-
-
 
         <div className="columns">
           <div className="column columns is-justify-content-center">
             <div className="column is-narrow has-text-centered p-0">
-
               <svg id="horizonlogo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 356.18"><path fill="#039" d="M28.137 0H483.86C499.337 0 512 12.663 512 28.14v299.9c0 15.477-12.663 28.14-28.14 28.14H28.137C12.663 356.18 0 343.517 0 328.04V28.14C0 12.663 12.663 0 28.137 0z" /><path fill="#FC0" d="M237.179 53.246h14.378L256 39.572l4.443 13.674h14.378l-11.633 8.451 4.444 13.673L256 66.919l-11.632 8.451 4.444-13.673-11.633-8.451zm0 237.458h14.378L256 277.03l4.443 13.674h14.378l-11.633 8.451 4.444 13.673L256 304.377l-11.632 8.451 4.444-13.673-11.633-8.451zM118.45 171.975h14.378l4.443-13.674 4.443 13.674h14.378l-11.633 8.451 4.443 13.673-11.631-8.451-11.632 8.451 4.444-13.673-11.633-8.451zm59.363-102.796h14.377l4.443-13.674 4.443 13.674h14.378l-11.632 8.451 4.443 13.674-11.632-8.451-11.632 8.451 4.443-13.674-11.631-8.451zm-43.429 43.429h14.378l4.442-13.673 4.444 13.673h14.377l-11.632 8.451 4.443 13.674-11.632-8.451-11.631 8.451 4.443-13.674-11.632-8.451zm-.032 118.737h14.377l4.443-13.674 4.443 13.674h14.377l-11.631 8.451 4.443 13.674-11.632-8.451-11.632 8.451 4.443-13.674-11.631-8.451zm43.471 43.46h14.378l4.443-13.674 4.443 13.674h14.378l-11.632 8.451 4.443 13.674-11.632-8.451-11.631 8.451 4.443-13.674-11.633-8.451zm178.085-102.83h14.378l4.443-13.674 4.443 13.674h14.378l-11.633 8.451 4.444 13.673-11.632-8.451-11.631 8.451 4.443-13.673-11.633-8.451zM296.546 69.179h14.378l4.443-13.674 4.443 13.674h14.377l-11.631 8.451 4.443 13.674-11.632-8.451-11.632 8.451 4.443-13.674-11.632-8.451zm43.429 43.429h14.377l4.444-13.673 4.442 13.673h14.378l-11.632 8.451 4.443 13.674-11.631-8.451-11.632 8.451 4.443-13.674-11.632-8.451zm.033 118.737h14.377l4.443-13.674 4.443 13.674h14.377l-11.631 8.451 4.443 13.674-11.632-8.451-11.632 8.451 4.443-13.674-11.631-8.451zm-43.473 43.46h14.378l4.443-13.674 4.443 13.674h14.378l-11.633 8.451 4.443 13.674-11.631-8.451-11.632 8.451 4.443-13.674-11.632-8.451z" /></svg>
             </div>
             <div className="column is-narrow credit pl-2 pt-0">
-              The COORDINATE project has<br />received funding from the<br />European Union&apos;s  Horizon 2020<br />research and  innovation programme<br />under grant agreement No. 101008589.
+              COORDINATE project has<br />received funding from the<br />European Union&apos;s  Horizon 2020<br />research and  innovation programme<br />under grant agreement No. 101008589.
             </div>
           </div>
         </div>
-
-
 
       </div>
       <script type="application/ld+json" data-testid="coordinateJson">{organizationCoordinateJSON}</script>
