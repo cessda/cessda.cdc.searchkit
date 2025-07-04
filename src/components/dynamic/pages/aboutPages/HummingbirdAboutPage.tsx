@@ -30,13 +30,13 @@ const DynamicAboutPage: React.FC<DynamicAboutPageProps> = ({ metrics }) => {
     amount: number;
     description: string;
   };
- const currentThematicView = useAppSelector((state) => state.thematicView.currentThematicView);
+  const currentThematicView = useAppSelector((state) => state.thematicView.currentThematicView);
   const MetricsCircle: React.FC<MetricsCircleProps> = ({ amount, description }) => {
     return (
-      <div className="columns is-flex is-flex-direction-column is-vcentered mb-0">
-            <Helmet>
-                      <title>{currentThematicView.title} - About</title>
-                      </Helmet>
+      <div className="columns is-flex is-flex-direction-column is-vcentered mt-15 mb-0">
+        <Helmet>
+          <title>{currentThematicView.title} - About</title>
+        </Helmet>
         <div className="metrics-circle m-2">
           <span className="metrics-circle-text">{amount}</span>
         </div>
@@ -51,13 +51,13 @@ const DynamicAboutPage: React.FC<DynamicAboutPageProps> = ({ metrics }) => {
         <React.Suspense fallback={<></>}>
           <Await resolve={metrics} errorElement={<></>}>
             {(metrics: Awaited<ReturnType<typeof metricsLoader>>) => {
-              if(metrics.meta.requestStatus === "fulfilled"){
+              if (metrics.meta.requestStatus === "fulfilled") {
                 const payload = metrics.payload as Metrics;
                 return (
                   <>
-                    <MetricsCircle amount={payload.studies} description={t("about.metrics.studies")} />
-                    <MetricsCircle amount={payload.creators} description={t("about.metrics.creators")} />
-                    <MetricsCircle amount={payload.countries} description={t("about.metrics.countries")} />
+                    {payload.studies > 0 && <MetricsCircle amount={payload.studies} description={t("about.metrics.studies")} />}
+                    {payload.creators > 0 && <MetricsCircle amount={payload.creators} description={t("about.metrics.creators")} />}
+                    {payload.countries > 0 && <MetricsCircle amount={payload.countries} description={t("about.metrics.countries")} />}
                   </>
                 );
               }
@@ -71,20 +71,16 @@ const DynamicAboutPage: React.FC<DynamicAboutPageProps> = ({ metrics }) => {
       <div className="column p-6">
         <h1 className="main-title mb-4">About HumMingBird</h1>
         <div className="text-container">
-        <h2>Enhanced migration measures from a multidimensional perspective (HumMingBird)</h2>
-      
-<p>
-The project’s overall objective is to improve the understanding of the changing nature of migration flows and the drivers of migration. It will also analyse patterns, motivations, and new geographies. Moreover, HumMingBird aims to calculate population estimates, determine
-emerging and future trends, and identify accordingly possible future implications of today’s policy decisions.
-
-        </p>
-        <p>
-The HumMingBird collection in the CESSDA Data Catalogue contains studies on migration topics as a main project deliverable.
-
-        </p>
-
-</div></div>
-     
+          <h2>Enhanced migration measures from a multidimensional perspective (HumMingBird)</h2>
+          <p>
+            The project&apos;s overall objective is to improve the understanding of the changing nature of migration flows and the drivers of migration. It will also analyse patterns, motivations, and new geographies. Moreover, HumMingBird aims to calculate population estimates, determine
+            emerging and future trends, and identify accordingly possible future implications of today&apos;s policy decisions.
+          </p>
+          <p>
+            The HumMingBird collection in the CESSDA Data Catalogue contains studies on migration topics as a main project deliverable.
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
