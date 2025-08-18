@@ -6,7 +6,7 @@ import fetch from 'jest-mock-fetch' ;
 global.fetch = fetch;
 
 if (!global.TextEncoder) {
-  global.TextEncoder = TextEncoder
+  global.TextEncoder = TextEncoder as typeof global.TextEncoder
 }
 
 if (!global.TextDecoder) {
