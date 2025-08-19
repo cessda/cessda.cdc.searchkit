@@ -17,12 +17,20 @@ import express from 'express';
 import config from '../webpack.dev.config.js';
 import path from 'path';
 import { checkEnvironmentVariables, renderResponse, startListening } from './helper';
+import { logger } from './logger';
 
 export function start() {
   checkEnvironmentVariables(false);
 
-  const app = express();
+  // Configure Webpack compiler
   const compiler = webpack(config);
+  if (!compiler) {
+    logger.error("Unable to start Data Catalogue application. Webpack compiler configuration failed.");
+    process.exitCode = 1;
+    return;
+  }
+
+  const app = express();
 
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname, '../dist'));
