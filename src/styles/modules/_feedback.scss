@@ -21,6 +21,17 @@
     @extend .button;
     @extend .is-info;
     margin: auto;
+    padding-bottom: calc(0.5em - 1px) !important;
+    padding-left: 1em !important;
+    padding-right: 1em !important;
+    padding-top: calc(0.5em - 1px) !important;
+    color: white !important;
+    background-color: $light_blue !important;
+
+    &:hover, &:focus {
+      color: white !important;
+      background-color: $dark_blue !important;
+    }
   }
 }
 
