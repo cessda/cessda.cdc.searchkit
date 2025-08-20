@@ -226,11 +226,13 @@ export function truncateText(string: string, limit: number): string {
 }
 
 /**
- * Strip non-styling HTML tags from the given HTML string.
+ * Strip non-styling HTML tags from the given HTML string
+ * except hyperlinks which are sanitized instead.
  * @param {string} html the HTML to strip.
  */
 function stripHTMLElements(html: string) {
   const strippedHTML = striptags(html, [
+    "a",
     "p",
     "strong",
     "br",
@@ -248,7 +250,16 @@ function stripHTMLElements(html: string) {
     "h5",
     "h6",
   ]);
-  return strippedHTML.trim();
+  function sanitizeAnchorTags(html: string): string {
+    return html.replace(/<a\s+([^>]*href="[^"]+"[^>]*)>/gi, (_match, attrs) => {
+      // Extract href
+      const hrefMatch = attrs.match(/href="[^"]+"/i);
+      const href = hrefMatch ? hrefMatch[0] : '';
+
+      return `<a ${href} target="_blank" rel="noopener noreferrer">`;
+    });
+  }
+  return sanitizeAnchorTags(strippedHTML.trim());
 }
 
 // Generates study JSON-LD for Google indexing.
