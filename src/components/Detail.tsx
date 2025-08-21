@@ -65,9 +65,10 @@ const Detail = (props: Props) => {
   const item = props.item;
   const headings = props.headings;
   const truncatedAbstractLength = 2000;
+  const abstractWithoutTags = striptags(item.abstract).trim();
 
 
-  const [abstractExpanded, setAbstractExpanded] = useState(props.item.abstract.length < truncatedAbstractLength);
+  const [abstractExpanded, setAbstractExpanded] = useState(item.abstract.length <= truncatedAbstractLength || abstractWithoutTags === item.abstractLong);
   const exportMetadataOptions: Option[] = [
     { value: 'json', label: 'JSON' },
     { value: 'ddi25', label: 'DDI-C 2.5' }
@@ -381,6 +382,50 @@ const Detail = (props: Props) => {
     }
   }
 
+  /**
+   * Converts plain text URLs in an HTML string into clickable anchor (`<a>`) tags,
+   * while preserving any existing anchor tags in the input.
+   *
+   * Scans for plain text URLs (http/https), wraps them in anchor tags with
+   * `target="_blank"` and `rel="noopener noreferrer"`, and handles edge cases
+   * like trailing punctuation and unbalanced brackets.
+   *
+   * @param html - The input HTML string that may contain plain text URLs.
+   * @returns A new HTML string with plain text URLs converted into clickable links.
+   */
+  const makeUrlsClickable = (html: string): string => {
+    const addHyperlinks = (text: string): string => {
+      return text.replace(/(https?:\/\/[^\s<>"')\]]+)([.,!?;:)\]]?)/g, (_match, url, trailing) => {
+        let actualUrl = url;
+        let actualTrailing = trailing;
+
+        const bracketPairs: Record<string, string> = { ')': '(', ']': '[' };
+        const opening = bracketPairs[trailing];
+
+        if (opening) {
+          const openCount = (url.match(new RegExp(`\\${opening}`, 'g')) || []).length;
+          const closeCount = (url.match(new RegExp(`\\${trailing}`, 'g')) || []).length;
+          if (closeCount < openCount) {
+            actualUrl += trailing;
+            actualTrailing = '';
+          }
+        }
+
+        if (/[.,!?;:]$/.test(actualUrl)) {
+          actualTrailing = actualUrl.slice(-1) + actualTrailing;
+          actualUrl = actualUrl.slice(0, -1);
+        }
+
+        return `<a href="${actualUrl}" target="_blank" rel="noopener noreferrer">${actualUrl}</a>${actualTrailing}`;
+      });
+    };
+
+    return html
+      .split(/(<a\b[^>]*>.*?<\/a>)/gi)
+      .map((part) => /^<a\b[^>]*>.*<\/a>$/i.test(part) ? part : addHyperlinks(part))
+      .join('');
+  };
+
   return (
     <>
       <Helmet>
@@ -388,13 +433,11 @@ const Detail = (props: Props) => {
       </Helmet>
 
       <div className="metadata-container study-wrapper">
-
         <div className="main-content">
           <article>
             <section className="metadata-section">
-              <div className="columns is-gapless is-vcentered mb-0 mt-0">
-                <div className="column smalltext">
-
+              <div className="columns is-gapless is-vcentered mb-0 mt-0 pt-5">
+                <div className="column">
                   {item.studyUrl && (
                     <a
                       href={item.studyUrl}
@@ -404,9 +447,7 @@ const Detail = (props: Props) => {
                         <FaExternalLinkAlt />
                       </span>
                       &nbsp;
-                      <span className="is-small">
-                        {t("goToStudy")}
-                        &nbsp;&nbsp;</span>
+                      <span>{t("goToStudy")}&nbsp;&nbsp;</span>
                     </a>
                   )}
 
@@ -418,15 +459,10 @@ const Detail = (props: Props) => {
                     &nbsp;
                     <span>{t("viewJson")}</span>
                   </a>
-
                 </div>
+
                 <div className="column is-narrow">
                   <div className="columns is-mobile is-gapless">
-
-
-                    {/* <Tooltip content={t("metadata.keywords.tooltip.content")}
-                    ariaLabel={t("metadata.keywords.tooltip.ariaLabel")}
-                    classNames={{container: 'ml-1'}}/> */}
                     <div className="column is-narrow mt-2">
                       <Select options={exportMetadataOptions}
                         defaultValue={exportMetadataOptions[0]}
@@ -461,9 +497,6 @@ const Detail = (props: Props) => {
                     </div>
                   </div>
                 </div>
-
-
-
               </div>
               {languageLinks}
 
@@ -519,18 +552,18 @@ const Detail = (props: Props) => {
                   {generateHeading('abstract')}
                   {abstractExpanded ? (
                     <div
-                      className="data-abstract"
-                      dangerouslySetInnerHTML={{ __html: item.abstract }}
+                      data-testid="abstract-full"
+                      dangerouslySetInnerHTML={{ __html: makeUrlsClickable(item.abstract) }}
                     />
                   ) : (
-                    <div className="data-abstract">
+                    <div data-testid="abstract-truncated">
                       {truncate(striptags(item.abstract), {
                         length: truncatedAbstractLength,
                         separator: " ",
                       })}
                     </div>
                   )}
-                  {item.abstract.length > truncatedAbstractLength && (
+                  {(item.abstract.length > truncatedAbstractLength && abstractWithoutTags !== item.abstractLong) && (
                     <a className="button is-small is-light mt-2" data-testid="expand-abstract"
                       onClick={() => {
                         setAbstractExpanded(abstractExpanded => !abstractExpanded)
@@ -646,7 +679,6 @@ const Detail = (props: Props) => {
                   {generateElements(item.samplingProcedureFreeTexts, "div",
                     (text) => (
                       <div
-                        className="data-abstract"
                         dangerouslySetInnerHTML={{ __html: text }}
                       />
                     )
@@ -659,7 +691,7 @@ const Detail = (props: Props) => {
                 <>
                   {generateHeading('dataKind')}
                   {item.dataKindFreeTexts || item.generalDataFormats ? generateElements(formatDataKind(item.dataKindFreeTexts, item.generalDataFormats), 'div', text =>
-                    <div className="data-abstract" dangerouslySetInnerHTML={{ __html: text }} data-testid="data-kind" />
+                    <div dangerouslySetInnerHTML={{ __html: text }} data-testid="data-kind" />
                   ) : <span>{t("language.notAvailable.field")}</span>}
                 </>
               }
@@ -727,8 +759,8 @@ const Detail = (props: Props) => {
                   {generateElements(item.dataAccessFreeTexts, "div",
                     (text) => (
                       <div
-                        className="data-abstract"
-                        dangerouslySetInnerHTML={{ __html: text }}
+                        data-testid="access-terms"
+                        dangerouslySetInnerHTML={{ __html: makeUrlsClickable(text) }}
                       />
                     )
                   )}
@@ -767,8 +799,6 @@ const Detail = (props: Props) => {
                 </>
               }
             </section>
-
-
           </article>
         </div>
       </div>

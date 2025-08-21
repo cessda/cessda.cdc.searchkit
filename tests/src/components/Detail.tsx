@@ -405,7 +405,7 @@ it('should format creators correctly', () => {
   // Check each creator element
   mockStudy.creators.forEach((creator, index) => {
     const creatorElement = creatorElements[index];
-    
+
     // Check if creator's name is rendered
     expect(creatorElement).toHaveTextContent(creator.name);
 
@@ -438,4 +438,29 @@ it('should format creators correctly', () => {
       }
     }
   });
+});
+
+it('should make urls clickable in abstract and terms of data access', async () => {
+  renderDetailWithModifiedProps({
+    abstract: 'This is a mock abstract describing a mock study.\n\n' +
+      'This mock abstract also includes links to http://www.example.com?param=(test), http://www.example.com?param=[test] and http://www.example.com. ' +
+      'Link with tags already in it: <a href="https://www.example.com" target="_blank" rel="noopener noreferrer">Already existing link</a>.',
+    dataAccessFreeTexts: [
+      "Data access terms and conditions (http://www.example.com) and another link for testing [https://www.example.com]."
+    ],
+  });
+
+  const abstractElement = screen.getByTestId('abstract-full')
+  expect(abstractElement).toBeInTheDocument();
+  const abstractHTML = abstractElement.innerHTML || '';
+  expect(abstractHTML).toContain('<a href="http://www.example.com?param=(test)" target="_blank" rel="noopener noreferrer">http://www.example.com?param=(test)</a>,');
+  expect(abstractHTML).toContain('<a href="http://www.example.com?param=[test]" target="_blank" rel="noopener noreferrer">http://www.example.com?param=[test]</a>');
+  expect(abstractHTML).toContain('<a href="http://www.example.com" target="_blank" rel="noopener noreferrer">http://www.example.com</a>.');
+  expect(abstractHTML).toContain('<a href="https://www.example.com" target="_blank" rel="noopener noreferrer">Already existing link</a>.');
+
+  const accessTermsElement = screen.getByTestId('access-terms');
+  expect(accessTermsElement).toBeInTheDocument();
+  const termsOfDataAccessHTML = accessTermsElement.innerHTML || '';
+  expect(termsOfDataAccessHTML).toContain('(<a href="http://www.example.com" target="_blank" rel="noopener noreferrer">http://www.example.com</a>)');
+  expect(termsOfDataAccessHTML).toContain('[<a href="https://www.example.com" target="_blank" rel="noopener noreferrer">https://www.example.com</a>].');
 });
