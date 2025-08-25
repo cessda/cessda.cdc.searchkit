@@ -127,7 +127,7 @@ const CustomRefinementList = ({
                 className="ais-SearchBox-input"
                 placeholder=""
                 value={query}
-                onChange={(e) => handleQueryChange(e.currentTarget.value)}
+                onChange={(e) => handleQueryChange(e.currentTarget.value.toLowerCase())}
               />
               {query && (
                 <button

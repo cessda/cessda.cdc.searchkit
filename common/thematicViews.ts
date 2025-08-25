@@ -40,7 +40,7 @@ export const thematicViews: readonly ThematicView[] = [
     "defaultIndex": "cmmstudy_en",
     "title": "Data Catalogue",
     "longTitle": "CESSDA Data Catalogue",
-    "listDescription": "The CESSDA Data Catalogue master collection contains descriptions of more 40,000 data collections held by CESSDA’s Service Providers (SPs), originating from over 20 European countries.",
+    "listDescription": "The CESSDA Data Catalogue master collection contains descriptions of more than 40,000 data collections held by CESSDA’s Service Providers (SPs), originating from over 20 European countries.",
     "rootClass": "cdc",
     "icon": "cdc-icon.svg",
     "favicon": "cdc-favicon.png",
