@@ -46,8 +46,8 @@ const mockToggleShowMore = jest.fn();
 const mockSearchForItems = jest.fn();
 
 const baseItems = [
-  { label: 'Option A', value: 'Option A', count: 10, isRefined: false },
-  { label: 'Option B', value: 'Option B', count: 5, isRefined: true },
+  { label: 'option a', value: 'option a', count: 10, isRefined: false },
+  { label: 'option b', value: 'option b', count: 5, isRefined: true },
 ];
 
 beforeEach(() => {
@@ -66,7 +66,7 @@ beforeEach(() => {
     items: [
       {
         attribute: 'category',
-        refinements: [{ label: 'Option B', value: 'Option B' }],
+        refinements: [{ label: 'option b', value: 'option b' }],
       },
     ],
   });
@@ -78,8 +78,8 @@ describe('CustomRefinementList', () => {
   it('renders with default props', () => {
     render(<CustomRefinementList attribute="category" />);
     expect(screen.getByTestId('custom-refinement-list')).toBeInTheDocument();
-    expect(screen.getByText('Option A')).toBeInTheDocument();
-    expect(screen.getByText('Option B')).toBeInTheDocument();
+    expect(screen.getByText('option a')).toBeInTheDocument();
+    expect(screen.getByText('option b')).toBeInTheDocument();
   });
 
   it('renders search box when searchable is true', () => {
@@ -94,14 +94,14 @@ describe('CustomRefinementList', () => {
 
     expect(optionACheckbox).not.toBeChecked();
     await userEvent.click(optionACheckbox);
-    expect(mockRefine).toHaveBeenCalledWith('Option A');
+    expect(mockRefine).toHaveBeenCalledWith('option a');
   });
 
   it('clears all refinements when clear button is clicked', async () => {
     render(<CustomRefinementList attribute="category" />);
     const clearButton = screen.getByText(/clear/i);
     await userEvent.click(clearButton);
-    expect(mockRefine).toHaveBeenCalledWith('Option B');
+    expect(mockRefine).toHaveBeenCalledWith('option b');
   });
 
   it('toggles show more when button is clicked', async () => {
@@ -111,19 +111,21 @@ describe('CustomRefinementList', () => {
     expect(mockToggleShowMore).toHaveBeenCalled();
   });
 
-  it('updates query and shows reset button', async () => {
+  it('updates query while changing input into lowercase and shows reset button', async () => {
     render(<CustomRefinementList attribute="category" searchable />);
     const input = screen.getByRole('searchbox');
 
     await act(async () => {
-      await userEvent.type(input, 'test');
+      await userEvent.type(input, 'TEST');
     });
 
     expect(input).toHaveValue('test');
     await waitFor(() => {
+      expect(mockSearchForItems).toHaveBeenCalledWith('t');
+      expect(mockSearchForItems).toHaveBeenCalledWith('te');
+      expect(mockSearchForItems).toHaveBeenCalledWith('tes');
       expect(mockSearchForItems).toHaveBeenCalledWith('test');
     });
-
 
     const resetButton = screen.getByTitle(/clear/i);
     await act(async () => {
@@ -146,11 +148,11 @@ describe('CustomRefinementList', () => {
 
     // Manually trigger the debounced search
     act(() => {
-      debouncedFn('Alpha');
+      debouncedFn('alpha');
     });
 
     await waitFor(() => {
-      expect(mockSearchForItems).toHaveBeenCalledWith('Alpha');
+      expect(mockSearchForItems).toHaveBeenCalledWith('alpha');
     });
 
     const checkbox = screen.getAllByRole('checkbox')[0];
@@ -183,7 +185,7 @@ describe('CustomRefinementList', () => {
       await userEvent.click(clearButton);
     });
 
-    expect(mockRefine).toHaveBeenCalledWith('Option B');
+    expect(mockRefine).toHaveBeenCalledWith('option b');
     expect(mockSearchForItems).toHaveBeenCalledWith('');
   });
 
@@ -191,8 +193,8 @@ describe('CustomRefinementList', () => {
     render(<CustomRefinementList attribute="category" disableTags />);
 
     // Both options should be visible even though Option B is selected
-    expect(screen.getByText('Option A')).toBeInTheDocument();
-    expect(screen.getByText('Option B')).toBeInTheDocument();
+    expect(screen.getByText('option a')).toBeInTheDocument();
+    expect(screen.getByText('option b')).toBeInTheDocument();
 
     // The selected tag section should not be rendered
     expect(screen.queryByText(/clear/i)).not.toBeInTheDocument();
@@ -209,6 +211,6 @@ describe('CustomRefinementList', () => {
       await userEvent.keyboard('{Enter}');
     });
 
-    expect(mockRefine).toHaveBeenCalledWith('Option A');
+    expect(mockRefine).toHaveBeenCalledWith('option a');
   });
 });
