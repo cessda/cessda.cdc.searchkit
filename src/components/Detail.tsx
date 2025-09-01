@@ -527,24 +527,53 @@ const Detail = (props: Props) => {
 
                       const normalizedAgency = agency?.toUpperCase().trim();
 
-                      // Matches short-form DOIs with or without 'doi:' prefix
-                      const isShortDOI = /^(?:doi:)?10\.\d{4,9}\/\S+$/i.test(pid);
-
-                      // Matches full DOI URLs (http or https)
-                      const isFullDOIUrl = /^https?:\/\/doi\.org\/\S+$/i.test(pid);
+                      let link: string | undefined = undefined;
 
                       // Only treat as DOI if:
-                      // - agency is DOI
-                      // - OR agency is missing/empty AND pattern matches
-                      const isDOI =
-                        (normalizedAgency === "DOI" || !normalizedAgency) &&
-                        (isShortDOI || isFullDOIUrl);
+                      // - (agency is DOI OR agency is missing/empty)
+                      // - AND string is validated as a DOI
+                      if (normalizedAgency === "DOI" || !normalizedAgency) {
 
-                      let link = null;
-                      if (isDOI) {
-                        const cleanedPid = pid.replace(/^doi:/i, ""); // Remove 'doi:' prefix if present
-                        const normalizedPid = cleanedPid.replace(/^http:\/\//i, "https://"); // Force https
-                        link = isFullDOIUrl ? normalizedPid : `https://doi.org/${normalizedPid}`;
+                        if (URL.canParse(pid)) {
+
+                          const pidURL = new URL(pid);
+
+                          // Matches full DOI URLs (http or https)
+                          if (/^https?:$/i.test(pidURL.protocol)) {
+                            // Check if this is a DOI domain
+                            if (pidURL.hostname === "doi.org" || pidURL.hostname === "dx.doi.org") {
+                              link = `https://doi.org${pidURL.pathname}`;
+                            }
+                          }
+
+                          // Matches short-form DOIs with 'doi:' prefix
+                          else if (pidURL.protocol === "doi:") {
+                            link = `https://doi.org/${pidURL.pathname}`;
+                          }
+ 
+                        } else {
+
+                          // Matches DOIs based on prefix
+                          const firstDot = pid.indexOf(".");
+                          const directoryIndicator = pid.substring(0, firstDot);
+
+                          // The DOI specification allows for directory indicators other
+                          // than 10, but we will not check for these
+                          if (directoryIndicator === "10") {
+
+                            // Check if a registrant code exists (mandatory when the directory indicator is 10)
+                            const firstSlash = pid.indexOf("/");
+                            const registrantCode = pid.substring(firstDot + 1, firstSlash);
+
+                            // Check if a suffix exists
+                            const suffix = pid.substring(firstSlash + 1, pid.length);
+
+                            // Valid DOI?
+                            if (registrantCode && suffix) {
+                              link = `https://doi.org/${pid}`;
+                            }
+                          }
+                        }
                       }
 
                       return (
