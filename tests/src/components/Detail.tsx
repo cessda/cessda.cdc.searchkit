@@ -464,3 +464,30 @@ it('should make urls clickable in abstract and terms of data access', async () =
   expect(termsOfDataAccessHTML).toContain('(<a href="http://www.example.com" target="_blank" rel="noopener noreferrer">http://www.example.com</a>)');
   expect(termsOfDataAccessHTML).toContain('[<a href="https://www.example.com" target="_blank" rel="noopener noreferrer">https://www.example.com</a>].');
 });
+
+it('should make DOIs clickable in permanent identifiers', async () => {
+  renderDetailWithModifiedProps({ pidStudies: [
+    { pid: "10.60686/t-fsd3907", agency: "DOI" },
+    { pid: "doi:10.0000/test", agency: "" },
+    { pid: "10.0001/test", agency: "" },
+    { pid: "10.01.0001/test", agency: ""},
+    { pid: "10.0002/test", agency: "incorrectagency" },
+    { pid: "11.0000/incorrectprefix", agency: "" },
+    { pid: "https://doi.org/10.0003/test", agency: "" },
+    { pid: "http://dx.doi.org/10.0004/test", agency: "" }
+  ] });
+  const expectedOutput = [
+    '<a href="https://doi.org/10.60686/t-fsd3907" target="_blank" rel="noopener noreferrer">https://doi.org/10.60686/t-fsd3907</a> (DOI)',
+    '<a href="https://doi.org/10.0000/test" target="_blank" rel="noopener noreferrer">https://doi.org/10.0000/test</a>',
+    '<a href="https://doi.org/10.0001/test" target="_blank" rel="noopener noreferrer">https://doi.org/10.0001/test</a>',
+    '<a href="https://doi.org/10.01.0001/test" target="_blank" rel="noopener noreferrer">https://doi.org/10.01.0001/test</a>',
+    '10.0002/test (incorrectagency)',
+    '11.0000/incorrectprefix',
+    '<a href="https://doi.org/10.0003/test" target="_blank" rel="noopener noreferrer">https://doi.org/10.0003/test</a>',
+    '<a href="https://doi.org/10.0004/test" target="_blank" rel="noopener noreferrer">https://doi.org/10.0004/test</a>'
+  ];
+
+  const pidElements = screen.getAllByTestId('pid');
+  expect(pidElements).toHaveLength(8);
+  expect(pidElements.map(p => p.innerHTML)).toEqual(expectedOutput);
+});
