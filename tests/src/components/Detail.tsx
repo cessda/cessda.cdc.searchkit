@@ -488,6 +488,6 @@ it('should make DOIs clickable in permanent identifiers', async () => {
   ];
 
   const pidElements = screen.getAllByTestId('pid');
-  expect(pidElements).toHaveLength(6);
+  expect(pidElements).toHaveLength(8);
   expect(pidElements.map(p => p.innerHTML)).toEqual(expectedOutput);
 });
