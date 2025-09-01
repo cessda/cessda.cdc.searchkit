@@ -523,11 +523,43 @@ const Detail = (props: Props) => {
                   {generateHeading('pid')}
                   {generateElements(item.pidStudies.filter((p) => p.pid), "div",
                     (pidStudy) => {
-                      // The agency field is an optional attribute, only append if present
-                      if (pidStudy.agency) {
-                        return <p key={pidStudy.pid}>{`${pidStudy.pid} (${pidStudy.agency})`}</p>;
+                      const { pid, agency } = pidStudy;
+
+                      const normalizedAgency = agency?.toUpperCase().trim();
+
+                      // Matches short-form DOIs with or without 'doi:' prefix
+                      const isShortDOI = /^(?:doi:)?10\.\d{4,9}\/\S+$/i.test(pid);
+
+                      // Matches full DOI URLs (http or https)
+                      const isFullDOIUrl = /^https?:\/\/doi\.org\/\S+$/i.test(pid);
+
+                      // Only treat as DOI if:
+                      // - agency is DOI
+                      // - OR agency is missing/empty AND pattern matches
+                      const isDOI =
+                        (normalizedAgency === "DOI" || !normalizedAgency) &&
+                        (isShortDOI || isFullDOIUrl);
+
+                      let link = null;
+                      if (isDOI) {
+                        const cleanedPid = pid.replace(/^doi:/i, ""); // Remove 'doi:' prefix if present
+                        const normalizedPid = cleanedPid.replace(/^http:\/\//i, "https://"); // Force https
+                        link = isFullDOIUrl ? normalizedPid : `https://doi.org/${normalizedPid}`;
                       }
-                      return <p key={pidStudy.pid}>{pidStudy.pid}</p>;
+
+                      return (
+                        <p key={pid} data-testid="pid">
+                          {link ? (
+                            <a href={link} target="_blank" rel="noopener noreferrer">
+                              {link}
+                            </a>
+                          ) : (
+                            pid
+                          )}
+                          {/* The agency field is an optional attribute, only append if present */}
+                          {agency ? ` (${agency})` : null}
+                        </p>
+                      );
                     }
                   )}
                 </React.Fragment>
