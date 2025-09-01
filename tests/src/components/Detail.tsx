@@ -470,17 +470,21 @@ it('should make DOIs clickable in permanent identifiers', async () => {
     { pid: "10.60686/t-fsd3907", agency: "DOI" },
     { pid: "doi:10.0000/test", agency: "" },
     { pid: "10.0001/test", agency: "" },
+    { pid: "10.01.0001/test", agency: ""},
     { pid: "10.0002/test", agency: "incorrectagency" },
     { pid: "11.0000/incorrectprefix", agency: "" },
-    { pid: "http://doi.org/10.0003/test", agency: "" }
+    { pid: "https://doi.org/10.0003/test", agency: "" },
+    { pid: "http://dx.doi.org/10.0004/test", agency: "" }
   ] });
   const expectedOutput = [
     '<a href="https://doi.org/10.60686/t-fsd3907" target="_blank" rel="noopener noreferrer">https://doi.org/10.60686/t-fsd3907</a> (DOI)',
     '<a href="https://doi.org/10.0000/test" target="_blank" rel="noopener noreferrer">https://doi.org/10.0000/test</a>',
     '<a href="https://doi.org/10.0001/test" target="_blank" rel="noopener noreferrer">https://doi.org/10.0001/test</a>',
+    '<a href="https://doi.org/10.01.0001/test" target="_blank" rel="noopener noreferrer">https://doi.org/10.01.0001/test</a>',
     '10.0002/test (incorrectagency)',
     '11.0000/incorrectprefix',
     '<a href="https://doi.org/10.0003/test" target="_blank" rel="noopener noreferrer">https://doi.org/10.0003/test</a>',
+    '<a href="https://doi.org/10.0004/test" target="_blank" rel="noopener noreferrer">https://doi.org/10.0004/test</a>'
   ];
 
   const pidElements = screen.getAllByTestId('pid');
