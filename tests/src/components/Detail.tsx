@@ -29,12 +29,21 @@ const baseProps: Props = {
     { pid: { id: 'pid', level: 'subtitle', translation: "PID" } },
     { series: { id: 'series', level: 'subtitle', translation: "Series" } },
     { abstract: { id: 'abstract', level: 'subtitle', translation: "Abstract" } },
-    { funding: { id: 'funding', level: 'title', translation: "Funding information" } },
-    { collPeriod: { id: 'data-collection-period', level: 'subtitle', translation: ("Data collection period") } },
-    { country: { id: 'country', level: 'subtitle', translation: ("Country") } },
-    { universe: { id: 'universe', level: 'subtitle', translation: ("Universe") } },
-    { publicationYear: { id: 'publication-year', level: 'subtitle', translation: ("Publication year") } },
-    { relPub: { id: 'related-publications', level: 'subtitle', translation: ("Related publications") } }
+    { collPeriod: { id: 'data-collection-period', level: 'subtitle', translation: "Data collection period" } },
+    { country: { id: 'country', level: 'subtitle', translation: "Country" } },
+    { analysisUnit: { id: 'analysis-unit', level: 'subtitle', translation: "Analysis unit" } },
+    { universe: { id: 'universe', level: 'subtitle', translation: "Universe" } },
+    { sampProc: { id: 'sampling-procedure', level: 'subtitle', translation: "Sampling procedure" } },
+    { dataKind: { id: 'data-kind', level: 'subtitle', translation: "Kind of data" } },
+    { collMode: { id: 'data-collection-mode', level: 'subtitle', translation: "Data collection mode" } },
+    {
+      funding:
+        { id: 'funding', level: 'title', translation: "Funding information" },
+      "funder-0": { id: "funder-0", level: "subtitle", translation: "Funder" },
+      "grantNumber-0": { id: "grant-number-0", level: "subtitle", translation: "Grant number" }
+    },
+    { publicationYear: { id: 'publication-year', level: 'subtitle', translation: "Publication year" } },
+    { relPub: { id: 'related-publications', level: 'subtitle', translation: "Related publications" } }
   ]
 };
 
@@ -490,4 +499,57 @@ it('should make DOIs clickable in permanent identifiers', async () => {
   const pidElements = screen.getAllByTestId('pid');
   expect(pidElements).toHaveLength(8);
   expect(pidElements.map(p => p.innerHTML)).toEqual(expectedOutput);
+});
+
+it("should show hidden fields when 'All elements' is clicked", async () => {
+  renderDetailWithModifiedProps({
+    series: [],
+    unitTypes: [],
+    universe: undefined,
+    samplingProcedureFreeTexts: [],
+    dataKindFreeTexts: [],
+    generalDataFormats: [],
+    typeOfModeOfCollections: [],
+    relatedPublications: [],
+    funding: [{ agency: "Finnish Agency" }]
+  });
+
+  // Default view assertions
+  expect(screen.queryByText("Series")).not.toBeInTheDocument();
+  expect(screen.queryByText("Analysis unit")).not.toBeInTheDocument();
+  expect(screen.queryByText("Universe")).not.toBeInTheDocument();
+  expect(screen.queryByText("Sampling procedure")).not.toBeInTheDocument();
+  expect(screen.queryByText("Kind of data")).not.toBeInTheDocument();
+  expect(screen.queryByText("Data collection mode")).not.toBeInTheDocument();
+  expect(screen.queryByText("Related publications")).not.toBeInTheDocument();
+  expect(screen.getByText("Funding information")).toBeInTheDocument();
+  expect(screen.getByText("Funder")).toBeInTheDocument();
+  expect(screen.getByText("Finnish Agency")).toBeInTheDocument();
+  expect(screen.queryByText("Grant number")).not.toBeInTheDocument();
+
+  // Toggle to 'All elements'
+  const showAllElementsButton = screen.getByTestId("all-elements-view-button");
+  userEvent.click(showAllElementsButton);
+
+  // All elements view assertions
+  await waitFor(() => {
+    expect(screen.getByText("Series")).toBeInTheDocument();
+    checkValueAfterHeading("Series", "language.notAvailable.field");
+    expect(screen.getByText("Analysis unit")).toBeInTheDocument();
+    checkValueAfterHeading("Analysis unit", "language.notAvailable.field");
+    expect(screen.getByText("Universe")).toBeInTheDocument();
+    checkValueAfterHeading("Universe", "language.notAvailable.field");
+    expect(screen.getByText("Sampling procedure")).toBeInTheDocument();
+    checkValueAfterHeading("Sampling procedure", "language.notAvailable.field");
+    expect(screen.getByText("Kind of data")).toBeInTheDocument();
+    checkValueAfterHeading("Kind of data", "language.notAvailable.field");
+    expect(screen.getByText("Data collection mode")).toBeInTheDocument();
+    checkValueAfterHeading("Data collection mode", "language.notAvailable.field");
+    expect(screen.getByText("Related publications")).toBeInTheDocument();
+    checkValueAfterHeading("Related publications", "language.notAvailable.field");
+    expect(screen.getByText("Funding information")).toBeInTheDocument();
+    expect(screen.getByText("Finnish Agency")).toBeInTheDocument();
+    expect(screen.getByText("Grant number")).toBeInTheDocument();
+    checkValueAfterHeading("Grant number", "language.notAvailable.field");
+  });
 });

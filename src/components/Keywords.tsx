@@ -33,7 +33,7 @@ interface State {
 }
 
 export class Keywords extends React.Component<Props & WithTranslation, State> {
-  
+
   private abortController = new AbortController();
 
   constructor(props: Props & WithTranslation) {
@@ -80,7 +80,7 @@ export class Keywords extends React.Component<Props & WithTranslation, State> {
     }
 
     if (elements.length === 0) {
-      return <div lang={this.props.lang}>{this.props.t("language.notAvailable.field", this.props.lang)}</div>;
+      return <div lang={this.props.lang} className="mb-10">{this.props.t("language.notAvailable.field", this.props.lang)}</div>;
     }
     return elements;
   }
@@ -94,24 +94,23 @@ export class Keywords extends React.Component<Props & WithTranslation, State> {
       elsstURLs: elsstURLs
     });
   }
-  
+
   render(): React.ReactNode {
     const { t } = this.props;
-  
+
     return (<>
-    
-      <div className="tags" data-testid="tags">
+      <div className="tags mt-2" data-testid="tags">
         {this.generateElements(this.state.isExpanded ? this.props.keywords : this.props.keywords.slice(0, this.props.keywordLimit),
           keywords => {
             // If the term is a valid ELSST term, also link to ELSST
             const keywordTerm = upperFirst(keywords.term);
             return (<>
-              <Link to={{pathname: "/" + location.pathname.split('/')[1].replace("detail",""), search: `?keywords[0]=${encodeURI(keywords.term.toLowerCase())}&sortBy=${this.props.currentIndex}`}}>{keywordTerm}</Link>
+              <Link to={{ pathname: "/" + location.pathname.split('/')[1].replace("detail", ""), search: `?keywords[0]=${encodeURI(keywords.term.toLowerCase())}&sortBy=${this.props.currentIndex}` }}>{keywordTerm}</Link>
               {this.state.elsstURLs[keywords.term] &&
                 <span className="is-inline-flex is-align-items-center">&nbsp;(
                   <a href={this.state.elsstURLs[keywords.term]} rel="noreferrer" target="_blank"
                     className="is-inline-flex is-align-items-center" data-testid="elsst-link">
-                    <span className="icon"><FaExternalLinkAlt/></span>ELSST
+                    <span className="icon"><FaExternalLinkAlt /></span>ELSST
                   </a>)
                 </span>
               }
@@ -132,15 +131,15 @@ export class Keywords extends React.Component<Props & WithTranslation, State> {
           this.setState(state => ({ isExpanded: !state.isExpanded }))
         }>
           {this.state.isExpanded ?
-          <>
-            <span className="icon is-small"><FaAngleUp/></span>
-            <span>{t("readLess")}</span>
-          </>
-          :
-          <>
-            <span className="icon is-small"><FaAngleDown/></span>
-            <span>{t("readMore")}</span>
-          </>
+            <>
+              <span className="icon is-small"><FaAngleUp /></span>
+              <span>{t("readLess")}</span>
+            </>
+            :
+            <>
+              <span className="icon is-small"><FaAngleDown /></span>
+              <span>{t("readMore")}</span>
+            </>
           }
         </a>
       }
