@@ -20,6 +20,7 @@ import {
   DataCollectionFreeText,
   DataKindFreeText,
   getDDI,
+  Identifier,
   TermVocabAttributes,
   Universe,
 } from "../../common/metadata";
@@ -37,7 +38,7 @@ import Select from 'react-select';
 import { useAppSelector } from "../hooks";
 import Keywords from "./Keywords";
 import SeriesList from './SeriesList';
-import OrcidLogo from "./OrcidLogo";
+import { OrcidLogo, RorLogo } from "./PidLogos";
 import { Helmet } from "react-helmet-async";
 
 export interface Props {
@@ -297,46 +298,103 @@ const Detail = (props: Props) => {
 
 
   /**
-   * Formats the given creator inside span element with as much information as possible, preferably
-   * creator name, creator affiliation and research identifier. Research identifier will also include
-   * the specific type and hyperlink for uri when they available. Hyperlink text is usually id but can
-   * be uri if id is empty but uri still exists. Minimum value for creator is the creator name.
+   * Formats the given creator inside span element with as much information as possible.
    *
-   * @param creator the creator to format
-   * @returns formatted creator in span element
+   * The formatting includes:
+   * - Creator name (always shown)
+   * - One or more creator identifiers (e.g., ORCID) with logo and hyperlink, if available
+   * - Affiliation name and one or more affiliation identifiers (e.g., ROR) with logo and hyperlink, if available
+   *
+   * Display logic:
+   * - If only creator identifiers are present: "Name [PID1] [PID2] ... (Affiliation)"
+   * - If only affiliation identifiers are present: "Name | Affiliation [Affiliation PID1] [Affiliation PID2] ..."
+   * - If both creator and affiliation identifiers are present: "Name [PID1] [PID2] ... | Affiliation [Affiliation PID1] [Affiliation PID2] ..."
+   * - If no identifiers are present: "Name (Affiliation)"
+   *
+   * Logos are shown for known identifier types (e.g., ORCID, ROR). Unknown types fall back to a label and plain text.
+   * Each identifier is rendered as a clickable link if a URI is provided, otherwise as plain text.
+   *
+   * @param creator - The creator object containing name, affiliation, and a list of identifier details.
+   * @returns A formatted span element representing the creator with enriched metadata.
    */
   const formatCreator = (creator: Creator) => {
-    const creatorFormatted = (
+    const renderIdentifier = (identifier: Identifier) => {
+      if (!identifier) return null;
+
+      const type = identifier.type?.toLowerCase();
+      const isOrcid = type === "orcid";
+      const isRor = type === "ror";
+
+      const logo = isOrcid ? <OrcidLogo aria-label="ORCID logo" /> : isRor ? <RorLogo aria-label="ROR logo" /> : null;
+      const label = !isOrcid && !isRor ? (identifier.type || "Research Identifier") + ": " : "";
+
+      return (
+        <span className="is-inline-block" key={identifier.id || identifier.uri}>
+          {label}
+          {identifier.uri ? (
+            <a href={identifier.uri} target="_blank" rel="noopener noreferrer">
+              {logo}
+              <span className="icon"><FaExternalLinkAlt /></span>
+              {identifier.id || identifier.uri}
+            </a>
+          ) : (
+            <>
+              {logo}
+              {identifier.id}
+            </>
+          )}
+        </span>
+      );
+    };
+
+    const identifiers = [
+      ...(creator.identifiers || []),
+      // Could handle updated identifiers with just "creator.identifiers || []"
+      // so this is to make it work with the old format where "identifier" was a single object
+      ...("identifier" in creator && typeof creator.identifier === "object" && creator.identifier !== null
+        ? [creator.identifier as Identifier]
+        : [])
+    ];
+
+    const creatorIdentifiers = identifiers.filter(id =>
+      id.role?.toLowerCase() === "pid" ||
+      id.type?.toLowerCase() === "orcid" ||
+      // Fallback: no role, and not clearly affiliation pid (e.g. ROR with affiliation defined)
+      (!id.role && (id.type?.toLowerCase() !== "ror" || !creator.affiliation))
+    );
+
+    const affiliationIdentifiers = identifiers.filter(id =>
+      creator.affiliation && (id.role?.toLowerCase() === "affiliation-pid" || (!id.role && id.type?.toLowerCase() === "ror"))
+    );
+
+    return (
       <span data-testid="creator">
         {creator.name}
-        {creator.affiliation && ` (${creator.affiliation})`}
-        {creator.identifier && (
-          <React.Fragment key={`${creator.name}`}>
-            {" - "}
-            <span className="is-inline-block">
-              {creator.identifier.type?.toLowerCase() !== "orcid" &&
-                <React.Fragment key={`${creator.identifier.type || "Research Identifier"}`}>
-                  {creator.identifier.type || "Research Identifier"}{": "}
-                </React.Fragment>
-              }
-              {creator.identifier.uri ? (
-                <a href={creator.identifier.uri} target="_blank" rel="noreferrer">
-                  {creator.identifier.type?.toLowerCase() === "orcid" &&
-                    <OrcidLogo />
-                  }
-                  <span className="icon"><FaExternalLinkAlt /></span>
-                  {creator.identifier.id ? creator.identifier.id : creator.identifier.uri}
-                </a>
-              ) : (
-                creator.identifier.id
-              )}
-            </span>
-          </React.Fragment>
+        {creatorIdentifiers.length > 0 && (
+          <>
+            {" "}
+            {creatorIdentifiers.map(renderIdentifier)}
+          </>
+        )}
+
+        {creator.affiliation && (
+          <>
+            {" "}
+            {(creatorIdentifiers.length > 0 || affiliationIdentifiers.length > 0)
+              ? `| ${creator.affiliation}`
+              : `(${creator.affiliation})`}
+
+            {affiliationIdentifiers.length > 0 && (
+              <>
+                {" "}
+                {affiliationIdentifiers.map(renderIdentifier)}
+              </>
+            )}
+          </>
         )}
       </span>
     );
-    return creatorFormatted;
-  }
+  };
 
   /**
    * Formats the given dataKindFreeTexts and generalDataFormats into the same array
@@ -550,7 +608,7 @@ const Detail = (props: Props) => {
                           else if (pidURL.protocol === "doi:") {
                             link = `https://doi.org/${pidURL.pathname}`;
                           }
- 
+
                         } else {
 
                           // Matches DOIs based on prefix

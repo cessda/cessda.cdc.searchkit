@@ -38,7 +38,7 @@ describe('Metadata utilities', () => {
           creators: [
             { name: 'Jane Doe' },
             { name: 'University of Essex' },
-            { name: 'John Smith', affiliation: 'University of Essex', identifier: { id: "0", type: "Test", uri: "http://localhost/0" } },
+            { name: 'John Smith', affiliation: 'University of Essex', identifiers: [{ id: "0", type: "Test", uri: "http://localhost/0" }] },
             { name: 'Joe Bloggs, University of Essex' }
           ],
           code: 'UKDS',
@@ -150,7 +150,7 @@ describe('Metadata utilities', () => {
         creators: [
           { name: 'Jane Doe' },
           { name: 'University of Essex' },
-          { name: 'John Smith', affiliation: 'University of Essex', identifier: { id: "0", type: "Test", uri: "http://localhost/0" } },
+          { name: 'John Smith', affiliation: 'University of Essex', identifiers: [{ id: "0", type: "Test", uri: "http://localhost/0" }] },
           { name: 'Joe Bloggs, University of Essex' }
         ],
         dataAccess: 'Restricted',
@@ -324,7 +324,7 @@ describe('Metadata utilities', () => {
           creators: [
             { name: 'Jane Doe' },
             { name: 'University of Essex' },
-            { name: 'John Smith', affiliation: 'University of Essex', identifier: { id: "0", type: "Test", uri: "http://localhost/0" } },
+            { name: 'John Smith', affiliation: 'University of Essex', identifiers: [{ id: "0", type: "Test", uri: "http://localhost/0" }] },
             { name: 'Joe Bloggs, University of Essex' }
           ],
           code: 'UKDS',
@@ -468,7 +468,7 @@ describe('Metadata utilities', () => {
           creators: [
             { name: 'Jane Doe' },
             { name: 'University of Essex' },
-            { name: 'John Smith', affiliation: 'University of Essex', identifier: { id: "0", type: "Test", uri: "http://localhost/0" } },
+            { name: 'John Smith', affiliation: 'University of Essex', identifiers: [{ id: "0", type: "Test", uri: "http://localhost/0" }] },
             { name: 'Joe Bloggs, University of Essex' }
           ],
           code: 'UKDS',
