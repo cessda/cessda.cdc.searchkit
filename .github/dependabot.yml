@@ -55,4 +55,8 @@ updates:
       typescript-eslint:
         patterns:
         - "@typescript-eslint/*"
+      # Group Webpack dependencies together
+      webpack:
+        patterns:
+        - "*webpack*"
 
