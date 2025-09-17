@@ -58,5 +58,5 @@ updates:
       # Group Webpack dependencies together
       webpack:
         patterns:
-        - "*webpack*
+        - "*webpack*"
 
