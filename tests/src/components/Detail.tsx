@@ -402,7 +402,6 @@ it('should format creators correctly', () => {
   const creatorElements = screen.getAllByTestId('creator');
   expect(creatorElements.length).toBe(mockStudy.creators.length);
 
-  // Check each creator element
   mockStudy.creators.forEach((creator, index) => {
     const creatorElement = creatorElements[index];
 
@@ -411,31 +410,41 @@ it('should format creators correctly', () => {
 
     // Check if affiliation is rendered correctly
     if (creator.affiliation) {
-      expect(creatorElement).toHaveTextContent(`(${creator.affiliation})`);
+      expect(creatorElement).toHaveTextContent(creator.affiliation);
     }
 
-    const expectedIdentifierType = creator.identifier
-    ? (creator.identifier.type?.toLowerCase() === "orcid" ? null : `${creator.identifier.type || "Research Identifier"}: `)
-    : '';
+    // Check identifiers
+    if (creator.identifiers && creator.identifiers.length > 0) {
+      creator.identifiers.forEach(identifier => {
+        const expectedLabel = identifier.type?.toLowerCase() === "orcid" || identifier.type?.toLowerCase() === "ror"
+          ? null
+          : `${identifier.type || "Research Identifier"}: `;
 
-    // Check if identifier is rendered correctly
-    if (creator.identifier) {
-      if (expectedIdentifierType) {
-        expect(creatorElement).toHaveTextContent(expectedIdentifierType);
-      } else if (creator.identifier?.type?.toLowerCase() === "orcid") {
-        const orcidLogo = screen.getByLabelText('ORCID logo');
-        expect(orcidLogo).toBeInTheDocument();
-      }
+        if (expectedLabel) {
+          expect(creatorElement).toHaveTextContent(expectedLabel);
+        }
 
-      if (creator.identifier.uri) {
-        // Check if the link is present and correct
-        const link = creatorElement.querySelector('a');
-        expect(link).toBeInTheDocument();
-        expect(link).toHaveAttribute('href', creator.identifier.uri);
-        expect(link).toHaveTextContent(creator.identifier.id || creator.identifier.uri);
-      } else if (creator.identifier.id) {
-        expect(creatorElement).toHaveTextContent(creator.identifier.id);
-      }
+        const utils = within(creatorElement);
+
+        if (identifier.uri) {
+          const link = utils.getByRole('link', { name: new RegExp(identifier.id || identifier.uri) });
+          expect(link).toBeInTheDocument();
+          expect(link).toHaveAttribute('href', identifier.uri);
+        }
+        else if (identifier.id) {
+          expect(creatorElement).toHaveTextContent(identifier.id);
+        }
+
+        if (identifier.type?.toLowerCase() === "orcid") {
+          const orcidLogo = utils.getByLabelText('ORCID logo');
+          expect(orcidLogo).toBeInTheDocument();
+        }
+
+        if (identifier.type?.toLowerCase() === "ror") {
+          const rorLogo = utils.getByLabelText('ROR logo');
+          expect(rorLogo).toBeInTheDocument();
+        }
+      });
     }
   });
 });

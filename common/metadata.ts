@@ -93,13 +93,14 @@ export interface CMMStudy {
 export interface Creator {
   name: string;
   affiliation?: string;
-  identifier?: Identifier;
+  identifiers?: Identifier[];
 }
 
 export interface Identifier {
   id: string;
   type?: string;
   uri?: string;
+  role?: string;
 }
 
 export interface Country {
@@ -413,10 +414,10 @@ export function getDDI(metadata: CMMStudy, lang: string): string {
 
   const authEntyXML = creators.map(creator => {
     const affiliationAttr = creator.affiliation ? ` affiliation="${creator.affiliation}"` : '';
-    const extLink = creator.identifier ?
-      `<ExtLink URI="${creator.identifier.uri}" role="PID" title="${creator.identifier.type}" xml:lang="${lang}">${creator.identifier.id}</ExtLink>`
-      : '';
-    return `<AuthEnty xml:lang="${lang}"${affiliationAttr}>${creator.name}${extLink}</AuthEnty>`;
+    const extLinks = creator.identifiers?.map(identifier =>
+      `<ExtLink URI="${identifier.uri}" role="PID" title="${identifier.type}" xml:lang="${lang}">${identifier.id}</ExtLink>`
+    ).join('') || '';
+    return `<AuthEnty xml:lang="${lang}"${affiliationAttr}>${creator.name}${extLinks}</AuthEnty>`;
   }).join('\n');
 
   const fundingXML = funding.map(funding => createElement('grantNo', funding.grantNumber || '', {

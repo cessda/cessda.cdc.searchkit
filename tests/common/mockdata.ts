@@ -21,10 +21,15 @@ export const mockStudy: CMMStudy = {
   creators: [
     { name: 'Jane Doe' },
     { name: 'University of Essex' },
-    { name: 'John Smith', affiliation: 'University of Essex', identifier: { id: "0", type: "Test", uri: "http://localhost/0" } },
+    { name: 'John Smith', affiliation: 'University of Essex', identifiers: [{ id: "0", type: "Test", uri: "http://localhost/0" }] },
     { name: 'Joe Bloggs, University of Essex' },
-    { name: 'Matti Meikäläinen', identifier: { id: "", type: "ORCID", uri: "http://localhost/0" } },
-    { name: 'Maija Meikäläinen', affiliation: 'Tampere University', identifier: { id: "1" } }
+    { name: 'Matti Meikäläinen', identifiers: [{ id: "", type: "ORCID", uri: "http://localhost/0" }] },
+    { name: 'Maija Meikäläinen', affiliation: 'Tampere University', identifiers: [{ id: "1" }] },
+    { name: 'Mikko Meikäläinen', affiliation: 'Tampere University', identifiers: [
+        { id: "0000-0000-0000-0000", type: "ORCID", uri: "https://orcid.org/0000-0000-0000-0000", role: "Pid" },
+        { id: "000000000", type: "ROR", uri: "https://ror.org/000000000", role: "Affiliation-Pid" }
+      ]
+    },
   ],
   code: 'UKDS',
   dataAccess: 'Restricted',
