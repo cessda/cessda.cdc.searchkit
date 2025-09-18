@@ -202,6 +202,8 @@
   "back": "Back",
   "backToSearch": "Back to search",
   "close": "Close",
+  "defaultView": "Default view",
+  "allElementsView": "All elements",
   "metadata": {
     "summaryInformation": "Summary information",
     "studyTitle": "Study title",

@@ -35,11 +35,12 @@ import { useTranslation } from "react-i18next";
 import Tooltip from "./Tooltip";
 import { HeadingEntry } from "../containers/DetailPage";
 import Select from 'react-select';
-import { useAppSelector } from "../hooks";
+import { useAppDispatch, useAppSelector } from "../hooks";
 import Keywords from "./Keywords";
 import SeriesList from './SeriesList';
 import { OrcidLogo, RorLogo } from "./PidLogos";
 import { Helmet } from "react-helmet-async";
+import { toggleAllFields } from "../reducers/detail";
 
 export interface Props {
   item: CMMStudy;
@@ -60,8 +61,10 @@ interface Option {
 
 const Detail = (props: Props) => {
   const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const currentThematicView = useAppSelector((state) => state.thematicView.currentThematicView);
   const currentIndex = useAppSelector((state) => state.thematicView.currentIndex);
+  const showAllFields = useAppSelector((state) => state.detail.showAllFields);
 
   const item = props.item;
   const headings = props.headings;
@@ -556,7 +559,30 @@ const Detail = (props: Props) => {
                   </div>
                 </div>
               </div>
-              {languageLinks}
+
+              <div className="columns is-mobile is-gapless">
+                <div className="column is-one-third is-flex">
+                  {languageLinks}
+                </div>
+                <div className="column is-flex is-flex-wrap-wrap is-align-self-flex-end is-justify-content-end">
+                  <button
+                    className={`button is-small mt-3 mr-1 ${!showAllFields ? "is-static" : ""}`}
+                    disabled={!showAllFields}
+                    onClick={showAllFields ? () => dispatch(toggleAllFields(showAllFields)) : undefined}
+                    data-testid="default-view-button"
+                  >
+                    {t("defaultView")}
+                  </button>
+                  <button
+                    className={`button is-small mt-3 ${showAllFields ? "is-static" : ""}`}
+                    disabled={showAllFields}
+                    onClick={!showAllFields ? () => dispatch(toggleAllFields(showAllFields)) : undefined}
+                    data-testid="all-elements-view-button"
+                  >
+                    {t("allElementsView")}
+                  </button>
+                </div>
+              </div>
 
               {generateHeading('summary')}
 
@@ -659,7 +685,7 @@ const Detail = (props: Props) => {
                 </>
               }
 
-              {!currentThematicView.excludeFields.includes('series') &&
+              {!currentThematicView.excludeFields.includes("series") && (showAllFields || item.series.length > 0) &&
                 <>
                   {generateHeading('series')}
                   <SeriesList seriesList={item.series} lang={currentIndex.languageCode} />
@@ -735,9 +761,7 @@ const Detail = (props: Props) => {
                 <Tooltip content={t("metadata.keywords.tooltip.content")}
                   ariaLabel={t("metadata.keywords.tooltip.ariaLabel")}
                   classNames={{ container: 'mt-1 ml-1' }} />
-                <div className="tags mt-2">
-                  <Keywords keywords={item.keywords.slice().sort((a, b) => a.term.localeCompare(b.term))} keywordLimit={12} lang={currentIndex.languageCode} currentIndex={currentIndex.indexName} />
-                </div>
+                <Keywords keywords={item.keywords.slice().sort((a, b) => a.term.localeCompare(b.term))} keywordLimit={12} lang={currentIndex.languageCode} currentIndex={currentIndex.indexName} />
               </section>
             }
 
@@ -778,7 +802,7 @@ const Detail = (props: Props) => {
                 </>
               }
 
-              {!currentThematicView.excludeFields.includes('unitTypes') &&
+              {!currentThematicView.excludeFields.includes('unitTypes') && (showAllFields || item.unitTypes.length > 0) &&
                 <>
                   {generateHeading('analysisUnit')}
                   {generateElements(item.unitTypes, "div", (unit) => unit.term)}
@@ -786,6 +810,7 @@ const Detail = (props: Props) => {
               }
 
               {!currentThematicView.excludeFields.includes('universe') &&
+                (showAllFields || (item.universe && item.universe.inclusion)) &&
                 <>
                   {generateHeading('universe')}
                   {item.universe ? formatUniverse(item.universe) : <span>{t("language.notAvailable.field")}</span>}
@@ -793,6 +818,7 @@ const Detail = (props: Props) => {
               }
 
               {!currentThematicView.excludeFields.includes('samplingProcedureFreeTexts') &&
+                (showAllFields || item.samplingProcedureFreeTexts.length > 0) &&
                 <>
                   {generateHeading('sampProc')}
                   {generateElements(item.samplingProcedureFreeTexts, "div",
@@ -807,6 +833,7 @@ const Detail = (props: Props) => {
 
               {/* If hiding the below field group, use "generalDataFormats" in excludeFields in src/utilities/thematicViews.ts */}
               {!currentThematicView.excludeFields.includes('generalDataFormats') &&
+                (showAllFields || (item.dataKindFreeTexts?.length > 0 || item.generalDataFormats?.length > 0)) &&
                 <>
                   {generateHeading('dataKind')}
                   {item.dataKindFreeTexts || item.generalDataFormats ? generateElements(formatDataKind(item.dataKindFreeTexts, item.generalDataFormats), 'div', text =>
@@ -816,6 +843,7 @@ const Detail = (props: Props) => {
               }
 
               {!currentThematicView.excludeFields.includes('typeOfModeOfCollections') &&
+                (showAllFields || item.typeOfModeOfCollections.length > 0) &&
                 <>
                   {generateHeading('collMode')}
                   {generateElements(item.typeOfModeOfCollections, "div", (method) => method.term)}
@@ -825,34 +853,31 @@ const Detail = (props: Props) => {
             </section>
 
 
-            {!currentThematicView.excludeFields.includes('funding') &&
-              <>
-                {item.funding.length > 0 &&
-                  <section className="metadata-section" data-testid='funding'>
-                    {generateHeading('funding', 'is-inline-flex')}
-                    {item.funding.map((funding, index) => (
-                      <React.Fragment key={`${funding.agency || ''}${funding.grantNumber || ''}`}>
-                        {funding.agency &&
-                          <>
-                            {generateHeading(`funder-${index}`)}
-                            <p lang={currentIndex.languageCode}>
-                              {funding.agency}
-                            </p>
-                          </>
-                        }
-                        {funding.grantNumber &&
-                          <>
-                            {generateHeading(`grantNumber-${index}`)}
-                            <p lang={currentIndex.languageCode}>
-                              {funding.grantNumber}
-                            </p>
-                          </>
-                        }
-                      </React.Fragment>
-                    ))}
-                  </section>
-                }
-              </>
+            {!currentThematicView.excludeFields.includes("funding") &&
+              (showAllFields || item.funding.some(f => f.agency || f.grantNumber)) &&
+              <section className="metadata-section" data-testid="funding">
+                {generateHeading("funding", "is-inline-flex")}
+                {(item.funding.length > 0 ? item.funding : [{}]).map((funding, index) => (
+                  <React.Fragment key={`funder-${index}-grant-${index}`}>
+                    {(showAllFields || funding.agency) && (
+                      <>
+                        {generateHeading(`funder-${index}`)}
+                        <p lang={currentIndex.languageCode}>
+                          {funding.agency || t("language.notAvailable.field")}
+                        </p>
+                      </>
+                    )}
+                    {(showAllFields || funding.grantNumber) && (
+                      <>
+                        {generateHeading(`grantNumber-${index}`)}
+                        <p lang={currentIndex.languageCode}>
+                          {funding.grantNumber || t("language.notAvailable.field")}
+                        </p>
+                      </>
+                    )}
+                  </React.Fragment>
+                ))}
+              </section>
             }
 
             <section className="metadata-section">
@@ -889,6 +914,7 @@ const Detail = (props: Props) => {
 
             <section className="metadata-section">
               {!currentThematicView.excludeFields.includes('relatedPublications') &&
+                (showAllFields || item.relatedPublications.length > 0) &&
                 <>
                   {generateHeading('relPub')}
                   {generateElements(

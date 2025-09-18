@@ -12,7 +12,7 @@
 // limitations under the License.
 
 import { CMMStudy, getStudyModel, Similar } from "../../common/metadata";
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { Language, languageMap } from "../utilities/language";
 import { ThematicViewState } from "./thematicView";
 
@@ -21,12 +21,14 @@ export interface DetailState {
   availableLanguages: Language[];
   study: CMMStudy | undefined;
   similars: Similar[];
+  showAllFields: boolean;
 }
 
 const initialState: DetailState = {
   availableLanguages: [],
   study: undefined,
   similars: [],
+  showAllFields: false
 };
 
 export const updateStudy = createAsyncThunk('search/updateStudy', async ({ id, lang }: { id: string, lang: string }, { getState }) => {
@@ -73,9 +75,11 @@ const detailSlice = createSlice({
   initialState: initialState,
   reducers: {
     clearStudy(state: DetailState) {
-      //state.languageAvailableIn = ;
       state.study = undefined;
       state.similars = [];
+    },
+    toggleAllFields: (state: DetailState, action: PayloadAction<boolean>) => {
+      state.showAllFields = !action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -86,52 +90,6 @@ const detailSlice = createSlice({
   },
 });
 
-export const { clearStudy } = detailSlice.actions;
-
-// Other code such as selectors can use the imported `RootState` type
-// export const selectShowAdvancedSearch = (state: RootState) =>
-//   state.showAdvancedSearch;
+export const { clearStudy, toggleAllFields } = detailSlice.actions;
 
 export default detailSlice.reducer;
-
-// import { CMMStudy, Similar } from "../../common/metadata";
-// import { Action } from "../actions";
-// import { CLEAR_STUDY, UPDATE_STUDY } from "../actions/detail";
-// import { Language } from "../utilities/language";
-
-// export interface DetailState {
-//   languageAvailableIn: Language[],
-//   study: CMMStudy | undefined;
-//   similars: Similar[];
-// }
-
-// const initialState: DetailState = {
-//   languageAvailableIn: [],
-//   study: undefined,
-//   similars: []
-// }
-
-// const detailReducer = (state: DetailState =  initialState, action: Action) => {
-//   switch(action.type) {
-//     case CLEAR_STUDY: {
-//       return Object.assign({}, state, {
-//         languageAvailableIn: action.languageAvailableIn,
-//         study: undefined,
-//         similars: []
-//       });
-//     }
-
-//     case UPDATE_STUDY: {
-//       return Object.assign({}, state, {
-//         languageAvailableIn: [],
-//         study: action.displayed,
-//         similars: action.similars
-//       });
-//     }
-
-//     default:
-//       return state;
-//   }
-// }
-
-// export default detailReducer;

@@ -80,32 +80,47 @@ const DetailPage = () => {
   }
 
   function addFundingEntries(fundingArray: Funding[]): HeadingEntry[] {
-    const fundingHeadings: HeadingEntry[] = [];
-    if (fundingArray.length > 0) {
-      // Add the main 'Funding' title once
-      fundingHeadings.push({ funding: { id: 'funding', level: 'title', translation: t('metadata.funding') } });
-
-      // Add each funding item found
-      fundingArray.forEach((fundingItem, index) => {
-        if (fundingItem.agency) {
-          fundingHeadings.push({
-            [`funder-${index}`]: {
-              id: `funder-${index}`,
-              level: 'subtitle',
-              translation: t('metadata.funder'),
-            },
-          });
-        }
-
-        if (fundingItem.grantNumber) {
-          fundingHeadings.push({
-            [`grantNumber-${index}`]: {
-              id: `grant-number-${index}`,
-              level: 'subtitle',
-              translation: t('metadata.grantNumber'),
-            },
-          });
-        }
+    const fundingHeadings: HeadingEntry[] = [
+      {
+        funding: {
+          id: "funding",
+          level: "title",
+          translation: t("metadata.funding"),
+        },
+      },
+    ];
+    if (fundingArray.length === 0) {
+      // Add one default set of subheadings for all elements view
+      fundingHeadings.push({
+        "funder-0": {
+          id: "funder-0",
+          level: "subtitle",
+          translation: t("metadata.funder"),
+        },
+      });
+      fundingHeadings.push({
+        "grantNumber-0": {
+          id: "grant-number-0",
+          level: "subtitle",
+          translation: t("metadata.grantNumber"),
+        },
+      });
+    } else {
+      fundingArray.forEach((_, index) => {
+        fundingHeadings.push({
+          [`funder-${index}`]: {
+            id: `funder-${index}`,
+            level: "subtitle",
+            translation: t("metadata.funder"),
+          },
+        });
+        fundingHeadings.push({
+          [`grantNumber-${index}`]: {
+            id: `grant-number-${index}`,
+            level: "subtitle",
+            translation: t("metadata.grantNumber"),
+          },
+        });
       });
     }
     return fundingHeadings;
@@ -129,7 +144,7 @@ const DetailPage = () => {
     { sampProc: { id: 'sampling-procedure', level: 'subtitle', translation: t("metadata.samplingProcedure") } },
     { dataKind: { id: 'data-kind', level: 'subtitle', translation: t("metadata.dataKind") } },
     { collMode: { id: 'data-collection-mode', level: 'subtitle', translation: t("metadata.dataCollectionMethod") } },
-    ...addFundingEntries((data.payload?.study && (data.payload.study.funding.length > 0)) ? data.payload.study.funding : []),
+    ...addFundingEntries(data.payload?.study?.funding ?? []),
     { access: { id: 'access', level: 'title', translation: t("metadata.access") } },
     { publisher: { id: 'publisher', level: 'subtitle', translation: t("metadata.publisher") } },
     { publicationYear: { id: 'publication-year', level: 'subtitle', translation: t("metadata.yearOfPublication") } },
@@ -139,12 +154,12 @@ const DetailPage = () => {
     { relPub: { id: 'related-publications', level: 'title', translation: t("metadata.relatedPublications") } }
   ]
   return (
-<div>    
+<div>
 <Helmet>
         <link rel="canonical" href={`https://datacatalogue.cessda.eu/detail/${location.pathname.split('/').slice(-1)[0]}?lang=${searchParams.get("lang")}`}>
         </link>
       </Helmet>
-  
+
      {location.state?.from === currentThematicView.path &&
      <div>
           <a className="ais-ClearRefinements-button focus-visible pl-4"
@@ -174,7 +189,7 @@ const DetailPage = () => {
         </React.Suspense>
 
       </div>
-     
+
       <div className="column pt-0 is-two-thirds-desktop is-full-tablet is-full-mobile main-column mb-6">
 
         <React.Suspense fallback={<p data-testid="loading">{t("loader.loading")}</p>}>
