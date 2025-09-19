@@ -132,7 +132,7 @@ describe('Metadata utilities', () => {
         id: '1',
         titleStudy: 'Study Title',
         titleStudyHighlight: '',
-        abstract: 'Abstract with link (<a href="http://example.com" target="_blank" rel="noopener noreferrer">Link text</a>)',
+        abstract: 'Abstract with link (<a href="http://example.com/" target="_blank" rel="noopener noreferrer">Link text</a>)',
         abstractShort: 'Abstract with link (Link text)',
         abstractLong: 'Abstract with link (Link text)',
         abstractHighlight: '',
