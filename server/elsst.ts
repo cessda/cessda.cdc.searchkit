@@ -63,7 +63,7 @@ async function getELSSTTerm(labels: string[], lang: string): Promise<TermURIResu
         if (results.result.length > 0) {
           // Check uri from result if it contains known prefix to change it and add clang parameter
           let resultUri = results.result[0].uri;
-          if(resultUri.includes(ELSST_URI_PREFIX)) {
+          if(resultUri.startsWith(ELSST_URI_PREFIX)) {
             const resultUriUuid = resultUri.replace(ELSST_URI_PREFIX, '');
             resultUri = `${SKOSMOS_URL}/${ELSST_VOCABULARY}/en/page/${resultUriUuid}?clang=${lang}`;
           }
