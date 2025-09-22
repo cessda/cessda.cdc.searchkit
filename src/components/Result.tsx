@@ -14,12 +14,15 @@
 import React, { useEffect, useState } from "react";
 import { FaAngleDown, FaAngleUp, FaExternalLinkAlt,  FaLock, FaLockOpen } from 'react-icons/fa';
 import { Link, useLocation } from "react-router";
-import { CMMStudy, TermVocabAttributes } from "../../common/metadata";
+import { CMMStudy, normalizeAndDecodeHTML, TermVocabAttributes } from "../../common/metadata";
 import { useTranslation } from "react-i18next";
 import { useAppSelector } from "../hooks";
 import Keywords from "./Keywords";
 import { Hit, HitAttributeHighlightResult } from "instantsearch.js";
 import getPaq from "../utilities/getPaq";
+
+/** Matches all characters in a regex that should be escaped */
+const regexEscape = /[/\-\\^$*+?.()|[\]{}]/g;
 
 function generateCreatorElements(item: CMMStudy) {
   const creators: React.JSX.Element[] = [];
@@ -109,26 +112,16 @@ const Result: React.FC<ResultProps> = ({ hit }) => {
     setAbstractExpanded(!abstractExpanded)
   }
 
-  function normalizeAndDecodeHTML(text: string) {
-    if (text) {
-      text = text.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
-      text = text.replace(/<\/?[A-Z]+>/g, function (match) {
-        return match.toLowerCase();
-      });
-      text = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-    const element = document.createElement('div');
-    element.innerHTML = text;
-    return element.textContent || element.innerText;
-  }
-
   const renderAbstract = () => {
     let abstract = normalizeAndDecodeHTML(hit.abstract);
     const matchedWords = (hit._highlightResult?.abstract as HitAttributeHighlightResult)?.matchedWords || [];
     if (matchedWords.length > 0) {
       if (abstractExpanded) {
-        // Create a regular expression that matches any of the highlighted texts
-        const regexString = matchedWords.map((text: string) => `(${text})`).join('|');
+        // Create a regular expression that matches any of the highlighted texts.
+        // Any RegEx control characters are escaped. The RegEx is case insensitive.
+        const regexString = matchedWords
+          .map((text: string) => text.replace(regexEscape, "\\$&"))
+          .map((text: string) => `(${text})`).join('|');
         const regex = new RegExp(regexString, 'gi');
 
         // Use the regular expression to find and highlight all matching texts in the full abstract
@@ -140,11 +133,15 @@ const Result: React.FC<ResultProps> = ({ hit }) => {
 
     // Make sure abstract is not longer than set limit but don't slice in the middle of the word
     if (!abstractExpanded) {
-      abstract = abstract.length <= truncatedAbstractLength ? abstract
+      const abstractTruncated = abstract.length <= truncatedAbstractLength ? abstract
         : abstract.slice(0, abstract.lastIndexOf(' ', truncatedAbstractLength)) + '...';
-    }
 
-    return abstract;
+      // Invoke the HTML parser to close any unclosed tags
+      const docFragment = new DOMParser().parseFromString(abstractTruncated, "text/html");
+      return docFragment.body.innerHTML;
+    } else {
+      return abstract;
+    }
   };
 
   const creators = generateCreatorElements(hit);

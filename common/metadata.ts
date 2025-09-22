@@ -251,16 +251,52 @@ function stripHTMLElements(html: string) {
     "h5",
     "h6",
   ]);
-  function sanitizeAnchorTags(html: string): string {
-    return html.replace(/<a\s+([^>]*href="[^"]+"[^>]*)>/gi, (_match, attrs) => {
-      // Extract href
-      const hrefMatch = attrs.match(/href="[^"]+"/i);
-      const href = hrefMatch ? hrefMatch[0] : '';
 
-      return `<a ${href} target="_blank" rel="noopener noreferrer">`;
-    });
-  }
   return sanitizeAnchorTags(strippedHTML.trim());
+}
+
+/**
+ * Sanitize &lt;a&gt; tags by setting target="_blank" and rel="noopener noreferrer".
+ * All other attributes are removed.
+ * 
+ * @param html the HTML to sanitize.
+ * @returns the sanitized HTML.
+ */
+function sanitizeAnchorTags(html: string): string {
+  const parser = new DOMParser();
+  const parsedHTML = parser.parseFromString(html, "text/html");
+  
+  // Get all <a> elements
+  const anchorElements = parsedHTML.getElementsByTagName("a");
+
+  for(const elem of anchorElements) {
+    // Store the href
+    const href = elem.href;
+
+    // Clear other attributes
+    for (const attr of elem.getAttributeNames()) {
+      elem.removeAttribute(attr);
+    }
+
+    // Copy href
+    elem.href = href;
+
+    // Set target and rel attributes
+    elem.target = "_blank";
+    elem.rel = "noopener noreferrer";
+  }
+
+  return parsedHTML.body.innerHTML;
+}
+
+export function normalizeAndDecodeHTML(html: string) {
+  if (html) {
+    // Convert escaped HTML tags
+    html = html.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+  }
+
+  // Strip non-styling elements from the HTML
+  return stripHTMLElements(html);
 }
 
 // Generates study JSON-LD for Google indexing.
@@ -368,6 +404,7 @@ function extractDataCollectionPeriod(
   return startDate + dataCollectionPeriodEnddate.substring(0, 10);
 }
 
+// TODO: implement with DOM
 export function getDDI(metadata: CMMStudy, lang: string): string {
   const {
     titleStudy, creators, dataCollectionPeriodStartdate, dataCollectionPeriodEnddate, dataCollectionYear,
