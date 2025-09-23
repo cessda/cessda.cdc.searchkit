@@ -14,7 +14,7 @@
 import fs from "fs";
 import path from "path";
 import _ from "lodash";
-import express, { RequestHandler } from "express";
+import express, { NextFunction, RequestHandler } from "express";
 import bodyParser from "body-parser";
 import compression from "compression";
 import methodOverride from "method-override";
@@ -37,6 +37,7 @@ import swaggerSearchApiV2 from "./swagger-searchApiV2";
 import Client from "@searchkit/api";
 import 'isomorphic-unfetch';
 import { getELSSTRouter } from "./elsst";
+import QueryString from "qs";
 
 const { ConnectionError, ResponseError } = errors;
 
@@ -755,50 +756,6 @@ export async function renderResponse(
     return;
   }
 
-/*
-
-  switch (req.path) {
-    // The root path and the about path always return 200
-    case "/":
-    case "/about":
-      case "/accessibility-statement":
-      status = 200;
-      break;
-
-    case "/detail":
-      if (req.query.q) {
-        // If we are on the detail page and a query is set, retrive the JSON-LD metadata
-        try {
-          metadata = await getMetadata(
-            req.query.q as string,
-            req.query.lang as string | undefined
-          );
-          if (!metadata) {
-            // Set status to 404, a study was not found
-            status = 404;
-          }
-        } catch (e: unknown) {
-          const u = e as ElasticError;
-          if (u instanceof ResponseError && u.statusCode === 404) {
-            status = u.statusCode;
-          } else {
-            logger.error(`Cannot communicate with Elasticsearch: ${u}`);
-            status = 503;
-          }
-        }
-      } else {
-        // No query parameter, return 404
-        status = 404;
-      }
-      break;
-
-    default:
-      // All other URLs should return 404
-      status = 404;
-      break;
-  }
-*/
-
 status = 404;
 
 if ( req.path.includes("/about") ) {
@@ -820,7 +777,7 @@ if ( paths.includes(req.path) ) {
   status = 200;
 }
 
-if ( req.path.includes("/detail") ) {
+if ( req.path.endsWith("/detail") ) {
    if (req.query.q) {
     // If we are on the detail page and a query is set, retrive the JSON-LD metadata
     try {
@@ -863,6 +820,38 @@ if ( req.path.includes("/detail") ) {
   }
 }
 
+function rewriteKeywordsQueryHandler(req: express.Request, res: express.Response, next: NextFunction) {
+
+  const term = req.query["keywords.term[0]"];
+
+  if (term) {
+    // Copy the keys of req.query to a new object
+    const query = {
+      ...req.query
+    };
+
+    // Delete old keywords.term[0]
+    delete query["keywords.term[0]"];
+
+    // Add new keywords query, converting the keyword to lowercase
+    query["keywords[]"] = (term as string).toLowerCase();
+
+    // Add sortBy that uses main CDC collection and delete lang
+    query["sortBy"] = `cmmstudy_${query.lang}`
+    delete query["lang"];
+
+    // Create query string
+    const newQuery = QueryString.stringify(query, { encodeValuesOnly: true });
+
+    res.setHeader("Location", "/?" + newQuery);
+    res.sendStatus(301);
+
+  } else {
+    // No redirects necessary
+    next();
+  }
+}
+
 /**
  * Start listening.
  * @param app the express instance.
@@ -901,8 +890,13 @@ export function startListening(app: express.Express, handler: RequestHandler) {
     }
   });
 
+  // Add Prometheus metrics support
   app.use("/metrics", metricsRequestHandler(elasticsearch));
 
+  // Redirect old keywords.term[] requests
+  app.get("/", rewriteKeywordsQueryHandler);
+
+  // Add top level request handler
   app.get(/(.*)/, handler);
 
   const server = app.listen(port, () =>
