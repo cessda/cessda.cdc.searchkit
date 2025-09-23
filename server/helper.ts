@@ -836,6 +836,10 @@ function rewriteKeywordsQueryHandler(req: express.Request, res: express.Response
     // Add new keywords query, converting the keyword to lowercase
     query["keywords[]"] = (term as string).toLowerCase();
 
+    // Add sortBy that uses main CDC collection and delete lang
+    query["sortBy"] = `cmmstudy_${query.lang}`
+    delete query["lang"];
+
     // Create query string
     const newQuery = QueryString.stringify(query, { encodeValuesOnly: true });
 
