@@ -311,25 +311,16 @@ function getSearchkitRouter() {
     const userQuery = req.body?.[0]?.params?.query || "";
 
     // Extract negated phrases and terms from raw user query
-    const negatedPhrasePattern = /-"([^"]+)"/g;
-    const negatedPhrases: string[] = [];
-    let match: RegExpExecArray | null;
-    while ((match = negatedPhrasePattern.exec(userQuery)) !== null) {
-      negatedPhrases.push(match[1]);
-    }
-
-    const negativeTerms: string[] = userQuery
-      .split(/\s+/)
-      .filter((term: string) => term.startsWith('-') && !term.startsWith('-"'))
-      .map((term: string) => term.slice(1));
-
-    const allExclusions = [...negatedPhrases, ...negativeTerms];
-
-    // Remove exclusions from query
+    const exclusionPattern = /-"([^"]+)"|-(\S+)/g;
+    const allExclusions: string[] = [];
     let cleanedQuery = userQuery;
-    [...negatedPhrases.map((p) => `-"${p}"`), ...negativeTerms.map((t) => `-${t}`)].forEach((exclusion) => {
-      cleanedQuery = cleanedQuery.replace(exclusion, ' ');
-    });
+
+    let match: RegExpExecArray | null;
+    while ((match = exclusionPattern.exec(userQuery)) !== null) {
+      const term = match[1] || match[2];
+      allExclusions.push(term);
+      cleanedQuery = cleanedQuery.replace(match[0], ' ');
+    }
 
     // Normalize spacing to get the final positive query
     const positiveQuery = cleanedQuery
