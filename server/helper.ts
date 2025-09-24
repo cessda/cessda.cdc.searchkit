@@ -311,21 +311,53 @@ function getSearchkitRouter() {
 
     const userQuery = req.body?.[0]?.params?.query || "";
 
+    // Extract negated phrases and terms from raw user query
+    const exclusionPattern = /-"([^"]+)"|-(\S+)/g;
+    const allExclusions: string[] = [];
+    let cleanedQuery = userQuery;
+
+    let match: RegExpExecArray | null;
+    while ((match = exclusionPattern.exec(userQuery)) !== null) {
+      const term = match[1] || match[2];
+      allExclusions.push(term);
+      cleanedQuery = cleanedQuery.replace(match[0], ' ');
+    }
+
+    // Normalize spacing to get the final positive query
+    const positiveQuery = cleanedQuery
+      .replace(/\s*\+\s*/g, '+')
+      .replace(/\s*\|\s*/g, '|')
+      .replace(/\s+/g, ' ')
+      .trim();
+
     try {
       const response = await apiClient.handleRequest(req.body, {
         hooks: {
           // Hook to edit search request before it is executed
           beforeSearch: async (searchRequests) => {
             return searchRequests.map((sr) => {
-              const customQuery = userQuery
+              // Build the must clause
+              const mustClause = positiveQuery
                 ? {
                   simple_query_string: {
-                    query: userQuery,
+                    query: positiveQuery,
                     default_operator: "AND" as estypes.QueryDslOperator,
-                    fields: SEARCH_FIELDS_WITH_BOOSTS
+                    fields: [...SEARCH_FIELDS_WITH_BOOSTS, "*"],
+                    flags: "AND|OR|PHRASE|PRECEDENCE"
                   }
                 }
                 : { match_all: {} };
+
+              // Build the must_not clause if there are negative terms
+              const mustNotClause = allExclusions.length
+                ? allExclusions.map((term) => ({
+                  multi_match: {
+                    query: term,
+                    fields: [...SEARCH_FIELDS_WITH_BOOSTS, "*"],
+                    type: "phrase" as estypes.QueryDslTextQueryType
+                  }
+                }))
+                : [];
 
               return {
                 ...sr,
@@ -334,7 +366,8 @@ function getSearchkitRouter() {
                   track_total_hits: true, // Remove limit of 10000 results at the cost of speed
                   query: {
                     bool: {
-                      must: customQuery,
+                      must: mustClause,
+                      must_not: mustNotClause,
                       filter: sr.body?.query?.bool?.filter || [] // Preserve existing filters
                     }
                   }
