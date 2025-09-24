@@ -351,7 +351,7 @@ function getSearchkitRouter() {
                     query: positiveQuery,
                     default_operator: "AND" as estypes.QueryDslOperator,
                     fields: [...SEARCH_FIELDS_WITH_BOOSTS, "*"],
-                    flags: "AND|OR|PHRASE|PRECEDENCE|PREFIX"
+                    flags: "AND|OR|PHRASE|PRECEDENCE"
                   }
                 }
                 : { match_all: {} };
