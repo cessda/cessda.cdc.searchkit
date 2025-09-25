@@ -36,6 +36,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Fixed links from ELSST not working ([#733](https://github.com/cessda/cessda.cdc.versions/issues/733))
+- Fixed the search not searching all fields ([#735](https://github.com/cessda/cessda.cdc.versions/issues/735))
+- Enabled all advanced search cases listed in user guide ([#735](https://github.com/cessda/cessda.cdc.versions/issues/735))
 - Fixed filter search issue by changing any input into lowercase, added missing word to catalogue description ([PR-527](https://github.com/cessda/cessda.cdc.searchkit/pull/527))
 
 ## [4.0.0] - 2025-06-16
