@@ -14,6 +14,32 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - *Fixed (for any bug fixes)*
 - *Security (in case of vulnerabilities)*
 
+## [4.1.0] - 2025-09-29
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17184367.svg)](https://doi.org/10.5281/zenodo.17184367)
+
+### Added
+
+- Convert most forms of DOIs into clickable links ([#714](https://github.com/cessda/cessda.cdc.versions/issues/714))
+- Make URLs clickable in the "Abstract" and "Terms of data access" sections in the detailed study view ([#297](https://github.com/cessda/cessda.cdc.versions/issues/297))
+
+### Changed
+
+- Adjusted tooltip position, extended tooltip area with padding, fixed tooltip blur issues ([#720](https://github.com/cessda/cessda.cdc.versions/issues/720))
+- Fixed selected data access filter options not being present in query params ([#721](https://github.com/cessda/cessda.cdc.versions/issues/721))
+- Made the links to the documentation be relative to the site root ([PR-504](https://github.com/cessda/cessda.cdc.searchkit/pull/504))
+- Sort related publications by publication date ([#660](https://github.com/cessda/cessda.cdc.versions/issues/660))
+- Check that publication link starts with `http` ([#660](https://github.com/cessda/cessda.cdc.versions/issues/660))
+- Added project funding footer texts, added margin on top of about page metrics and display them only if the value is above 0 ([#722](https://github.com/cessda/cessda.cdc.versions/issues/722))
+- Add feedback button after page has loaded, fixed submit button style ([#725](https://github.com/cessda/cessda.cdc.versions/issues/725))
+
+### Fixed
+
+- Fixed links from ELSST not working ([#733](https://github.com/cessda/cessda.cdc.versions/issues/733))
+- Fixed the search not searching all fields ([#735](https://github.com/cessda/cessda.cdc.versions/issues/735))
+- Enabled all advanced search cases listed in user guide ([#735](https://github.com/cessda/cessda.cdc.versions/issues/735))
+- Fixed filter search issue by changing any input into lowercase, added missing word to catalogue description ([PR-527](https://github.com/cessda/cessda.cdc.searchkit/pull/527))
+
 ## [4.0.0] - 2025-06-16
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15584892.svg)](https://doi.org/10.5281/zenodo.15584892)
@@ -525,7 +551,8 @@ Searchkit - [10.5281/zenodo.3786300](https://zenodo.org/record/3786300)
 
 - N/A
 
-[4.0.0]: https://github.com/cessda/cessda.cdc.searchkit/releases/tag/0.3.0
+[4.1.0]: https://github.com/cessda/cessda.cdc.searchkit/releases/tag/4.1.0
+[4.0.0]: https://github.com/cessda/cessda.cdc.searchkit/releases/tag/4.0.0
 [COORDINATE Portal 0.3.0]: https://github.com/cessda/coordinate-portal/releases/tag/0.3.0
 [COORDINATE Portal 0.2.0]: https://github.com/cessda/coordinate-portal/releases/tag/0.2.0
 [COORDINATE Portal 0.1.0]: https://github.com/cessda/coordinate-portal/releases/tag/0.1.0
