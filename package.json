@@ -59,7 +59,7 @@
     "@types/jest": "30.0.0",
     "@types/lodash": "4.17.20",
     "@types/method-override": "3.0.0",
-    "@types/mini-css-extract-plugin": "2.5.0",
+    "@types/mini-css-extract-plugin": "2.5.1",
     "@types/node": "18.19.127",
     "@types/node-fetch": "2.6.11",
     "@types/react": "18.2.55",
