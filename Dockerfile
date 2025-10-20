@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM node:24 AS build
+FROM node:25 AS build
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -30,7 +30,7 @@ FROM webpack AS pre-final
 RUN npm prune --omit=dev
 
 # Create a separate image with the build layers removed
-FROM node:24 AS final
+FROM node:25 AS final
 COPY --from=pre-final /usr/src/app/node_modules/ /usr/src/app/node_modules/
 COPY --from=pre-final /usr/src/app/common/*.js /usr/src/app/common/
 COPY --from=pre-final /usr/src/app/server/*.js /usr/src/app/server/
