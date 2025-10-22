@@ -729,41 +729,6 @@ function jsonProxy() {
   return router;
 }
 
-export interface Metadata {
-  creators: string;
-  description: string;
-  publisher: string;
-  title: string;
-  jsonLd: WithContext<Dataset>;
-  id: string;
-}
-
-async function getMetadata(
-  q: string,
-  lang: string | undefined
-): Promise<Metadata | undefined> {
-  // Default to English if the language is unspecified
-  if (!lang) {
-    lang = "en";
-  }
-
-  const response = await elasticsearch.getStudy(q, `cmmstudy_${lang}`);
-
-  if (response) {
-    const study = getStudyModel(response);
-    return {
-      creators: study.creators.join("; "),
-      description: study.abstractShort,
-      title: study.titleStudy,
-      publisher: study.publisher.publisher,
-      jsonLd: getJsonLd(study),
-      id: study.id,
-    };
-  } else {
-    return undefined;
-  }
-}
-
 const paths = thematicViews.map(thematicView =>
   thematicView.path
 );
@@ -773,10 +738,9 @@ export async function renderResponse(
   res: express.Response,
   ejsTemplate: string
 ) {
-  // Default to success
-  let status = 200;
-
-  let metadata: Metadata | undefined = undefined;
+  // Default to not found and change later to success (or fail) for valid paths
+  let status = 404;
+  let jsonLd: WithContext<Dataset> | undefined = undefined;
 
   const contentType = req.accepts("html", "application/ld+json");
 
@@ -789,61 +753,50 @@ export async function renderResponse(
     return;
   }
 
-status = 404;
+  const staticPaths = ["/about", "/accessibility-statement", "/documentation", "/collections"];
+  if (staticPaths.some(p => req.path.includes(p)) || paths.includes(req.path)) {
+    status = 200;
+  }
 
-if ( req.path.includes("/about") ) {
-  status = 200;
-}
-if ( req.path.includes("/accessibility-statement") ) {
-  status = 200;
-}
+  // Handle detail page
+  if (req.path.includes("/detail")) {
+    const pathParts = req.path.split("/").filter(Boolean);
+    const studyId = pathParts[pathParts.length - 1]; // Last part is study id
+    const lang = req.query.lang as string | undefined;
 
-if ( req.path.includes("/documentation") ) {
-  status = 200;
-}
-
-if ( req.path.includes("/collections") ) {
-  status = 200;
-}
-
-if ( paths.includes(req.path) ) {
-  status = 200;
-}
-
-if ( req.path.endsWith("/detail") ) {
-   if (req.query.q) {
-    // If we are on the detail page and a query is set, retrive the JSON-LD metadata
-    try {
-      metadata = await getMetadata(
-        req.query.q as string,
-        req.query.lang as string | undefined
-      );
-      if (!metadata) {
-        // Set status to 404, a study was not found
-        status = 404;
+    if (studyId && contentType === "application/ld+json") {
+      // Try to retrieve JSON-LD metadata
+      try {
+        const response = await elasticsearch.getStudy(studyId, `cmmstudy_${lang}`);
+        if (response) {
+          jsonLd = getJsonLd(response as CMMStudy, req.originalUrl);
+          status = 200;
+        } else {
+          status = 404;
+        }
+      } catch (e: unknown) {
+        const u = e as ElasticError;
+        if (u instanceof ResponseError && u.statusCode === 404) {
+          status = u.statusCode;
+        } else {
+          logger.error(`Cannot communicate with Elasticsearch: ${u}`);
+          status = 503;
+        }
       }
-    } catch (e: unknown) {
-      const u = e as ElasticError;
-      if (u instanceof ResponseError && u.statusCode === 404) {
-        status = u.statusCode;
-      } else {
-        logger.error(`Cannot communicate with Elasticsearch: ${u}`);
-        status = 503;
-      }
+    } else {
+      status = 200;
     }
   }
-}
-
 
   switch (contentType) {
     case "html":
       // Render the HTML template
-      res.status(status).render(ejsTemplate, { metadata: metadata || {} });
+      res.status(status).render(ejsTemplate);
       break;
 
     case "application/ld+json":
       // Send a JSON-LD response
-      res.status(status).json(metadata?.jsonLd);
+      res.status(status).json(jsonLd);
       break;
 
     default:

@@ -58,7 +58,6 @@ describe('helper utilities', () => {
       // Status should be 200, and the template should be set correctly.
       expect(response.statusCode).toBe(200);
       expect(response._getRenderView()).toBe(ejsTemplate);
-      expect(response._getRenderData()).toEqual({ metadata: {}});
     });
 
     it('should return 406 when a client requests JSON-LD on pages that are not the detail page', async () => {
@@ -90,32 +89,7 @@ describe('helper utilities', () => {
       // Status code should be 406
       expect(response.statusCode).toBe(406);
     });
-/*
-    it('should request metadata', async () => {
-      const request = httpMocks.createRequest(requestParameters);
-      const response = httpMocks.createResponse();
 
-      mockedGetStudy.mockResolvedValue(mockStudy);
-      await renderResponse(request, response, ejsTemplate);
-
-      // Status code should be 200
-      expect(response.statusCode).toBe(200);
-      expect(mockedGetStudy).toBeCalledWith("test", "cmmstudy_en");
-      
-      // Assert fields of renderData are as expected
-      const renderData = response._getRenderData() as Metadata;
-      expect(renderData).toEqual({
-        metadata: {
-          creators: mockStudy.creators.join('; '),
-          description: mockStudy.abstract,
-          title: mockStudy.titleStudy,
-          publisher: mockStudy.publisher.publisher,
-          jsonLd: getJsonLd(getStudyModel(mockStudy)),
-          id: mockStudy.id
-        }
-      });
-    });
-*/
     // Don't know how to mock ResponseError with ES8
     // it('should return 503 on Elasticsearch error', async () => {
     //   const request = httpMocks.createRequest(requestParameters);
@@ -151,21 +125,6 @@ describe('helper utilities', () => {
     //   expect(response._getRenderData()).toEqual({ metadata: {}});
     // });
 
-    it('should return 404 when Elasticsearch returns nothing', async () => {
-      const request = httpMocks.createRequest(requestParameters);
-      const response = httpMocks.createResponse();
-
-      // Simulate Elasticsearch returning nothing
-      mockedGetStudy.mockResolvedValue(undefined);
-
-      await renderResponse(request, response, ejsTemplate);
-
-      // Status code should be 404
-      expect(response.statusCode).toBe(404);
-      expect(mockedGetStudy).toHaveBeenCalledWith("test", "cmmstudy_en");
-      expect(response._getRenderData()).toEqual({ metadata: {}});
-    });
-
     it('should return 404 if the requested path does not exist', async () => {
       const request = httpMocks.createRequest({
         path: "/non-existent-path"
@@ -176,7 +135,6 @@ describe('helper utilities', () => {
 
       // Status code should be 404
       expect(response.statusCode).toBe(404);
-      expect(response._getRenderData()).toEqual({ metadata: {}});
     });
   });
 

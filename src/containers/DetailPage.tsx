@@ -154,8 +154,8 @@ const DetailPage = () => {
     { relPub: { id: 'related-publications', level: 'title', translation: t("metadata.relatedPublications") } }
   ]
   return (
-<div>
-<Helmet>
+    <div>
+      <Helmet>
         <link rel="canonical" href={`https://datacatalogue.cessda.eu/detail/${location.pathname.split('/').slice(-1)[0]}?lang=${searchParams.get("lang")}`}>
         </link>
       </Helmet>

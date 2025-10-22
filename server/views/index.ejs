@@ -15,42 +15,17 @@
 // limitations under the License.
 -->
 <head>
-  <title>
-    <% if (metadata.title) { %>
-      <%= metadata.title %> - CESSDA Data Catalogue
-    <% } else { %>
-      CESSDA Data Catalogue
-    <% } %>
-  </title>
+  <title>CESSDA Data Catalogue</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@CESSDA_Data">
   <meta property="og:site_name" content="CESSDA Data Catalogue">
   <meta property="og:type" content="website">
-  <% if (metadata.title) { %>
-    <meta property="og:title" content="<%= metadata.title %> - CESSDA Data Catalogue">
-  <% } else { %>
-    <meta property="og:title" content="CESSDA Data Catalogue">
-  <% } %>
-  <% if (metadata.description) { %>
-    <meta property="og:description" content="<%= metadata.description %>">
-  <% } else { %>
-    <meta property="og:description" content="The CESSDA Data Catalogue contains the metadata of data holdings of CESSDA's Service Providers. It's a one-stop-shop for research and discovery, enabling access to extensive collections of data relevant to social science research.">
-  <% } %>
+  <meta property="og:title" content="CESSDA Data Catalogue">
+  <meta property="og:description" content="The CESSDA Data Catalogue contains the metadata of data holdings of CESSDA's Service Providers. It's a one-stop-shop for research and discovery, enabling access to extensive collections of data relevant to social science research.">
   <meta property="og:image" content="https://datacatalogue.cessda.eu/static/img/cessda_logo_dc.png">
-  <% if (metadata.creators) { %>
-    <meta name="twitter:label1" content="Creator">
-    <meta name="twitter:data1" content="<%= metadata.creators %>">
-  <% } %>
-  <% if (metadata.publisher) { %>
-    <meta name="twitter:label2" content="Publisher">
-    <meta name="twitter:data2" content="<%= metadata.publisher %>">
-  <% } %>
   <link rel="shortcut icon" type="image/png" href="data:image/png;base64,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">
-  <% if (metadata.id) { %>
-    <link rel="describedby" type="application/xml" profile="http://purl.org/dc/elements/1.1/ http://www.openarchives.org/OAI/2.0/" href="https://datacatalogue.cessda.eu/oai-pmh/v0/oai?verb=GetRecord&identifier=<%= metadata.id %>&metadataPrefix=oai_ddi25">
-  <% } %>
   <noscript>
     <style>
       noscript {
@@ -88,9 +63,6 @@
     <a href="https://outdatedbrowser.com/" target="_blank" rel="noopener noreferrer">modern browser</a>.
   </div>
   <div id='root'></div>
-  <% if (metadata.jsonLd) { %>
-    <script id="json-ld" type="application/ld+json"><%- JSON.stringify(metadata.jsonLd) %></script>
-  <% } %>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
   <script id="zammad_form_script" src="https://helpdesk.cessda.eu/assets/form/form.js"></script>
   <script>

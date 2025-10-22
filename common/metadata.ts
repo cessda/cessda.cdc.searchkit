@@ -374,14 +374,14 @@ export function getJsonLd(data: CMMStudy, href?: string): WithContext<Dataset> {
     description: truncate(data.abstract, { length: 5000, separator: ' ' }),
     url: href, // Needs to generate a URL if href is undefined
     sameAs: data.studyUrl,
-    keywords: data.keywords.map(i => upperFirst(i.term)),
-    variableMeasured: data.unitTypes.map(u => u.term).join(', '),
-    measurementTechnique: data.typeOfModeOfCollections.map(t => t.term).join(', '),
+    keywords: Array.isArray(data.keywords) ? data.keywords.map(i => upperFirst(i.term)) : [],
+    variableMeasured: Array.isArray(data.unitTypes) ? data.unitTypes.map(u => u.term).join(', ') : '',
+    measurementTechnique: Array.isArray(data.typeOfModeOfCollections) ? data.typeOfModeOfCollections.map(t => t.term).join(', ') : '',
     license: license,
     identifier: identifier,
-    creator: creators,
+    creator: Array.isArray(data.creators) ? creators : [],
     temporalCoverage: extractDataCollectionPeriod(data.dataCollectionPeriodStartdate, data.dataCollectionPeriodEnddate),
-    spatialCoverage: data.studyAreaCountries.map(s => s.country).join(', '),
+    spatialCoverage: Array.isArray(data.studyAreaCountries) ? data.studyAreaCountries.map(s => s.country).join(', ') : '',
     datePublished: data.publicationYear.substring(0, 10),
     dateModified: data.lastModified.substring(0, 10)
   };
