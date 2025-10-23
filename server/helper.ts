@@ -19,7 +19,7 @@ import bodyParser from "body-parser";
 import compression from "compression";
 import methodOverride from "method-override";
 import responseTime from "response-time";
-import { CMMStudy, getJsonLd, getStudyModel } from "../common/metadata";
+import { CMMStudy, getJsonLd, MetadataUtils } from "../common/metadata";
 import { thematicViews } from "../common/thematicViews";
 import {
   apiResponseTimeHandler,
@@ -38,6 +38,7 @@ import Client from "@searchkit/api";
 import 'isomorphic-unfetch';
 import { getELSSTRouter } from "./elsst";
 import QueryString from "qs";
+import { JSDOM } from "jsdom";
 
 const { ConnectionError, ResponseError } = errors;
 
@@ -172,6 +173,9 @@ const apiClient = Client({
 }, {
   debug: debugEnabled
 });
+
+const jsdom = new JSDOM();
+const metadataUtils = new MetadataUtils(new jsdom.window.DOMParser())
 
 export function checkBuildDirectory() {
   if (!fs.existsSync(path.join(__dirname, "../dist"))) {
@@ -621,7 +625,7 @@ function externalApiV2() {
 
         // Respond with JSON-LD if specified by the client
         "application/ld+json": () => {
-          const studyModels = response.hits.hits.map(hit => getStudyModel(hit._source));
+          const studyModels = response.hits.hits.map(hit => metadataUtils.getStudyModel(hit._source));
           const jsonLdArray = studyModels.map((value) => getJsonLd(value));
           res.json({
             SearchTerms: searchTerms,
@@ -715,7 +719,7 @@ function jsonProxy() {
       // If the client requests JSON-LD, return it
       switch (accepts) {
         case "application/ld+json":
-          res.send(getJsonLd(getStudyModel(study)));
+          res.send(getJsonLd(metadataUtils.getStudyModel(study)));
           return;
         case "json":
           res.send(study);
@@ -750,7 +754,7 @@ async function getMetadata(
   const response = await elasticsearch.getStudy(q, `cmmstudy_${lang}`);
 
   if (response) {
-    const study = getStudyModel(response);
+    const study = metadataUtils.getStudyModel(response);
     return {
       creators: study.creators.join("; "),
       description: study.abstractShort,
@@ -764,20 +768,13 @@ async function getMetadata(
   }
 }
 
-const paths = thematicViews.map(thematicView =>
-  thematicView.path
-);
-
 export async function renderResponse(
   req: express.Request,
   res: express.Response,
   ejsTemplate: string
 ) {
-  // Default to success
-  let status = 200;
 
-  let metadata: Metadata | undefined = undefined;
-
+  // Configure acceptable content types
   const contentType = req.accepts("html", "application/ld+json");
 
   if (
@@ -789,51 +786,71 @@ export async function renderResponse(
     return;
   }
 
-status = 404;
+  // Default to not found
+  let status = 404;
 
-if ( req.path.includes("/about") ) {
-  status = 200;
-}
-if ( req.path.includes("/accessibility-statement") ) {
-  status = 200;
-}
+  let metadata: Metadata | undefined;
 
-if ( req.path.includes("/documentation") ) {
-  status = 200;
-}
-
-if ( req.path.includes("/collections") ) {
-  status = 200;
-}
-
-if ( paths.includes(req.path) ) {
-  status = 200;
-}
-
-if ( req.path.endsWith("/detail") ) {
-   if (req.query.q) {
-    // If we are on the detail page and a query is set, retrive the JSON-LD metadata
-    try {
-      metadata = await getMetadata(
-        req.query.q as string,
-        req.query.lang as string | undefined
-      );
-      if (!metadata) {
-        // Set status to 404, a study was not found
-        status = 404;
-      }
-    } catch (e: unknown) {
-      const u = e as ElasticError;
-      if (u instanceof ResponseError && u.statusCode === 404) {
-        status = u.statusCode;
+  // Is this a valid theme?
+  for (const view of thematicViews) {
+    if (req.path.startsWith(view.path)) {
+      // Normalise the path by removing the view path
+      // If the view path ends with a trailing slash,
+      // this is ignored when normalising the path
+      let normalisedPath: string;
+      if (view.path.endsWith("/")) {
+        normalisedPath = req.path.substring(view.path.length - 1);
       } else {
-        logger.error(`Cannot communicate with Elasticsearch: ${u}`);
-        status = 503;
+        normalisedPath = req.path.substring(view.path.length);
+      }
+
+      // If on theme root, add / if missing
+      if (normalisedPath === "") {
+        res.redirect(301, req.path + "/");
+        return;
+      }
+
+      // Match static pages
+      if ( normalisedPath === "/"
+        || normalisedPath === "/about" 
+        || normalisedPath === "/accessibility-statement"
+        || normalisedPath === "/documentation"
+        || normalisedPath === "/collections"
+      ) {
+        status = 200;
+        break;
+      }
+
+      // Match detail page
+      const detailRegex = RegExp("^\\/detail\\/(\\w+)\\/?$");
+      const detailMatch = normalisedPath.match(detailRegex);
+      if (detailMatch) {
+        // If we are on the detail page and a query is set, retrive the JSON-LD metadata
+        const studyId = detailMatch[1]
+        try {
+          metadata = await getMetadata(
+            studyId,
+            req.query.lang as string | undefined
+          );
+          if (metadata) {
+            // Set status to 200, study was found
+            status = 200;
+          } else {
+            // Set status to 404, a study was not found
+            status = 404;
+          }
+        } catch (e: unknown) {
+          if (e instanceof ResponseError && e.statusCode === 404) {
+            status = e.statusCode;
+          } else {
+            logger.error(`Cannot communicate with Elasticsearch: ${e}`);
+            status = 503;
+          }
+        }
+        break;
       }
     }
   }
-}
-
 
   switch (contentType) {
     case "html":

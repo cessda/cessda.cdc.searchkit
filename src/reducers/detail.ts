@@ -11,10 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { CMMStudy, getStudyModel, Similar } from "../../common/metadata";
+import { CMMStudy, Similar } from "../../common/metadata";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { Language, languageMap } from "../utilities/language";
 import { ThematicViewState } from "./thematicView";
+import MetadataUtils from "../utilities/metadata";
 
 
 export interface DetailState {
@@ -52,7 +53,7 @@ export const updateStudy = createAsyncThunk('search/updateStudy', async ({ id, l
 
     // Get the study model from the hit.
     const json = await response.json() as { source: CMMStudy, similars: Similar[] };
-    study = getStudyModel(json.source);
+    study = MetadataUtils.getStudyModel(json.source);
     similars = json.similars
 
   } else if (response.status === 404) {

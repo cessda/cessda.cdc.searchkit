@@ -21,8 +21,7 @@ import httpMocks from 'node-mocks-http';
 // Constants
 const ejsTemplate = "server/views/index.ejs";
 const requestParameters = {
-  path: "/detail",
-  query: { q: "test" }
+  path: "/detail/test"
 };
 
 // Mock setup
