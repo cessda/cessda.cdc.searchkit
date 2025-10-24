@@ -490,7 +490,44 @@ const Detail = (props: Props) => {
   return (
     <>
       <Helmet>
-        <title>{item.titleStudy || t("language.notAvailable.field")} - {currentThematicView.longTitle}</title>
+        {item.titleStudy && (
+          <title>{item.titleStudy} - {currentThematicView.longTitle}</title>
+        )}
+
+        {/* Open Graph */}
+        {item.titleStudy && (
+          <meta property="og:title" content={`${item.titleStudy} - ${currentThematicView.longTitle}`} />
+        )}
+        {item.abstractShort && (
+          <meta property="og:description" content={item.abstractShort} />
+        )}
+        {item.studyUrl && (
+          <meta property="og:url" content={item.studyUrl} />
+        )}
+
+        {/* Twitter */}
+        {item.creators && (
+          <meta name="twitter:label1" content="Creator" />
+        )}
+        {item.creators && (
+          <meta name="twitter:data1" content={item.creators.map(c => c.name).join("; ")} />
+        )}
+        {item.publisher && (
+          <meta name="twitter:label2" content="Publisher" />
+        )}
+        {item.publisher && (
+          <meta name="twitter:data2" content={item.publisher.publisher} />
+        )}
+
+        {/* OAI-PMH describedby link */}
+        {item.id && (
+          <link
+            key="describedby"
+            rel="describedby"
+            type="application/xml"
+            href={`https://datacatalogue.cessda.eu/oai-pmh/v0/oai?verb=GetRecord&identifier=${item.id}&metadataPrefix=oai_ddi25`}
+          />
+        )}
       </Helmet>
 
       <div className="metadata-container study-wrapper">

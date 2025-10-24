@@ -743,7 +743,7 @@ export interface Metadata {
 }
 
 async function getMetadata(
-  q: string,
+  studyId: string,
   lang: string | undefined
 ): Promise<Metadata | undefined> {
   // Default to English if the language is unspecified
@@ -751,12 +751,12 @@ async function getMetadata(
     lang = "en";
   }
 
-  const response = await elasticsearch.getStudy(q, `cmmstudy_${lang}`);
+  const response = await elasticsearch.getStudy(studyId, `cmmstudy_${lang}`);
 
   if (response) {
     const study = metadataUtils.getStudyModel(response);
     return {
-      creators: study.creators.join("; "),
+      creators: study.creators.map(c => c.name).join("; "),
       description: study.abstractShort,
       title: study.titleStudy,
       publisher: study.publisher.publisher,

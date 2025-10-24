@@ -14,9 +14,13 @@
 
 import fs from 'fs';
 import path from 'path';
-import Elasticsearch from '../../server/elasticsearch';
 import { Client } from '@elastic/elasticsearch'
 import httpMocks from 'node-mocks-http';
+import { JSDOM } from "jsdom";
+import { errors } from '@elastic/elasticsearch';
+import Elasticsearch from '../../server/elasticsearch';
+import { mockStudy } from '../common/mockdata';
+import { getJsonLd, MetadataUtils } from '../../common/metadata';
 
 // Constants
 const ejsTemplate = "server/views/index.ejs";
@@ -39,7 +43,7 @@ mockedElasticsearch.mockImplementation(() => {
 });
 
 // Import the helper
-import { checkBuildDirectory, renderResponse } from '../../server/helper';
+import { checkBuildDirectory, renderResponse, Metadata } from '../../server/helper';
 
 // Reset the mock after each test
 beforeEach(() => mockedGetStudy.mockReset());
@@ -89,8 +93,11 @@ describe('helper utilities', () => {
       // Status code should be 406
       expect(response.statusCode).toBe(406);
     });
-/*
+
     it('should request metadata', async () => {
+      const jsdom = new JSDOM();
+      const metadataUtils = new MetadataUtils(new jsdom.window.DOMParser())
+
       const request = httpMocks.createRequest(requestParameters);
       const response = httpMocks.createResponse();
 
@@ -99,56 +106,53 @@ describe('helper utilities', () => {
 
       // Status code should be 200
       expect(response.statusCode).toBe(200);
-      expect(mockedGetStudy).toBeCalledWith("test", "cmmstudy_en");
-      
+      expect(mockedGetStudy).toHaveBeenCalledWith("test", "cmmstudy_en");
+
       // Assert fields of renderData are as expected
       const renderData = response._getRenderData() as Metadata;
       expect(renderData).toEqual({
         metadata: {
-          creators: mockStudy.creators.join('; '),
+          creators: mockStudy.creators.map(c => c.name).join("; "),
           description: mockStudy.abstract,
           title: mockStudy.titleStudy,
           publisher: mockStudy.publisher.publisher,
-          jsonLd: getJsonLd(getStudyModel(mockStudy)),
+          jsonLd: getJsonLd(metadataUtils.getStudyModel(mockStudy)),
           id: mockStudy.id
         }
       });
     });
-*/
-    // Don't know how to mock ResponseError with ES8
-    // it('should return 503 on Elasticsearch error', async () => {
-    //   const request = httpMocks.createRequest(requestParameters);
-    //   const response = httpMocks.createResponse();
 
-    //   // Simulate Elasticsearch returning 500
-    //   // @ts-expect-error - minimal typings
-    //   mockedGetStudy.mockRejectedValue(new errors.ResponseError({ statusCode: 500 }));
+    it('should return 503 on Elasticsearch error', async () => {
+      const request = httpMocks.createRequest(requestParameters);
+      const response = httpMocks.createResponse();
 
-    //   await renderResponse(request, response, ejsTemplate);
+      // Simulate Elasticsearch returning 500
+      // @ts-expect-error - minimal typings
+      mockedGetStudy.mockRejectedValue(new errors.ResponseError({ statusCode: 500 }));
 
-    //   // Status code should be 503
-    //   expect(response.statusCode).toBe(503);
-    //   expect(mockedGetStudy).toBeCalledWith("test", "cmmstudy_en");
-    //   expect(response._getRenderData()).toEqual({ metadata: {}});
-    // });
+      await renderResponse(request, response, ejsTemplate);
 
-    // Don't know how to mock ResponseError with ES8
-    // it('should return 404 when Elasticsearch returns 404', async () => {
+      // Status code should be 503
+      expect(response.statusCode).toBe(503);
+      expect(mockedGetStudy).toHaveBeenCalledWith("test", "cmmstudy_en");
+      expect(response._getRenderData()).toEqual({ metadata: {} });
+    });
 
-    //   const request = httpMocks.createRequest(requestParameters);
-    //   const response = httpMocks.createResponse();
+    it('should return 404 when Elasticsearch returns 404', async () => {
+      const request = httpMocks.createRequest(requestParameters);
+      const response = httpMocks.createResponse();
 
-    //   // Simulate Elasticsearch returning 404
-    //   // @ts-expect-error - minimal typings
-    //   mockedGetStudy.mockRejectedValue(new errors.ResponseError({ statusCode: 404 }));
+      // Simulate Elasticsearch returning 404
+      // @ts-expect-error - minimal typings
+      mockedGetStudy.mockRejectedValue(new errors.ResponseError({ statusCode: 404 }));
 
-    //   await renderResponse(request, response, ejsTemplate);
+      await renderResponse(request, response, ejsTemplate);
 
-    //   // Status code should be 404
-    //   expect(response.statusCode).toBe(404);
-    //   expect(mockedGetStudy).toBeCalledWith("test", "cmmstudy_en");
-    //   expect(response._getRenderData()).toEqual({ metadata: {}});
-    // });
+      // Status code should be 404
+      expect(response.statusCode).toBe(404);
+      expect(mockedGetStudy).toHaveBeenCalledWith("test", "cmmstudy_en");
+      expect(response._getRenderData()).toEqual({ metadata: {} });
+    });
 
     it('should return 404 when Elasticsearch returns nothing', async () => {
       const request = httpMocks.createRequest(requestParameters);
