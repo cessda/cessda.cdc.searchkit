@@ -221,8 +221,8 @@ const routes: RouteObject[] = thematicViews.map(thematicView => {
     errorElement: <ErrorPage />,
     children: [
       { path: "", element: <SearchPage /> },
-      { path: "about", element: <AboutPage />, loader: metricsLoader },
-      { path: "detail/:id", element: <DetailPage />, loader: studyLoader },
+      { path: "about", element: <AboutPage />, loader: metricsLoader, HydrateFallback: () => null },
+      { path: "detail/:id", element: <DetailPage />, loader: studyLoader, HydrateFallback: () => null },
       { path: "documentation", element: <UserGuidePage /> },
       { path: "rest-api", element: <RestApiPage /> },
       { path: "accessibility-statement", element: <AccessibilityStatementPage /> },

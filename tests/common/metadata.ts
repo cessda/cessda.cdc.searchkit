@@ -11,13 +11,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { getJsonLd, getStudyModel } from '../../common/metadata';
+import { getJsonLd, MetadataUtils } from '../../common/metadata';
 
 describe('Metadata utilities', () => {
   describe('getStudyModel()', () => {
     it('should return a populated study model', () => {
+      const metadataUtils = new MetadataUtils(new DOMParser());
       expect(
-        getStudyModel({
+        metadataUtils.getStudyModel({
           id: "1",
           titleStudy: 'Study Title',
           titleStudyHighlight: 'Study Title',
@@ -245,8 +246,9 @@ describe('Metadata utilities', () => {
     });
 
     it('should return a study model with default values', () => {
+      const metadataUtils = new MetadataUtils(new DOMParser());
       expect(
-        getStudyModel({})
+        metadataUtils.getStudyModel({})
       ).toEqual({
         id: undefined,
         titleStudy: undefined,
@@ -294,7 +296,8 @@ describe('Metadata utilities', () => {
 
   it('should throw if an incorrect type is given', () => {
     expect(() => {
-      getStudyModel(undefined)
+      const metadataUtils = new MetadataUtils(new DOMParser());
+      metadataUtils.getStudyModel(undefined)
     }).toThrow(
       TypeError
     );

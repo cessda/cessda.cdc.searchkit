@@ -35,7 +35,6 @@ export function start() {
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname, '../dist'));
 
-  const indexRegex = new RegExp("index.dev.ejs");
   app.use(webpackMiddleware(compiler, {
     publicPath: config.output?.publicPath,
     index: 'src',
@@ -48,7 +47,7 @@ export function start() {
       modules: false
     },
     // Write the index.ejs file to disk so that ejs can access it
-    writeToDisk: (filePath) => indexRegex.test(filePath)
+    writeToDisk: (filePath) => /index.dev.ejs/.test(filePath)
   }));
 
   app.use(webpackHotMiddleware(compiler));

@@ -167,136 +167,144 @@ export interface Series {
   uris?: string[];
 }
 
-/**
- * Creates a model to store/display study metadata in the user interface.
- *
- * The comments indicate the label displayed in the UI for each property (it is not always obvious).
- */
-export function getStudyModel(source: Partial<CMMStudy> | undefined, highlight?: estypes.SearchHit["highlight"]): CMMStudy {
-  if (typeof(source) !== "object") {
-    throw TypeError("_source is not an object");
-  }
-  return ({
-    id: source.id as string,
-    titleStudy: source.titleStudy as string,
-    titleStudyHighlight: highlight?.titleStudy ? stripHTMLElements(highlight.titleStudy.join()) : '',
-    code: source.code as string,
-    creators: source.creators || [],
-    pidStudies: source.pidStudies || [],
-    abstract: stripHTMLElements(source.abstract as string),
-    abstractShort: truncateText(striptags(source.abstract as string), 380),
-    abstractLong: truncateText(striptags(source.abstract as string), 2000),
-    abstractHighlight: highlight?.abstract ? stripHTMLElements(highlight.abstract.join()) : '',
-    abstractHighlightShort: highlight?.abstract ? truncateText(striptags(highlight.abstract.join()), 380) : '',
-    abstractHighlightLong: highlight?.abstract ? truncateText(striptags(highlight.abstract.join()), 2000) : '',
-    studyAreaCountries: source.studyAreaCountries || [],
-    typeOfTimeMethods: source.typeOfTimeMethods || [],
-    unitTypes: source.unitTypes || [],
-    typeOfSamplingProcedures: source.typeOfSamplingProcedures || [],
-    samplingProcedureFreeTexts: (source.samplingProcedureFreeTexts || []).map(text => stripHTMLElements(text)),
-    typeOfModeOfCollections: source.typeOfModeOfCollections || [],
-    dataCollectionPeriodStartdate: source.dataCollectionPeriodStartdate || '',
-    dataCollectionPeriodEnddate: source.dataCollectionPeriodEnddate || '',
-    dataCollectionFreeTexts: source.dataCollectionFreeTexts || [],
-    dataCollectionYear: source.dataCollectionYear,
-    fileLanguages: source.fileLanguages || [],
-    publisher: source.publisher as Publisher,
-    publicationYear: source.publicationYear || '',
-    dataAccess: source.dataAccess || '',
-    dataAccessFreeTexts: (source.dataAccessFreeTexts || []).map(text => stripHTMLElements(text)),
-    dataAccessUrl: source.dataAccessUrl,
-    studyNumber: source.studyNumber || '',
-    classifications: source.classifications || [],
-    keywords: source.keywords || [],
-    lastModified: source.lastModified || '',
-    studyUrl: source.studyUrl,
-    studyXmlSourceUrl: source.studyXmlSourceUrl as string,
-    langAvailableIn: (source.langAvailableIn || []).map(i => i.toUpperCase()).sort(),
-    universe: source.universe,
-    relatedPublications: source.relatedPublications || [],
-    funding: source.funding || [],
-    dataKindFreeTexts: source.dataKindFreeTexts || [],
-    generalDataFormats: source.generalDataFormats || [],
-    series: source.series || []
-  });
-}
-
-export function truncateText(string: string, limit: number): string {
-  const trimmedString = string.trim();
-  return truncate(trimmedString, { length: limit, separator: ' ' } );
-}
-
-/**
- * Strip non-styling HTML tags from the given HTML string
- * except hyperlinks which are sanitized instead.
- * @param {string} html the HTML to strip.
- */
-function stripHTMLElements(html: string) {
-  const strippedHTML = striptags(html, [
-    "a",
-    "p",
-    "strong",
-    "br",
-    "em",
-    "i",
-    "s",
-    "ol",
-    "ul",
-    "li",
-    "b",
-    "h1",
-    "h2",
-    "h3",
-    "h4",
-    "h5",
-    "h6",
-  ]);
-
-  return sanitizeAnchorTags(strippedHTML.trim());
-}
-
-/**
- * Sanitize &lt;a&gt; tags by setting target="_blank" and rel="noopener noreferrer".
- * All other attributes are removed.
- * 
- * @param html the HTML to sanitize.
- * @returns the sanitized HTML.
- */
-function sanitizeAnchorTags(html: string): string {
-  const parser = new DOMParser();
-  const parsedHTML = parser.parseFromString(html, "text/html");
+export class MetadataUtils {
   
-  // Get all <a> elements
-  const anchorElements = parsedHTML.getElementsByTagName("a");
+  private domParser: DOMParser;
 
-  for(const elem of anchorElements) {
-    // Store the href
-    const href = elem.href;
+  constructor(domParser: DOMParser) {
+    this.domParser = domParser;
+  }
 
-    // Clear other attributes
-    for (const attr of elem.getAttributeNames()) {
-      elem.removeAttribute(attr);
+  /**
+   * Creates a model to store/display study metadata in the user interface.
+   *
+   * The comments indicate the label displayed in the UI for each property (it is not always obvious).
+   */
+  getStudyModel(source: Partial<CMMStudy> | undefined, highlight?: estypes.SearchHit["highlight"]): CMMStudy {
+    if (typeof (source) !== "object") {
+      throw TypeError("_source is not an object");
+    }
+    return ({
+      id: source.id as string,
+      titleStudy: source.titleStudy as string,
+      titleStudyHighlight: highlight?.titleStudy ? this.stripHTMLElements(highlight.titleStudy.join()) : '',
+      code: source.code as string,
+      creators: source.creators || [],
+      pidStudies: source.pidStudies || [],
+      abstract: this.stripHTMLElements(source.abstract as string),
+      abstractShort: this.truncateText(striptags(source.abstract as string), 380),
+      abstractLong: this.truncateText(striptags(source.abstract as string), 2000),
+      abstractHighlight: highlight?.abstract ? this.stripHTMLElements(highlight.abstract.join()) : '',
+      abstractHighlightShort: highlight?.abstract ? this.truncateText(striptags(highlight.abstract.join()), 380) : '',
+      abstractHighlightLong: highlight?.abstract ? this.truncateText(striptags(highlight.abstract.join()), 2000) : '',
+      studyAreaCountries: source.studyAreaCountries || [],
+      typeOfTimeMethods: source.typeOfTimeMethods || [],
+      unitTypes: source.unitTypes || [],
+      typeOfSamplingProcedures: source.typeOfSamplingProcedures || [],
+      samplingProcedureFreeTexts: (source.samplingProcedureFreeTexts || []).map(text => this.stripHTMLElements(text)),
+      typeOfModeOfCollections: source.typeOfModeOfCollections || [],
+      dataCollectionPeriodStartdate: source.dataCollectionPeriodStartdate || '',
+      dataCollectionPeriodEnddate: source.dataCollectionPeriodEnddate || '',
+      dataCollectionFreeTexts: source.dataCollectionFreeTexts || [],
+      dataCollectionYear: source.dataCollectionYear,
+      fileLanguages: source.fileLanguages || [],
+      publisher: source.publisher as Publisher,
+      publicationYear: source.publicationYear || '',
+      dataAccess: source.dataAccess || '',
+      dataAccessFreeTexts: (source.dataAccessFreeTexts || []).map(text => this.stripHTMLElements(text)),
+      dataAccessUrl: source.dataAccessUrl,
+      studyNumber: source.studyNumber || '',
+      classifications: source.classifications || [],
+      keywords: source.keywords || [],
+      lastModified: source.lastModified || '',
+      studyUrl: source.studyUrl,
+      studyXmlSourceUrl: source.studyXmlSourceUrl as string,
+      langAvailableIn: (source.langAvailableIn || []).map(i => i.toUpperCase()).sort(),
+      universe: source.universe,
+      relatedPublications: source.relatedPublications || [],
+      funding: source.funding || [],
+      dataKindFreeTexts: source.dataKindFreeTexts || [],
+      generalDataFormats: source.generalDataFormats || [],
+      series: source.series || []
+    });
+  }
+
+  truncateText(string: string, limit: number): string {
+    const trimmedString = string.trim();
+    return truncate(trimmedString, { length: limit, separator: ' ' });
+  }
+
+  /**
+   * Strip non-styling HTML tags from the given HTML string
+   * except hyperlinks which are sanitized instead.
+   * @param {string} html the HTML to strip.
+   */
+  stripHTMLElements(html: string) {
+    const strippedHTML = striptags(html, [
+      "a",
+      "p",
+      "strong",
+      "br",
+      "em",
+      "i",
+      "s",
+      "ol",
+      "ul",
+      "li",
+      "b",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+    ]);
+
+    return this.sanitizeAnchorTags(strippedHTML.trim());
+  }
+
+  /**
+   * Sanitize &lt;a&gt; tags by setting target="_blank" and rel="noopener noreferrer".
+   * All other attributes are removed.
+   * 
+   * @param html the HTML to sanitize.
+   * @returns the sanitized HTML.
+   */
+  sanitizeAnchorTags(html: string): string {
+    const parsedHTML = this.domParser.parseFromString(html, "text/html");
+
+    // Get all <a> elements
+    const anchorElements = parsedHTML.getElementsByTagName("a");
+
+    for (const elem of anchorElements) {
+      // Store the href
+      const href = elem.href;
+
+      // Clear other attributes
+      for (const attr of elem.getAttributeNames()) {
+        elem.removeAttribute(attr);
+      }
+
+      // Copy href
+      elem.href = href;
+
+      // Set target and rel attributes
+      elem.target = "_blank";
+      elem.rel = "noopener noreferrer";
     }
 
-    // Copy href
-    elem.href = href;
-
-    // Set target and rel attributes
-    elem.target = "_blank";
-    elem.rel = "noopener noreferrer";
+    return parsedHTML.body.innerHTML;
   }
 
-  return parsedHTML.body.innerHTML;
-}
+  normalizeAndDecodeHTML(html: string) {
+    if (html) {
+      // Convert escaped HTML tags
+      html = html.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+    }
 
-export function normalizeAndDecodeHTML(html: string) {
-  if (html) {
-    // Convert escaped HTML tags
-    html = html.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+    // Strip non-styling elements from the HTML
+    return this.stripHTMLElements(html);
   }
-
-  // Strip non-styling elements from the HTML
-  return stripHTMLElements(html);
 }
 
 // Generates study JSON-LD for Google indexing.

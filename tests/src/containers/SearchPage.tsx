@@ -17,7 +17,7 @@ import { render, screen } from "../../testutils";
 import userEvent from '@testing-library/user-event';
 import { useSearchParams } from "react-router";
 import SearchPage from "../../../src/containers/SearchPage";
-import { ThematicView, thematicViews, EsIndex } from "../../../common/thematicViews";
+import { thematicViews, EsIndex } from "../../../common/thematicViews";
 import { useAppDispatch, useAppSelector } from "../../../src/hooks";
 import '@testing-library/jest-dom';
 import { SortByItem } from 'instantsearch.js/es/connectors/sort-by/connectSortBy';
@@ -77,7 +77,7 @@ jest.mock("../../../src/hooks", () => ({
 }));
 
 const mockDispatch = jest.fn();
-const initialView = thematicViews.find((tv) => tv.path === "/") as ThematicView;
+const initialView = thematicViews[0];
 const initialIndex = initialView.esIndexes.find((i) => i.indexName === initialView.defaultIndex) as EsIndex;
 //const newView = thematicViews.find((tv) => tv.path === "/coordinate") as ThematicView;
 //const newIndex = newView.esIndexes.find((i) => i.indexName === newView.defaultIndex ) as EsIndex;

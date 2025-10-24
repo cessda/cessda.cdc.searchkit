@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 // @ts-check
 // Copyright CESSDA ERIC 2017-2025
 //

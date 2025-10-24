@@ -14,15 +14,14 @@
 import React, { useEffect, useState } from "react";
 import { FaAngleDown, FaAngleUp, FaExternalLinkAlt,  FaLock, FaLockOpen } from 'react-icons/fa';
 import { Link, useLocation } from "react-router";
-import { CMMStudy, normalizeAndDecodeHTML, TermVocabAttributes } from "../../common/metadata";
+import { CMMStudy, TermVocabAttributes } from "../../common/metadata";
 import { useTranslation } from "react-i18next";
 import { useAppSelector } from "../hooks";
 import Keywords from "./Keywords";
 import { Hit, HitAttributeHighlightResult } from "instantsearch.js";
 import getPaq from "../utilities/getPaq";
-
-/** Matches all characters in a regex that should be escaped */
-const regexEscape = /[/\-\\^$*+?.()|[\]{}]/g;
+import MetadataUtils from "../utilities/metadata";
+import { escapeRegex } from "../../common/utils";
 
 function generateCreatorElements(item: CMMStudy) {
   const creators: React.JSX.Element[] = [];
@@ -113,21 +112,21 @@ const Result: React.FC<ResultProps> = ({ hit }) => {
   }
 
   const renderAbstract = () => {
-    let abstract = normalizeAndDecodeHTML(hit.abstract);
+    let abstract = MetadataUtils.normalizeAndDecodeHTML(hit.abstract);
     const matchedWords = (hit._highlightResult?.abstract as HitAttributeHighlightResult)?.matchedWords || [];
     if (matchedWords.length > 0) {
       if (abstractExpanded) {
         // Create a regular expression that matches any of the highlighted texts.
         // Any RegEx control characters are escaped. The RegEx is case insensitive.
         const regexString = matchedWords
-          .map((text: string) => text.replace(regexEscape, "\\$&"))
+          .map((text: string) => escapeRegex(text))
           .map((text: string) => `(${text})`).join('|');
         const regex = new RegExp(regexString, 'gi');
 
         // Use the regular expression to find and highlight all matching texts in the full abstract
         abstract = abstract.replace(regex, (match: string) => `<mark>${match}</mark>`);
       } else {
-        abstract = normalizeAndDecodeHTML((hit._highlightResult!.abstract as HitAttributeHighlightResult).value);
+        abstract = MetadataUtils.normalizeAndDecodeHTML((hit._highlightResult!.abstract as HitAttributeHighlightResult).value);
       }
     }
 
@@ -152,7 +151,7 @@ const Result: React.FC<ResultProps> = ({ hit }) => {
       <h2 className="title is-6">
         <Link className="focus-visible"
         key={hit.objectID}
-          to={`detail/${hit.objectID}/?lang=${currentIndex.languageCode}`}
+          to={`detail/${hit.objectID}?lang=${currentIndex.languageCode}`}
           state={{ from: location.pathname }}>
           <span dangerouslySetInnerHTML={{ __html: (hit._highlightResult?.titleStudy as HitAttributeHighlightResult)?.value || hit.titleStudy }}></span>
         </Link>

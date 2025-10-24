@@ -15,7 +15,8 @@ import React, { useState } from 'react';
 import { FaAngleUp, FaAngleDown, FaExternalLinkAlt } from 'react-icons/fa';
 import { useTranslation } from "react-i18next";
 import striptags from "striptags";
-import { Series, truncateText } from "../../common/metadata";
+import { Series } from "../../common/metadata";
+import MetadataUtils from "../utilities/metadata";
 
 const MAX_DESCRIPTION_LENGTH = 600;
 
@@ -35,7 +36,7 @@ function truncateDescriptions(descriptions: string[], limit: number): string[] {
     const remainingLimit = limit - totalLength;
     if (remainingLimit <= 0) break;
 
-    const truncatedDesc = desc.length > remainingLimit ? truncateText(desc, remainingLimit) : desc;
+    const truncatedDesc = desc.length > remainingLimit ? MetadataUtils.truncateText(desc, remainingLimit) : desc;
 
     truncated.push(truncatedDesc);
     totalLength += truncatedDesc.length;

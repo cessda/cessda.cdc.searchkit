@@ -1,3 +1,4 @@
+// @ts-check
 // Copyright CESSDA ERIC 2017-2025
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -10,6 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+/** @type {import('jest').Config} */
 module.exports = {
   // Collect test coverage
   collectCoverage: true,
