@@ -120,9 +120,13 @@ const Root = () => {
           // Drop sortBy if we are not on the search page or it's the same as default index
           // Otherwise make sure to always have it
           sortBy: isSearchPage
-            ? indexUiState.sortBy === 'cmmstudy_en'
-              ? undefined
-              : indexUiState.sortBy ?? currentIndex.indexName
+            ? indexUiState.sortBy
+              ? indexUiState.sortBy === 'cmmstudy_en'
+                ? undefined
+                : indexUiState.sortBy
+              : currentIndex.indexName === 'cmmstudy_en'
+                ? undefined
+                : currentIndex.indexName
             : undefined,
         };
       },
