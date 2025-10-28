@@ -17,12 +17,28 @@ const initialView = thematicViews.find((tv) => tv.path === initialPath) as Thema
 
 const urlParams = new URLSearchParams(window.location.search);
 
+// Get base index according to sortBy (e.g. cmmstudy_fi_publication_year_desc) if it's defined
 const initialIndexQs = urlParams.get("sortBy");
-const initialIndex = initialIndexQs ? initialView.esIndexes.find((i) => i.indexName === initialIndexQs) as EsIndex : initialView.esIndexes.find((i) => i.indexName === initialView.defaultIndex) as EsIndex;
+let matchedIndex: EsIndex | undefined;
+if (initialIndexQs) {
+  const indexMatch = thematicViews.flatMap(tv => tv.esIndexes)
+    .find(index => initialIndexQs.startsWith(index.indexName));
+  if (indexMatch) {
+    matchedIndex = indexMatch;
+  }
+}
+// Resolve the initial index in priority order:
+// 1. Match from sortBy query param
+// 2. Thematic view's default index
+// 3. English index in the thematic view
+// 4. First index in the thematic view
+const initialIndex =
+  matchedIndex ??
+  initialView.esIndexes.find(i => i.indexName === initialView.defaultIndex) ??
+  initialView.esIndexes.find(i => i.languageCode === "en") ??
+  initialView.esIndexes[0];
 
-
-
-// (OC 11.2024) Take the opportunitiy to set the body class for thematic view styling while initialising state.
+// (OC 11.2024) Take the opportunity to set the body class for thematic view styling while initialising state.
 document.body.className = initialView.rootClass;
 
 const initialState: ThematicViewState = {

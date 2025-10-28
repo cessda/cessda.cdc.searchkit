@@ -79,6 +79,35 @@ const Detail = (props: Props) => {
   ]
   const [selectedExportMetadataOption, setSelectedExportMetadataOption] = useState<Option | null>(exportMetadataOptions[0]);
 
+  // Get currently selected display language and add links to other language variants of the study
+  const [searchParams] = useSearchParams();
+  const dispLang = searchParams.get("lang") || currentIndex.languageCode;
+
+  const languageLinks: JSX.Element[] = [];
+
+  if (item.langAvailableIn.length > 1) {
+    for (let i = 0; i < item?.langAvailableIn.length; i++) {
+      const lang = item.langAvailableIn[i].toLowerCase();
+      if (dispLang != lang) {
+        languageLinks.push(
+          <Link key={lang} className="button is-small mt-3 mr-1" to={`${location.pathname}?lang=${lang}`}>
+            {lang.toUpperCase()}
+          </Link>
+        );
+      } else {
+        languageLinks.push(
+          <span key={lang} className="button is-small is-static mt-3 mr-1">
+            {lang.toUpperCase()}
+          </span>
+        );
+      }
+    }
+  }
+
+  // Construct index to use for links, e.g. for search page with topic or keyword and JSON view
+  const baseIndexName = currentIndex.indexName.split("_")[0];
+  const selectedLangIndex = `${baseIndexName}_${dispLang}`;
+
   const formatter = new DateTimeFormatterBuilder()
     .appendValue(ChronoField.YEAR)
     .optionalStart()
@@ -257,7 +286,7 @@ const Detail = (props: Props) => {
       switch (selectedExportMetadataOption.value) {
         case 'json': {
           // Fetch the JSON data from the API
-          const jsonResponse = await fetch(`${window.location.origin}/api/json/${currentIndex.indexName}/${encodeURIComponent(item.id)}`);
+          const jsonResponse = await fetch(`${window.location.origin}/api/json/${selectedLangIndex}/${encodeURIComponent(item.id)}`);
 
           if (jsonResponse.ok) {
             exportData = JSON.stringify(await jsonResponse.json(), null, 2)
@@ -419,29 +448,6 @@ const Detail = (props: Props) => {
     });
     return Array.from(uniqueValues);
   }
-  const [searchParams] = useSearchParams();
-  const dispLang = searchParams.get("lang") || currentIndex.languageCode;
-
-  const languageLinks: JSX.Element[] = [];
-
-  if (item.langAvailableIn.length > 1) {
-    for (let i = 0; i < item?.langAvailableIn.length; i++) {
-      const lang = item.langAvailableIn[i].toLowerCase();
-      if (dispLang != lang) {
-        languageLinks.push(
-          <Link key={lang} className="button is-small mt-3 mr-1" to={`${location.pathname}?lang=${lang}`}>
-            {lang.toUpperCase()}
-          </Link>
-        );
-      } else {
-        languageLinks.push(
-          <span key={lang} className="button is-small is-static mt-3 mr-1">
-            {lang.toUpperCase()}
-          </span>
-        );
-      }
-    }
-  }
 
   /**
    * Converts plain text URLs in an HTML string into clickable anchor (`<a>`) tags,
@@ -550,7 +556,7 @@ const Detail = (props: Props) => {
                   )}
 
                   <a
-                    href={`/api/json/${currentIndex.indexName}/${encodeURIComponent(item.id)}`}
+                    href={`/api/json/${selectedLangIndex}/${encodeURIComponent(item.id)}`}
                     rel="noreferrer"
                     target="_blank">
                     <span className="icon is-small"><FaCode /></span>
@@ -781,7 +787,7 @@ const Detail = (props: Props) => {
                 <div className="tags mt-2">
                   {generateElements(item.classifications, "tag",
                     (classifications) => (
-                      <Link to={`/?sortBy=${currentIndex.indexName}&classifications%5B0%5D=${encodeURI(classifications.term.toLowerCase())}`}>
+                      <Link to={`/?sortBy=${selectedLangIndex}&classifications%5B0%5D=${encodeURI(classifications.term.toLowerCase())}`}>
                         {upperFirst(classifications.term)}
                       </Link>
                     )
@@ -798,7 +804,7 @@ const Detail = (props: Props) => {
                 <Tooltip content={t("metadata.keywords.tooltip.content")}
                   ariaLabel={t("metadata.keywords.tooltip.ariaLabel")}
                   classNames={{ container: 'mt-1 ml-1' }} />
-                <Keywords keywords={item.keywords.slice().sort((a, b) => a.term.localeCompare(b.term))} keywordLimit={12} lang={currentIndex.languageCode} currentIndex={currentIndex.indexName} />
+                <Keywords keywords={item.keywords.slice().sort((a, b) => a.term.localeCompare(b.term))} keywordLimit={12} lang={dispLang} currentIndex={selectedLangIndex} />
               </section>
             }
 
