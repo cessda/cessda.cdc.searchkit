@@ -14,6 +14,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - *Fixed (for any bug fixes)*
 - *Security (in case of vulnerabilities)*
 
+## [4.1.1] - 2025-10-29
+
+### Fixed
+
+- Fixed the server returning 404 for valid URLs ([#742](https://github.com/cessda/cessda.cdc.versions/issues/742))
+- Fixed initial index being undefined with non-default sortBy options ([#739](https://github.com/cessda/cessda.cdc.versions/issues/739))
+- Fixed initial sortBy index being treated as default ([#739](https://github.com/cessda/cessda.cdc.versions/issues/739))
+- Fixed links on detail page not using the currently selected language ([#739](https://github.com/cessda/cessda.cdc.versions/issues/739))
+
 ## [4.1.0] - 2025-09-29
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17184367.svg)](https://doi.org/10.5281/zenodo.17184367)
@@ -551,6 +560,7 @@ Searchkit - [10.5281/zenodo.3786300](https://zenodo.org/record/3786300)
 
 - N/A
 
+[4.1.1]: https://github.com/cessda/cessda.cdc.searchkit/releases/tag/4.1.1
 [4.1.0]: https://github.com/cessda/cessda.cdc.searchkit/releases/tag/4.1.0
 [4.0.0]: https://github.com/cessda/cessda.cdc.searchkit/releases/tag/4.0.0
 [COORDINATE Portal 0.3.0]: https://github.com/cessda/coordinate-portal/releases/tag/0.3.0
