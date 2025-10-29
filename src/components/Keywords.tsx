@@ -105,7 +105,7 @@ export class Keywords extends React.Component<Props & WithTranslation, State> {
             // If the term is a valid ELSST term, also link to ELSST
             const keywordTerm = upperFirst(keywords.term);
             return (<>
-              <Link to={{ pathname: "/" + location.pathname.split('/')[1].replace("detail", ""), search: `?keywords[0]=${encodeURI(keywords.term.toLowerCase())}&sortBy=${this.props.currentIndex}` }}>{keywordTerm}</Link>
+              <Link to={{ pathname: "/" + location.pathname.split('/')[1].replace("detail", ""), search: `?sortBy=${this.props.currentIndex}&keywords%5B%5D=${encodeURI(keywords.term.toLowerCase())}` }}>{keywordTerm}</Link>
               {this.state.elsstURLs[keywords.term] &&
                 <span className="is-inline-flex is-align-items-center">&nbsp;(
                   <a href={this.state.elsstURLs[keywords.term]} rel="noreferrer" target="_blank"

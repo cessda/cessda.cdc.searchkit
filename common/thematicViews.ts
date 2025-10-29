@@ -141,7 +141,6 @@ export const thematicViews: readonly ThematicView[] = [
           language: 'French',
           excludeFilters: []
         },
-
         {
           indexName: 'coordinate_de',
           languageCode: 'de',

@@ -103,6 +103,20 @@ const Root = () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       stateToRoute(uiState: any) {
         const indexUiState = uiState[currentIndex.indexName] || {};
+        const isSearchPage = location.pathname === '/' || location.pathname === `${currentThematicView.path}/`;
+
+        // Drop sortBy if we are not on the search page or it's the same as default index
+        // Otherwise make sure to always have it
+        let sortBy: string | undefined = undefined;
+        if (isSearchPage) {
+          if (indexUiState.sortBy) {
+            if (indexUiState.sortBy !== 'cmmstudy_en') {
+              sortBy = indexUiState.sortBy;
+            }
+          } else if (currentIndex.indexName !== 'cmmstudy_en') {
+            sortBy = currentIndex.indexName;
+          }
+        }
 
         return {
           query: indexUiState.query,
@@ -116,11 +130,8 @@ const Root = () => {
           timeMethodCV: indexUiState.refinementList?.timeMethodCV,
           resultsPerPage: indexUiState.hitsPerPage,
           page: indexUiState.page,
-          // Could remove the common part of index name but would need to check what else needs to be changed
-          // elsewhere, e.g. Header, LanguageSelector, DetailPage, SearchPage, and how it works
-          sortBy: indexUiState.sortBy  // && indexUiState.sortBy.replace('coordinate_', '')
+          sortBy: sortBy,
         };
-
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       routeToState(routeState: any) {
@@ -142,7 +153,6 @@ const Root = () => {
             hitsPerPage: routeState.resultsPerPage,
             page: routeState.page,
             sortBy: routeState.sortBy
-
           },
         };
       }
@@ -154,13 +164,7 @@ const Root = () => {
 
     <InstantSearch searchClient={searchClient}
       indexName={currentIndex.indexName}
-      // routing can't use updated values from redux store when key is null
-      // Could use index as key to make sure everything is always perfect and store values could be used but
-      // then it re-renders even when not really needed (like switching language on detail page)
-
-      // key={currentIndex.indexName}
       routing={routing}
-      // routing={true}
       future={{
         // If false, each widget unmounting will also remove its state, even if multiple widgets read that UI state
         // If true, each widget unmounting will only remove its state if it's the last of its type
