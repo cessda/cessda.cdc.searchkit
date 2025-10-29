@@ -105,6 +105,19 @@ const Root = () => {
         const indexUiState = uiState[currentIndex.indexName] || {};
         const isSearchPage = location.pathname === '/' || location.pathname === `${currentThematicView.path}/`;
 
+        // Drop sortBy if we are not on the search page or it's the same as default index
+        // Otherwise make sure to always have it
+        let sortBy: string | undefined = undefined;
+        if (isSearchPage) {
+          if (indexUiState.sortBy) {
+            if (indexUiState.sortBy !== 'cmmstudy_en') {
+              sortBy = indexUiState.sortBy;
+            }
+          } else if (currentIndex.indexName !== 'cmmstudy_en') {
+            sortBy = currentIndex.indexName;
+          }
+        }
+
         return {
           query: indexUiState.query,
           classifications: indexUiState.refinementList?.classifications,
@@ -117,17 +130,7 @@ const Root = () => {
           timeMethodCV: indexUiState.refinementList?.timeMethodCV,
           resultsPerPage: indexUiState.hitsPerPage,
           page: indexUiState.page,
-          // Drop sortBy if we are not on the search page or it's the same as default index
-          // Otherwise make sure to always have it
-          sortBy: isSearchPage
-            ? indexUiState.sortBy
-              ? indexUiState.sortBy === 'cmmstudy_en'
-                ? undefined
-                : indexUiState.sortBy
-              : currentIndex.indexName === 'cmmstudy_en'
-                ? undefined
-                : currentIndex.indexName
-            : undefined,
+          sortBy: sortBy,
         };
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
