@@ -2,21 +2,20 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FaAngleDown, FaAngleUp, FaCheck } from 'react-icons/fa';
 import { useNavigate } from 'react-router';
 
-
-interface IndexDropdownMenuProps {
-    buttonLabel: string;
+export interface IndexDropdownMenuProps {
     currentKey: string;
-    items: {
-        title: string;
-        key: string;
-        url?: string;
-        icon?: string;
-        action?: () => void;
-    }[];
+    items: ThematicViewMenuItem[];
 }
 
-export const IndexDropdownMenu = ({
-    buttonLabel,
+export interface ThematicViewMenuItem {
+  title: string;
+  key: string;
+  url: string;
+  icon?: string;
+  action?: () => void;
+}
+
+const ThematicViewDropdownMenu = ({
     currentKey,
     items,
 }: IndexDropdownMenuProps) => {
@@ -129,8 +128,7 @@ export const IndexDropdownMenu = ({
                 <span className="icon is-small mr-0">
                     {open ? <FaAngleUp /> : <FaAngleDown />}
                 </span>
-                {buttonLabel}
-                
+                Collection
             </button>
             {open && (
                 <div className="menu-dropdown">
@@ -150,7 +148,7 @@ export const IndexDropdownMenu = ({
                                 tabIndex={focusedIndex === index ? 0 : -1}
                                 onKeyDown={(event) => handleItemKeyDown(event, index)}
                             >
-                                <a href={item.url} onClick={() => setOpen(false)} className={`${currentKey == item.key ? 'column columns is-mobile is-gapless is-vcentered tv-menu-item selected py-1' : 'column columns is-mobile is-gapless is-vcentered tv-menu-item py-1'
+                                <a href={item.url} onClick={() => setOpen(false)} className={`${currentKey === item.key ? 'column columns is-mobile is-gapless is-vcentered tv-menu-item selected py-1' : 'column columns is-mobile is-gapless is-vcentered tv-menu-item py-1'
                                     }`}>
                                     <div className="select-icon column is-narrow mx-3 my-1">
 
@@ -166,7 +164,7 @@ export const IndexDropdownMenu = ({
                                     <div className="column is-narrow mx-2 pr-1">
                                     <span className="icon is-small">                               
                                     
-                                    {currentKey == item.key ? <FaCheck /> : ''}
+                                    {currentKey === item.key ? <FaCheck /> : ''}
                                     </span>
                                     </div>
                                 </a>
@@ -178,3 +176,5 @@ export const IndexDropdownMenu = ({
         </div>
     );
 };
+
+export default ThematicViewDropdownMenu;

@@ -65,12 +65,7 @@ module.exports = merge(common, {
     rules: [{
       test: /\.(ts|js)x?$/,
       exclude: /(node_modules)/,
-      loader: 'babel-loader',
-      options: {
-        plugins: [
-          'transform-react-remove-prop-types'
-        ]
-      }
+      loader: 'babel-loader'
     }]
   }
 });

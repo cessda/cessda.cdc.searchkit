@@ -4,7 +4,7 @@
     "module": "commonjs",
     "allowJs": false,
     "checkJs": false,
-    "jsx": "react-jsx",
+    "jsx": "react",
     "outDir": "./dist/",
     "noEmit": true,
     "strict": true,

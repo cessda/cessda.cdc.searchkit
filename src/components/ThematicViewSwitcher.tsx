@@ -14,35 +14,24 @@
 
 import React from "react";
 import { useAppSelector } from "../hooks";
-import { ThematicView } from "../../common/thematicViews";
-import { IndexDropdownMenu } from "./ThematicViewDropdownMenu";
+import ThematicViewDropdownMenu, { ThematicViewMenuItem } from "./ThematicViewDropdownMenu";
 
+function ThematicViewSwitcher() {
 
-
-
-  const ThematicViewSwitcher = () => {
-      
   const thematicView = useAppSelector((state) => state.thematicView);
-    const currentKey =thematicView.currentThematicView.key;
+  const currentKey = thematicView.currentThematicView.key;
 
-  const navItems=thematicView.list.map((thematicView: ThematicView) => (
-    {
-      title: thematicView.title,
-    icon: require('../img/icons/' + thematicView.icon),
-    url: thematicView.path,
-    key: thematicView.key
-    }
-    ));
-  return (
-   
-  
-    <IndexDropdownMenu
-    buttonLabel="Collection" 
-    currentKey={currentKey} 
-    items={navItems}
-  />
-      
-  );
-};
+  const navItems: ThematicViewMenuItem[] = [];
+  for (const view of thematicView.list) {
+    navItems.push({
+      title: view.title,
+      icon: require('../img/icons/' + view.icon),
+      url: view.path,
+      key: view.key
+    });
+  }
+
+  return <ThematicViewDropdownMenu currentKey={currentKey} items={navItems} />;
+}
 
 export default ThematicViewSwitcher;
