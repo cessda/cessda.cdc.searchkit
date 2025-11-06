@@ -95,7 +95,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-helmet-async": "2.0.5",
-    "react-i18next": "16.2.3",
+    "react-i18next": "16.2.4",
     "react-icons": "4.8.0",
     "react-instantsearch": "7.17.0",
     "react-redux": "9.2.0",
