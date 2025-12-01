@@ -57,7 +57,7 @@
     "@types/cors": "2.8.19",
     "@types/express": "5.0.3",
     "@types/jest": "30.0.0",
-    "@types/lodash": "4.17.20",
+    "@types/lodash": "4.17.21",
     "@types/method-override": "3.0.0",
     "@types/node": "18.19.130",
     "@types/node-fetch": "2.6.11",
