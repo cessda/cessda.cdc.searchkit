@@ -16,8 +16,8 @@ import { logger } from "./logger";
 import fetch from 'node-fetch';
 
 const SKOSMOS_URL = process.env.SEARCHKIT_SKOSMOS_URL || "https://thesauri.cessda.eu";
-const ELSST_VOCABULARY = process.env.SEARCHKIT_ELSST_VOCABULARY || "elsst-4";
-const ELSST_URI_PREFIX = process.env.SEARCHKIT_ELSST_URI_PREFIX || "https://elsst.cessda.eu/id/4/";
+const ELSST_VOCABULARY = process.env.SEARCHKIT_ELSST_VOCABULARY || "elsst-6";
+const ELSST_URI_PREFIX = process.env.SEARCHKIT_ELSST_URI_PREFIX || "https://elsst.cessda.eu/id/6/";
 
 interface SkosmosLookupResponse {
   result: {
