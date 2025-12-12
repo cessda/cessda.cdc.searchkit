@@ -42,7 +42,7 @@
       "label": "Topic",
       "placeholder": "Search topics",
       "tooltip": {
-        "content": "Topic terms serve to identify the general topics, subjects or themes of a study. Many but not all metadata providers use <a href=\"https://vocabularies.cessda.eu/vocabulary/TopicClassification?lang=en\">CESSDA Topic Classification</a> for their topic terms.",
+        "content": "Topic terms serve to identify the general topics, subjects or themes of a study. Many but not all metadata providers use <a href=\"https://vocabularies.cessda.eu/vocabulary/TopicClassification?lang=en\" target=\"blank\">CESSDA Topic Classification</a> for their topic terms.",
         "ariaLabel": "Tooltip button for Topic filter"
       }
     },
@@ -50,14 +50,14 @@
       "label": "Keywords",
       "placeholder": "Search keywords",
       "tooltip": {
-        "content": "Keywords which describe the content of the data. Many but not all metadata providers use <a href=\"https://elsst.cessda.eu/\">ELSST Thesaurus</a> for their keywords.",
+        "content": "Keywords which describe the content of the data. Many but not all metadata providers use <a href=\"https://elsst.cessda.eu/\" target=\"blank\">ELSST Thesaurus</a> for their keywords.",
         "ariaLabel": "Tooltip button for Keywords filter"
       }
     },
     "dataAccess": {
       "label": "Data access",
       "tooltip": {
-        "content": "Data access is mapped using the <a href=\"https://wiki.surfnet.nl/display/standards/info-eu-repo#infoeurepo-AccessRights\">Access Rights CV</a> or custom Service Provider specific mappings. 'Uncategorized' means access terms haven't been mapped yet, but full details are usually available on the study page or the Service Provider's catalogue.",
+        "content": "Data access is mapped using the <a href=\"https://vocabularies.coar-repositories.org/access_rights/\" target=\"blank\" rel=\"noopener noreferrer\">Access Rights CV</a> or custom Service Provider specific mappings. 'Uncategorized' means access terms haven't been mapped yet, but full details are usually available on the study page or the Service Provider's catalogue.",
         "ariaLabel": "Tooltip button for Data access filter"
       }
     },
@@ -97,7 +97,7 @@
       "label": "Time Method (CV)",
       "placeholder": "Search time method (CV)",
       "tooltip": {
-        "content": "Describes the time dimension of the data collection. Based on the vocabulary developed by the DDI Alliance. The classification and its translations are available at <a href=\"https://vocabularies.cessda.eu/urn/urn:ddi:int.ddi.cv:TimeMethod:1.2.3\">CESSDA Vocabulary Service: DDI Alliance Controlled Vocabulary for Time Method</a>.",
+        "content": "Describes the time dimension of the data collection. Based on the vocabulary developed by the DDI Alliance. The classification and its translations are available at <a href=\"https://vocabularies.cessda.eu/urn/urn:ddi:int.ddi.cv:TimeMethod:1.2.3\" target=\"blank\">CESSDA Vocabulary Service: DDI Alliance Controlled Vocabulary for Time Method</a>.",
         "ariaLabel":"Tooltip button for Time method (CV) filter"
       }
     },
