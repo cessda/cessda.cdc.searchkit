@@ -27,9 +27,10 @@ module.exports = {
 
   preset: 'ts-jest/presets/js-with-babel',
   transform: {
-    "^.+\\.jsx?$": "babel-jest",
+    "^.+\\.jsx?$": ["babel-jest", { plugins: ['@babel/plugin-transform-export-namespace-from', '@babel/plugin-transform-modules-commonjs'] }],
     "^.+\\.svg$": "jest-transformer-svg"
   },
+  transformIgnorePatterns: [],
   // Setup Enzyme and fetch, this removes the need for imports in the tests
   setupFilesAfterEnv: ["<rootDir>setupTests.ts", "<rootDir>/src/i18n/config.ts"],
   testEnvironment: "jsdom",
