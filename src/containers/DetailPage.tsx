@@ -14,7 +14,7 @@
 import React, { useEffect } from "react";
 import Detail from "../components/Detail"
 import { useTranslation } from "react-i18next";
-import { updateStudy } from "../reducers/detail";
+import { updateStudy, UpdateStudyPayload } from "../reducers/detail";
 import { Await, Link, LoaderFunctionArgs, useLoaderData, useLocation, useNavigate, useSearchParams } from "react-router";
 import { store } from "../store";
 import { Funding, getJsonLd } from '../../common/metadata';
@@ -37,8 +37,7 @@ export const studyLoader = async ({ request, params }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const lang = url.searchParams.get("lang");
 
-  const data = await store.dispatch(updateStudy({ id: params.id as string, lang: lang as string }));
-  return { data };
+  return await store.dispatch(updateStudy({ id: params.id as string, lang: lang as string }));
 };
 
 const DetailPage = () => {
@@ -47,17 +46,20 @@ const DetailPage = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  const { data } = useLoaderData<typeof studyLoader>();
+  const data = useLoaderData<typeof studyLoader>();
+  const payload = data.payload as UpdateStudyPayload;
 
   useEffect(() => {
     // Update the JSON-LD representation
     const jsonLDElement = document.getElementById("json-ld");
 
-    if (data?.payload?.study) {
+
+
+    if (payload.study) {
       const script = document.createElement("script");
       script.id = "json-ld";
       script.type = "application/ld+json";
-      script.textContent = JSON.stringify(getJsonLd(data.payload.study));
+      script.textContent = JSON.stringify(getJsonLd(payload.study));
 
       if (jsonLDElement) {
         jsonLDElement.replaceWith(script);
@@ -144,7 +146,7 @@ const DetailPage = () => {
     { sampProc: { id: 'sampling-procedure', level: 'subtitle', translation: t("metadata.samplingProcedure") } },
     { dataKind: { id: 'data-kind', level: 'subtitle', translation: t("metadata.dataKind") } },
     { collMode: { id: 'data-collection-mode', level: 'subtitle', translation: t("metadata.dataCollectionMethod") } },
-    ...addFundingEntries(data.payload?.study?.funding ?? []),
+    ...addFundingEntries(payload?.study?.funding ?? []),
     { access: { id: 'access', level: 'title', translation: t("metadata.access") } },
     { publisher: { id: 'publisher', level: 'subtitle', translation: t("metadata.publisher") } },
     { publicationYear: { id: 'publication-year', level: 'subtitle', translation: t("metadata.yearOfPublication") } },
@@ -183,7 +185,8 @@ const DetailPage = () => {
         <React.Suspense fallback={<p>{t("loader.loading")}</p>}>
           <Await resolve={data} errorElement={<p>{t("loader.error")}</p>}>
             {(resolvedData) => {
-              return <Similars similars={resolvedData?.payload?.similars ? resolvedData.payload.similars : []} />
+              const payload  = resolvedData.payload as UpdateStudyPayload;
+              return <Similars similars={payload?.similars ? payload.similars : []} />
             }}
           </Await>
         </React.Suspense>
@@ -195,15 +198,16 @@ const DetailPage = () => {
         <React.Suspense fallback={<p data-testid="loading">{t("loader.loading")}</p>}>
           <Await resolve={data} errorElement={<p>{t("loader.error")}</p>}>
             {(resolvedData) => {
-              if (resolvedData?.payload?.study) {
-                return <Detail item={resolvedData.payload.study} headings={headings} />
+              const payload  = resolvedData.payload as UpdateStudyPayload;
+              if (payload.study) {
+                return <Detail item={payload.study} headings={headings} />
               }
               else {
                 const languageLinks: React.JSX.Element[] = [];
 
-                if (resolvedData.payload) {
-                  for (let i = 0; i < resolvedData.payload.availableLanguages.length; i++) {
-                    const lang = resolvedData.payload.availableLanguages[i];
+                if (payload) {
+                  for (let i = 0; i < payload.availableLanguages.length; i++) {
+                    const lang = payload.availableLanguages[i];
                     languageLinks.push(
                       <Link key={lang.code} to={`${location.pathname}?lang=${lang.code}`}>
                         {lang.label}
