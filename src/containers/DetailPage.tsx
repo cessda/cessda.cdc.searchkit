@@ -37,7 +37,8 @@ export const studyLoader = async ({ request, params }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const lang = url.searchParams.get("lang");
 
-  return await store.dispatch(updateStudy({ id: params.id as string, lang: lang as string }));
+  const data = await store.dispatch(updateStudy({ id: params.id as string, lang: lang as string }));
+  return { data };
 };
 
 const DetailPage = () => {
@@ -46,7 +47,7 @@ const DetailPage = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  const data = useLoaderData<typeof studyLoader>();
+  const { data } = useLoaderData<typeof studyLoader>();
   const payload = data.payload as UpdateStudyPayload;
 
   useEffect(() => {
@@ -69,7 +70,7 @@ const DetailPage = () => {
         jsonLDElement.remove();
       }
     }
-  }, [data]);
+  }, [data.payload]);
 
   function handleKeyDown(event: React.KeyboardEvent) {
     if (event.key === 'Enter' || event.key === ' ') {
