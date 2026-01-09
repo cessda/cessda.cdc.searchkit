@@ -1,6 +1,4 @@
-/** Matches all characters in a regex that should be escaped */
-const regexEscape = /[/\-\\^$*+?.()|[\]{}]/g;
-
+/** Escape all characters in a regex */
 export function escapeRegex(string: string) {
-  return string.replace(regexEscape, "\\$&");
+  return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, "\\$&");
 }
