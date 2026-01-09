@@ -199,7 +199,7 @@ const DetailPage = () => {
           <Await resolve={data} errorElement={<p>{t("loader.error")}</p>}>
             {(resolvedData) => {
               const payload  = resolvedData.payload as UpdateStudyPayload;
-              if (payload.study) {
+              if (payload?.study) {
                 return <Detail item={payload.study} headings={headings} />
               }
               else {
