@@ -53,9 +53,7 @@ const DetailPage = () => {
     // Update the JSON-LD representation
     const jsonLDElement = document.getElementById("json-ld");
 
-
-
-    if (payload.study) {
+    if (payload?.study) {
       const script = document.createElement("script");
       script.id = "json-ld";
       script.type = "application/ld+json";
