@@ -99,7 +99,7 @@ async function endpointGauges(esClient: Elasticsearch) {
   try {
     const endpoints = await esClient.getEndpoints();
     for (const result of endpoints) {
-      endpointGauge.set({ endpoint: result.key }, result.doc_count);
+      endpointGauge.set({ endpoint: String(result.key) }, result.doc_count);
     }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch(e) {

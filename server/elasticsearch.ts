@@ -308,11 +308,9 @@ export default class Elasticsearch {
    */
   async getIndicesForStudyId(id: string, indexPrefix?: string) {
     const res = await this.client.search({
-      body: {
-        query: {
-          ids: {
-            values: [id],
-          },
+      query: {
+        ids: {
+          values: [id],
         },
       },
       _source: false,

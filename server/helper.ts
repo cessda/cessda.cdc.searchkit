@@ -541,15 +541,15 @@ function externalApiV2() {
 
     // Create json body for ElasticSearchClient - nested post-filters
     if (req.query.classifications) {
-      mustQuery.push({ nested: buildNestedFilters(req.query.classifications, 'classifications', 'classifications.term') });
+      mustQuery.push({ nested: buildNestedFilters(req.query.classifications as string | string[], 'classifications', 'classifications.term') });
     }
 
     if (req.query.studyAreaCountries) {
-      mustQuery.push({ nested: buildNestedFilters(req.query.studyAreaCountries, 'studyAreaCountries', 'studyAreaCountries.searchField') });
+      mustQuery.push({ nested: buildNestedFilters(req.query.studyAreaCountries as string | string[], 'studyAreaCountries', 'studyAreaCountries.searchField') });
     }
 
     if (req.query.publishers) {
-      mustQuery.push({ nested: buildNestedFilters(req.query.publishers, 'publisherFilter', 'publisherFilter.publisher') })
+      mustQuery.push({ nested: buildNestedFilters(req.query.publishers as string | string[], 'publisherFilter', 'publisherFilter.publisher') })
     }
 
     if (mustQuery.length > 0) {
@@ -653,7 +653,7 @@ function externalApiV2() {
  * @param path the path to the nested document.
  * @param nestedPath the path to use in the nested document
  */
-function buildNestedFilters(query: unknown, path: string, nestedPath: string): estypes.QueryDslNestedQuery {
+function buildNestedFilters(query: string | string[], path: string, nestedPath: string): estypes.QueryDslNestedQuery {
   if (Array.isArray(query)) {
     return {
       path: path,
