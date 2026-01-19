@@ -89,7 +89,7 @@
     "jest-junit": "16.0.0",
     "jest-mock-fetch": "2.0.5",
     "jest-util": "30.2.0",
-    "mini-css-extract-plugin": "2.9.4",
+    "mini-css-extract-plugin": "2.10.0",
     "node-mocks-http": "1.17.2",
     "process": "0.11.10",
     "react": "18.2.0",
