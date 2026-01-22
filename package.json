@@ -27,7 +27,7 @@
     "isomorphic-unfetch": "4.0.2",
     "jest-transformer-svg": "2.1.0",
     "jsdom": "27.3.0",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "method-override": "3.0.0",
     "node-fetch": "2.7.0",
     "prom-client": "15.1.3",
