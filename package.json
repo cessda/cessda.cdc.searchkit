@@ -75,7 +75,7 @@
     "bulma": "0.9.4",
     "bulma-switch": "2.0.4",
     "clean-webpack-plugin": "4.0.0",
-    "css-loader": "7.1.2",
+    "css-loader": "7.1.4",
     "eslint": "8.57.0",
     "eslint-plugin-react": "7.37.5",
     "html-loader": "5.1.0",
