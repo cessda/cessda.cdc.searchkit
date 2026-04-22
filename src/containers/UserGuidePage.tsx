@@ -30,7 +30,8 @@ const UserGuidePage = () => {
     <div className="columns">
       <div className="content-wrapper column is-three-fifths is-offset-one-fifth mt-6 p-2">
         <DynamicUserGuidePage />
-      </div></div>
+      </div>
+    </div>
   );
 };
 

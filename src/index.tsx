@@ -48,7 +48,7 @@ if (script?.parentNode) {
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
 root.render(
-  <HelmetProvider>  
+  <HelmetProvider>
     <Provider store={store}>
       <App />
     </Provider>

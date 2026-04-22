@@ -30,7 +30,7 @@ const CollectionsPage = () => {
       <div className="content-wrapper column is-8 is-offset-2 mt-6 p-6">
         <h1 className="main-title mb-4">Collections</h1>
         <p>
-          The CESSDA Data Catalogue (CDC) provides collections (thematic views) on specific topics and issues.
+          The CESSDA Data Catalogue (CDC) provides collections (thematic views) on specific topics and issues. These are a subset of the CDC itself, and have a more focused searching and browsing experience. Choose a collection from below or use the dropdown at the top.
         </p>
 
         <div className="columns is-flex-wrap-wrap mt-2">
