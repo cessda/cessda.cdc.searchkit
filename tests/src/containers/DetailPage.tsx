@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -13,10 +13,12 @@
 // limitations under the License.
 
 import React from "react";
-import { render, screen, waitFor } from "../../testutils";
+import { render, renderWithStore, screen, waitFor } from "../../testutils";
 import DetailPage from "../../../src/containers/DetailPage";
 import { mockStudy } from "../../common/mockdata";
 import userEvent from '@testing-library/user-event';
+import { initialState as searchInitialState } from "../../../src/reducers/search";
+import { initialState as thematicViewInitialState } from "../../../src/reducers/thematicView";
 
 const mockNavigate = jest.fn();
 
@@ -36,53 +38,61 @@ jest.mock('react-router', () => ({
     },
   }),
   useLocation: () => ({
-    state: { 
+    state: {
       from: "/",
-     },
-        pathname: "/detail/8a230ed2d3c48685bb93a5dfecc98a65f8c29ea47c0517aac8d71b16d4394f9b"
+    },
+    pathname: "/detail/8a230ed2d3c48685bb93a5dfecc98a65f8c29ea47c0517aac8d71b16d4394f9b"
   }),
   useNavigate: () => mockNavigate,
 }));
 
 jest.mock("../../../src/components/Detail", () => () => <div>Detail component</div>);
-// jest.mock("../../../src/components/DetailIndex", () => () => <div>DetailIndex component</div>);
 jest.mock("../../../src/components/Similars", () => () => <div>Similars component</div>);
 
 it("should render correctly", async () => {
-  
+
   render(<DetailPage />);
 
   await waitFor(() => {
     expect(screen.getByText('Detail component')).toBeInTheDocument();
-//    expect(screen.getByText('DetailIndex component')).toBeInTheDocument();
     expect(screen.getByText('Similars component')).toBeInTheDocument();
   });
 });
 
 it("should handle back button click and keydown", async () => {
-  render(<DetailPage />);
+  const backToSearchUrl = "/coordinate?query=test";
 
-  const backButton = screen.getByTestId("back-button");
-
-  // Simulate button click
-  userEvent.click(backButton);
-  // Ensure navigate is called
-  await waitFor(() => {
-    expect(mockNavigate).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith(-1);
+  renderWithStore(<DetailPage />, {
+    preloadedState: {
+      search: {
+        ...searchInitialState,
+        backToSearchUrl,
+      },
+      thematicView: {
+        ...thematicViewInitialState,
+        currentThematicView: {
+          ...thematicViewInitialState.currentThematicView,
+          path: "/coordinate",
+        },
+        currentIndex: {
+          ...thematicViewInitialState.currentIndex,
+          indexName: "coordinate_en",
+        },
+      },
+    },
   });
 
-  // Ensure the button is focused
+  const backButton = await screen.findByTestId("back-button");
+
+  await userEvent.click(backButton);
+
+  expect(mockNavigate).toHaveBeenCalledWith(backToSearchUrl);
+
   backButton.focus();
+  await userEvent.keyboard("{Enter}");
 
-  // Simulate keydown event
-  userEvent.keyboard("{Enter}");
-  
-  // Ensure navigate is called again
-  await waitFor(() => {
-    expect(mockNavigate).toHaveBeenCalledTimes(2);
-    expect(mockNavigate).toHaveBeenCalledWith(-1);
-  });
+  expect(mockNavigate).toHaveBeenCalledTimes(2);
+  expect(mockNavigate).toHaveBeenLastCalledWith(backToSearchUrl);
 });
 
 it("renders JSON-LD script for the study", async () => {
@@ -100,7 +110,7 @@ it("renders available languages if no study found with selected language", async
   // Override the mock for this specific test using jest.spyOn
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const useLoaderDataSpy = jest.spyOn(require('react-router'), 'useLoaderData');
-  
+
   // Mock the return value for this test
   useLoaderDataSpy.mockReturnValueOnce({
     data: {

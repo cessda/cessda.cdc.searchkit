@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -12,16 +12,20 @@
 // limitations under the License.
 
 import React, { useEffect, useState } from "react";
-import { FaAngleDown, FaAngleUp, FaExternalLinkAlt,  FaLock, FaLockOpen } from 'react-icons/fa';
+import { FaAngleDown, FaAngleUp, FaExternalLinkAlt, FaLock, FaLockOpen } from 'react-icons/fa';
 import { Link, useLocation } from "react-router";
 import { CMMStudy, TermVocabAttributes } from "../../common/metadata";
 import { useTranslation } from "react-i18next";
-import { useAppSelector } from "../hooks";
+import { useAppDispatch, useAppSelector } from "../hooks";
 import Keywords from "./Keywords";
 import { Hit, HitAttributeHighlightResult } from "instantsearch.js";
 import getPaq from "../utilities/getPaq";
 import MetadataUtils from "../utilities/metadata";
-import { escapeRegex } from "../../common/utils";
+import { indexBaseFromSortBy, escapeRegex } from "../../common/utils";
+import { setBackToSearchUrl } from "../reducers/search";
+import { BASE_INDEX } from "../../common/constants";
+import { useInstantSearch } from "react-instantsearch";
+
 
 function generateCreatorElements(item: CMMStudy) {
   const creators: React.JSX.Element[] = [];
@@ -58,8 +62,10 @@ interface ResultProps {
 const Result: React.FC<ResultProps> = ({ hit }) => {
   const { t } = useTranslation();
   const location = useLocation();
+  const searchUrl = location.pathname + location.search;
+  const dispatch = useAppDispatch();
+  const { uiState } = useInstantSearch();
 
-  const currentIndex = useAppSelector((state) => state.thematicView.currentIndex);
   const showAbstract = useAppSelector((state) => state.search.showAbstract);
   const showKeywords = useAppSelector((state) => state.search.showKeywords);
 
@@ -82,7 +88,7 @@ const Result: React.FC<ResultProps> = ({ hit }) => {
         key={i}
         className="button is-small is-white mln-5 focus-visible"
         to={`detail/${hit.objectID}?lang=${hit.langAvailableIn[i].toLowerCase()}`}
-        state={{ from: location.pathname }}
+        onClick={() => { dispatch(setBackToSearchUrl(searchUrl)); }}
       >
         {hit.langAvailableIn[i].toUpperCase()}
       </Link>
@@ -145,14 +151,18 @@ const Result: React.FC<ResultProps> = ({ hit }) => {
 
   const creators = generateCreatorElements(hit);
 
+  const sortBy = uiState?.[BASE_INDEX]?.sortBy;
+  const activeSearchIndex = indexBaseFromSortBy(sortBy, BASE_INDEX);
+  const activeSearchLanguage = activeSearchIndex.split("_")[1];
+
   return (
     <div className="list-hit" data-qa="hit">
-   
+
       <h2 className="title is-6">
         <Link className="focus-visible"
-        key={hit.objectID}
-          to={`detail/${hit.objectID}?lang=${currentIndex.languageCode}`}
-          state={{ from: location.pathname }}>
+          key={hit.objectID}
+          to={`detail/${hit.objectID}?lang=${activeSearchLanguage}`}
+          onClick={() => { dispatch(setBackToSearchUrl(searchUrl)); }}>
           <span dangerouslySetInnerHTML={{ __html: (hit._highlightResult?.titleStudy as HitAttributeHighlightResult)?.value || hit.titleStudy }}></span>
         </Link>
       </h2>
@@ -164,8 +174,8 @@ const Result: React.FC<ResultProps> = ({ hit }) => {
       )}
       {showKeywords && sortedKeywords.length > 0 &&
         <div className="result-keywords mt-10">
-          <Keywords keywords={sortedKeywords} currentIndex={currentIndex.indexName} keywordLimit={truncatedKeywordsLength}
-            lang={currentIndex.languageCode} isExpandDisabled={true} />
+          <Keywords keywords={sortedKeywords} currentIndex={activeSearchIndex} keywordLimit={truncatedKeywordsLength}
+            lang={activeSearchLanguage} isExpandDisabled={true} />
         </div>
       }
       <span className="level mt-10 result-actions">
@@ -218,11 +228,11 @@ const Result: React.FC<ResultProps> = ({ hit }) => {
                 <span className="button is-small is-white bg-w pe-none mrn-5">
                   {hit.dataAccess === "Open" ? (
                     <span className="icon is-small">
-                      <FaLockOpen/>
+                      <FaLockOpen />
                     </span>
                   ) : hit.dataAccess === "Restricted" && (
                     <span className="icon is-small">
-                      <FaLock/>
+                      <FaLock />
                     </span>
                   )}
                   <span>{hit.dataAccess}</span>

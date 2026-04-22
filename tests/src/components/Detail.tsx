@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -17,34 +17,18 @@ import { render, screen, waitFor, within } from "../../testutils";
 import Detail, { Props } from "../../../src/components/Detail";
 import { mockStudy } from "../../common/mockdata";
 import userEvent from '@testing-library/user-event';
+import { BASE_INDEX } from '../../../common/constants';
+
+// Mock Keywords to get rid of warnings coming from it since it is tested separately anyway
+jest.mock('../../../src/components/Keywords', () => ({
+  __esModule: true,
+  default: () => <div data-testid="keywords-mock" />,
+}));
 
 const baseProps: Props = {
   item: {
     ...mockStudy,
-  },
-  headings: [
-    { summary: { id: 'summary-information', level: 'main', translation: "Summary" } },
-    { title: { id: 'title', level: 'subtitle', translation: "Title" } },
-    { creator: { id: 'creator', level: 'subtitle', translation: "Creator" } },
-    { pid: { id: 'pid', level: 'subtitle', translation: "PID" } },
-    { series: { id: 'series', level: 'subtitle', translation: "Series" } },
-    { abstract: { id: 'abstract', level: 'subtitle', translation: "Abstract" } },
-    { collPeriod: { id: 'data-collection-period', level: 'subtitle', translation: "Data collection period" } },
-    { country: { id: 'country', level: 'subtitle', translation: "Country" } },
-    { analysisUnit: { id: 'analysis-unit', level: 'subtitle', translation: "Analysis unit" } },
-    { universe: { id: 'universe', level: 'subtitle', translation: "Universe" } },
-    { sampProc: { id: 'sampling-procedure', level: 'subtitle', translation: "Sampling procedure" } },
-    { dataKind: { id: 'data-kind', level: 'subtitle', translation: "Kind of data" } },
-    { collMode: { id: 'data-collection-mode', level: 'subtitle', translation: "Data collection mode" } },
-    {
-      funding:
-        { id: 'funding', level: 'title', translation: "Funding information" },
-      "funder-0": { id: "funder-0", level: "subtitle", translation: "Funder" },
-      "grantNumber-0": { id: "grant-number-0", level: "subtitle", translation: "Grant number" }
-    },
-    { publicationYear: { id: 'publication-year', level: 'subtitle', translation: "Publication year" } },
-    { relPub: { id: 'related-publications', level: 'subtitle', translation: "Related publications" } }
-  ]
+  }
 };
 
 const renderDetailWithModifiedProps = (modifiedProps: Partial<Props['item']>) => {
@@ -93,12 +77,12 @@ it("should handle no study number provided", () => {
 
 it("should handle generating elements with no value", () => {
   renderDetailWithModifiedProps({ studyAreaCountries: [] });
-  checkValueAfterHeading('Country', 'language.notAvailable.field');
+  checkValueAfterHeading('metadata.country', 'language.notAvailable.field');
 });
 
 it("should handle formatting dates with missing data", () => {
   renderDetailWithModifiedProps({ publicationYear: undefined });
-  checkValueAfterHeading('Publication year', 'language.notAvailable.field');
+  checkValueAfterHeading('metadata.yearOfPublication', 'language.notAvailable.field');
 });
 
 it("should handle special case where array items are a start/end date range", () => {
@@ -110,7 +94,7 @@ it("should handle special case where array items are a start/end date range", ()
       { dataCollectionFreeText: "2006-05-04", event: "end" }
     ]
   });
-  checkValueAfterHeading('Data collection period', '01/02/2003 - 04/05/2006');
+  checkValueAfterHeading('metadata.dataCollectionPeriod', '01/02/2003 - 04/05/2006');
 });
 
 it("should handle formatting dates with fallback array containing date range", () => {
@@ -122,12 +106,12 @@ it("should handle formatting dates with fallback array containing date range", (
       { dataCollectionFreeText: "2006-05-04", event: "" }
     ]
   });
-  checkValueAfterHeading('Data collection period', '01/02/2003');
+  checkValueAfterHeading('metadata.dataCollectionPeriod', '01/02/2003');
 });
 
 it("should handle formatting dates with invalid first date", () => {
   renderDetailWithModifiedProps({ publicationYear: "Not a date" });
-  checkValueAfterHeading('Publication year', 'Not a date');
+  checkValueAfterHeading('metadata.yearOfPublication', 'Not a date');
 });
 
 it("should handle formatting dates as a range with invalid first date", () => {
@@ -135,7 +119,7 @@ it("should handle formatting dates as a range with invalid first date", () => {
     dataCollectionPeriodStartdate: 'Not a date',
     dataCollectionPeriodEnddate: '2006-05-04'
   });
-  checkValueAfterHeading('Data collection period', 'Not a date - 04/05/2006');
+  checkValueAfterHeading('metadata.dataCollectionPeriod', 'Not a date - 04/05/2006');
 });
 
 it("should handle formatting dates as a range with valid second date", () => {
@@ -143,7 +127,7 @@ it("should handle formatting dates as a range with valid second date", () => {
     dataCollectionPeriodStartdate: '2003-02-01',
     dataCollectionPeriodEnddate: '2006-05-04'
   });
-  checkValueAfterHeading('Data collection period', '01/02/2003 - 04/05/2006');
+  checkValueAfterHeading('metadata.dataCollectionPeriod', '01/02/2003 - 04/05/2006');
 });
 
 it("should handle formatting dates as a range with invalid second date", () => {
@@ -151,7 +135,7 @@ it("should handle formatting dates as a range with invalid second date", () => {
     dataCollectionPeriodStartdate: '2003-02-01',
     dataCollectionPeriodEnddate: 'Not a date'
   });
-  checkValueAfterHeading('Data collection period', '01/02/2003 - Not a date');
+  checkValueAfterHeading('metadata.dataCollectionPeriod', '01/02/2003 - Not a date');
 });
 
 it("should handle formatting dates as a range with valid second date but undefined first date", () => {
@@ -159,7 +143,7 @@ it("should handle formatting dates as a range with valid second date but undefin
     dataCollectionPeriodStartdate: undefined,
     dataCollectionPeriodEnddate: '2006-05-04'
   });
-  checkValueAfterHeading('Data collection period', 'language.notAvailable.field');
+  checkValueAfterHeading('metadata.dataCollectionPeriod', 'language.notAvailable.field');
 });
 
 it("should render related publications sorted by publication date", () => {
@@ -194,123 +178,148 @@ it("should render related publications sorted by publication date", () => {
 
 it("should handle no universe exclusion provided", () => {
   renderDetailWithModifiedProps({ universe: { exclusion: undefined, inclusion: 'Exampled studied cohort' } });
-  checkValueAfterHeading('Universe', 'Exampled studied cohort');
+  checkValueAfterHeading('metadata.universe', 'Exampled studied cohort');
 });
 
-it("should select json and trigger export metadata process", async () => {
-  // Spy on document.createElement
+it('should select json and trigger export metadata process', async () => {
+  // Spy on document.createElement (used to create <a> for download)
   const createElementSpy = jest.spyOn(document, 'createElement');
 
-  // Mock fetch
+  // Prevent jsdom from trying to navigate when <a>.click() is called
+  const anchorClickSpy = jest
+    .spyOn(HTMLAnchorElement.prototype, 'click')
+    .mockImplementation(() => {});
+
+  // Mock fetch for JSON export
   const mockFetch = jest.fn().mockResolvedValue({
     ok: true,
     json: async () => ({ some: 'data' }),
-    headers: new Headers(),
-    redirected: false,
-    status: 200,
-    statusText: 'OK',
-    type: 'basic',
-    url: '',
   } as Response);
-
   global.fetch = mockFetch;
 
   // Mock URL.createObjectURL and URL.revokeObjectURL
   const mockCreateObjectURL = jest.fn(() => 'blob:http://localhost/some-blob-url');
   const mockRevokeObjectURL = jest.fn();
-
-  // Apply the mocks to global.URL
   global.URL.createObjectURL = mockCreateObjectURL;
   global.URL.revokeObjectURL = mockRevokeObjectURL;
 
+  // Render the component
   render(<Detail {...baseProps} />);
 
-  // Simulate user clicking on the select box to open the dropdown
-  const inputElement = screen.getByRole('combobox', { name: 'Export metadata' });
-  userEvent.click(inputElement);
+  const user = userEvent.setup();
 
-  // Simulate selecting the "json" option
-  const jsonOption = await screen.findByText('JSON');
-  userEvent.click(jsonOption);
+  // Find the export format select
+  const select = screen.getByRole('combobox', { name: 'Export metadata' });
 
-  // Simulate clicking the export button
+  // Open select
+  await user.click(select);
+
+  // Navigate until JSON is selected
+  for (let i = 0; i < 5; i++) {
+    await user.keyboard('{ArrowDown}');
+    if (select.textContent?.includes('JSON')) {
+      await user.keyboard('{Enter}');
+      break;
+    }
+  }
+
+  // Click the export button
   const exportMetadataButton = screen.getByTestId('export-metadata-button');
-  userEvent.click(exportMetadataButton);
+  await user.click(exportMetadataButton);
 
-  // Now, wait for the async operations to complete and assert the correct behavior
+  // Assert that the JSON export fetch was triggered
   await waitFor(() => {
-    // Assertions to ensure the export process was triggered
-    expect(mockFetch).toHaveBeenCalled();
-    expect(mockFetch).toHaveBeenCalledWith(`${window.location.origin}/api/json/cmmstudy_en/1`);
-    expect(mockCreateObjectURL).toHaveBeenCalled();
-    expect(mockRevokeObjectURL).toHaveBeenCalled();
-    expect(createElementSpy).toHaveBeenCalledWith('a');
+    const jsonCalls = (mockFetch as jest.Mock).mock.calls
+      .map(call => call[0] as string)
+      .filter(url => url.includes('/api/json/'));
+
+    expect(jsonCalls).toHaveLength(1);
+    expect(jsonCalls[0]).toBe(
+      `${window.location.origin}/api/json/${BASE_INDEX}/1`
+    );
   });
 
-  // Clean up the spies after the test
+  // Assert that the browser download process was used
+  expect(mockCreateObjectURL).toHaveBeenCalled();
+  expect(mockRevokeObjectURL).toHaveBeenCalled();
+  expect(createElementSpy).toHaveBeenCalledWith('a');
+
+  // Cleanup spies
+  anchorClickSpy.mockRestore();
   createElementSpy.mockRestore();
   (global.fetch as jest.Mock).mockRestore();
   (global.URL.createObjectURL as jest.Mock).mockRestore();
   (global.URL.revokeObjectURL as jest.Mock).mockRestore();
 });
 
-it("should handle fetch failure and log error", async () => {
-  // Mock fetch to simulate a failure
+it('should handle fetch failure and log error', async () => {
+  // Mock fetch to simulate a failed JSON request
   const mockFetch = jest.fn().mockResolvedValue({
-    ok: false, // Simulate failure
-    json: async () => ({ some: 'data' }), // This will not be used
-    headers: new Headers(),
-    redirected: false,
-    status: 500,
-    statusText: 'Internal Server Error',
-    type: 'basic',
-    url: '',
+    ok: false,
+    json: async () => ({ some: 'data' }),
   } as Response);
-
   global.fetch = mockFetch;
 
-  // Mock URL.createObjectURL and URL.revokeObjectURL
-  const mockCreateObjectURL = jest.fn(() => 'blob:http://localhost/some-blob-url');
+  // Mock URL helpers (should not be used on failure)
+  const mockCreateObjectURL = jest.fn();
   const mockRevokeObjectURL = jest.fn();
-
   global.URL.createObjectURL = mockCreateObjectURL;
   global.URL.revokeObjectURL = mockRevokeObjectURL;
 
-  // Spy on console.error
-  const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn());
+  // Spy on console.error to verify error handling
+  const consoleErrorSpy = jest
+    .spyOn(console, 'error')
+    .mockImplementation(() => {});
 
+  // Prevent jsdom navigation just in case
+  const anchorClickSpy = jest
+    .spyOn(HTMLAnchorElement.prototype, 'click')
+    .mockImplementation(() => {});
+
+  // Render the component
   render(<Detail {...baseProps} />);
 
-  // Simulate user clicking on the select box to open the dropdown
-  const inputElement = screen.getByRole('combobox', { name: 'Export metadata' });
-  userEvent.click(inputElement);
+  const user = userEvent.setup();
 
-  // Simulate selecting the "json" option
-  const jsonOption = await screen.findByText('JSON');
-  userEvent.click(jsonOption);
+  // Find the export format select
+  const select = screen.getByRole('combobox', { name: 'Export metadata' });
 
-  // Simulate clicking the export button
+  // Open select
+  await user.click(select);
+
+  // Navigate until JSON is selected
+  for (let i = 0; i < 5; i++) {
+    await user.keyboard('{ArrowDown}');
+    if (select.textContent?.includes('JSON')) {
+      await user.keyboard('{Enter}');
+      break;
+    }
+  }
+
+  // Click the export button
   const exportMetadataButton = screen.getByTestId('export-metadata-button');
-  userEvent.click(exportMetadataButton);
+  await user.click(exportMetadataButton);
 
-  // Wait for async operations to complete
+  // Assert that fetch was attempted and the error was logged
   await waitFor(() => {
-    // Ensure the fetch call was made
-    expect(mockFetch).toHaveBeenCalled();
+    const jsonCalls = (mockFetch as jest.Mock).mock.calls
+      .map(call => call[0] as string)
+      .filter(url => url.includes('/api/json/'));
 
-    // Check if the createObjectURL and revokeObjectURL were not called due to failure
-    expect(mockCreateObjectURL).not.toHaveBeenCalled();
-    expect(mockRevokeObjectURL).not.toHaveBeenCalled();
-
-    // Check if the error was logged
+    expect(jsonCalls).toHaveLength(1);
     expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch JSON data');
   });
 
-  // Clean up mocks and spies
+  // Ensure download was NOT triggered
+  expect(mockCreateObjectURL).not.toHaveBeenCalled();
+  expect(mockRevokeObjectURL).not.toHaveBeenCalled();
+
+  // Cleanup mocks and spies
+  anchorClickSpy.mockRestore();
+  consoleErrorSpy.mockRestore();
   (global.fetch as jest.Mock).mockRestore();
   (global.URL.createObjectURL as jest.Mock).mockRestore();
   (global.URL.revokeObjectURL as jest.Mock).mockRestore();
-  consoleErrorSpy.mockRestore();
 });
 
 it('should expand abstract on click', async () => {
@@ -328,7 +337,8 @@ it('should expand abstract on click', async () => {
   expect(queryByText('readLess')).toBeNull();
 
   // Simulate clicking the toggle button
-  userEvent.click(toggleButton);
+  const user = userEvent.setup();
+  await user.click(toggleButton);
 
   // Verify state after clicking
   await waitFor(() => {
@@ -336,8 +346,6 @@ it('should expand abstract on click', async () => {
     expect(queryByText('readMore')).toBeNull();
   });
 });
-
-
 
 it('should add funding information if it exists', async () => {
   const fundingData = [
@@ -364,7 +372,7 @@ it('should add funding information if it exists', async () => {
   expect(fundingSection).toBeInTheDocument();
 
   // Funding title should exist
-  const fundingTitle = await screen.findByText('Funding information');
+  const fundingTitle = await screen.findByText('metadata.funding');
   expect(fundingTitle).toBeInTheDocument();
 
   // Check for each agency and grantNumber in the funding data
@@ -383,7 +391,7 @@ it('should not add funding information if it does not exist', () => {
   renderDetailWithModifiedProps({ funding: [] });
 
   // Attempt to find the funding information section
-  const fundingSection = screen.queryByText('Funding');
+  const fundingSection = screen.queryByText('metadata.funding');
 
   // Expect it to not be present in the document
   expect(fundingSection).toBe(null);
@@ -524,41 +532,42 @@ it("should show hidden fields when 'All elements' is clicked", async () => {
   });
 
   // Default view assertions
-  expect(screen.queryByText("Series")).not.toBeInTheDocument();
-  expect(screen.queryByText("Analysis unit")).not.toBeInTheDocument();
-  expect(screen.queryByText("Universe")).not.toBeInTheDocument();
-  expect(screen.queryByText("Sampling procedure")).not.toBeInTheDocument();
-  expect(screen.queryByText("Kind of data")).not.toBeInTheDocument();
-  expect(screen.queryByText("Data collection mode")).not.toBeInTheDocument();
-  expect(screen.queryByText("Related publications")).not.toBeInTheDocument();
-  expect(screen.getByText("Funding information")).toBeInTheDocument();
-  expect(screen.getByText("Funder")).toBeInTheDocument();
+  expect(screen.queryByText("metadata.series")).not.toBeInTheDocument();
+  expect(screen.queryByText("metadata.analysisUnit")).not.toBeInTheDocument();
+  expect(screen.queryByText("metadata.universe")).not.toBeInTheDocument();
+  expect(screen.queryByText("metadata.samplingProcedure")).not.toBeInTheDocument();
+  expect(screen.queryByText("metadata.dataKind")).not.toBeInTheDocument();
+  expect(screen.queryByText("metadata.dataCollectionMethod")).not.toBeInTheDocument();
+  expect(screen.queryByText("metadata.relatedPublications")).not.toBeInTheDocument();
+  expect(screen.getByText("metadata.funding")).toBeInTheDocument();
+  expect(screen.getByText("metadata.funder")).toBeInTheDocument();
   expect(screen.getByText("Finnish Agency")).toBeInTheDocument();
-  expect(screen.queryByText("Grant number")).not.toBeInTheDocument();
+  expect(screen.queryByText("metadata.grantNumber")).not.toBeInTheDocument();
 
   // Toggle to 'All elements'
+  const user = userEvent.setup();
   const showAllElementsButton = screen.getByTestId("all-elements-view-button");
-  userEvent.click(showAllElementsButton);
+  await user.click(showAllElementsButton);
 
   // All elements view assertions
   await waitFor(() => {
-    expect(screen.getByText("Series")).toBeInTheDocument();
-    checkValueAfterHeading("Series", "language.notAvailable.field");
-    expect(screen.getByText("Analysis unit")).toBeInTheDocument();
-    checkValueAfterHeading("Analysis unit", "language.notAvailable.field");
-    expect(screen.getByText("Universe")).toBeInTheDocument();
-    checkValueAfterHeading("Universe", "language.notAvailable.field");
-    expect(screen.getByText("Sampling procedure")).toBeInTheDocument();
-    checkValueAfterHeading("Sampling procedure", "language.notAvailable.field");
-    expect(screen.getByText("Kind of data")).toBeInTheDocument();
-    checkValueAfterHeading("Kind of data", "language.notAvailable.field");
-    expect(screen.getByText("Data collection mode")).toBeInTheDocument();
-    checkValueAfterHeading("Data collection mode", "language.notAvailable.field");
-    expect(screen.getByText("Related publications")).toBeInTheDocument();
-    checkValueAfterHeading("Related publications", "language.notAvailable.field");
-    expect(screen.getByText("Funding information")).toBeInTheDocument();
+    expect(screen.getByText("metadata.series")).toBeInTheDocument();
+    checkValueAfterHeading("metadata.series", "language.notAvailable.field");
+    expect(screen.getByText("metadata.analysisUnit")).toBeInTheDocument();
+    checkValueAfterHeading("metadata.analysisUnit", "language.notAvailable.field");
+    expect(screen.getByText("metadata.universe")).toBeInTheDocument();
+    checkValueAfterHeading("metadata.universe", "language.notAvailable.field");
+    expect(screen.getByText("metadata.samplingProcedure")).toBeInTheDocument();
+    checkValueAfterHeading("metadata.samplingProcedure", "language.notAvailable.field");
+    expect(screen.getByText("metadata.dataKind")).toBeInTheDocument();
+    checkValueAfterHeading("metadata.dataKind", "language.notAvailable.field");
+    expect(screen.getByText("metadata.dataCollectionMethod")).toBeInTheDocument();
+    checkValueAfterHeading("metadata.dataCollectionMethod", "language.notAvailable.field");
+    expect(screen.getByText("metadata.relatedPublications")).toBeInTheDocument();
+    checkValueAfterHeading("metadata.relatedPublications", "language.notAvailable.field");
+    expect(screen.getByText("metadata.funding")).toBeInTheDocument();
     expect(screen.getByText("Finnish Agency")).toBeInTheDocument();
-    expect(screen.getByText("Grant number")).toBeInTheDocument();
-    checkValueAfterHeading("Grant number", "language.notAvailable.field");
+    expect(screen.getByText("metadata.grantNumber")).toBeInTheDocument();
+    checkValueAfterHeading("metadata.grantNumber", "language.notAvailable.field");
   });
 });

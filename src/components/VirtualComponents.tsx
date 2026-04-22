@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -12,6 +12,9 @@
 // limitations under the License.
 
 import {
+  useSearchBox,
+  usePagination,
+  useHitsPerPage,
   useRange,
   UseRangeProps,
   useRefinementList,
@@ -19,22 +22,39 @@ import {
   useSortBy,
   UseSortByProps
 } from 'react-instantsearch';
+import { HITS_OPTIONS } from '../../common/constants'
+
+
+export const VirtualSearchBox = () => {
+  useSearchBox();
+  return null;
+};
+
+export const VirtualPagination = () => {
+  usePagination();
+  return null;
+};
+
+export const VirtualHitsPerPage = () => {
+  useHitsPerPage({
+    items: HITS_OPTIONS,
+  });
+
+  return null;
+};
 
 function VirtualRefinementList(props: UseRefinementListProps) {
   useRefinementList(props);
-
   return null;
 }
 
 function VirtualRangeInput(props: UseRangeProps) {
   useRange(props);
-
   return null;
 }
 
 function VirtualSortBy(props: UseSortByProps) {
   useSortBy(props);
-
   return null;
 }
 

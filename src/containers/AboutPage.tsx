@@ -13,10 +13,11 @@
 // limitations under the License.
 
 import React from "react";
-import { useLoaderData } from "react-router";
+import { LoaderFunctionArgs, useLoaderData } from "react-router";
 import { store } from "../store";
 import { updateMetrics } from "../reducers/search";
 import { useAppSelector } from "../hooks";
+import { thematicViews } from "../../common/thematicViews";
 
 const aboutPages = {
   cdc: require('../components/dynamic/pages/aboutPages/CdcAboutPage.tsx').default,
@@ -25,8 +26,20 @@ const aboutPages = {
   hummingbird: require('../components/dynamic/pages/aboutPages/HummingbirdAboutPage.tsx').default,
 };
 
-export const metricsLoader = async () => {
-  return await store.dispatch(updateMetrics());
+export const metricsLoader = async ({ request }: LoaderFunctionArgs) => {
+  const url = new URL(request.url);
+  const pathname = url.pathname;
+
+  const segment = pathname.split("/")[1];
+  const path = segment ? `/${segment}` : "/";
+
+  const view = thematicViews.find(v => v.path === path) ?? thematicViews.find(v => v.path === "/")!;
+
+  const indexWithoutLang = view.defaultIndex.split("_")[0];
+
+  return await store.dispatch(
+    updateMetrics({ indexBase: indexWithoutLang })
+  );
 };
 
 const AboutPage = () => {
@@ -37,8 +50,8 @@ const AboutPage = () => {
   return (
     <div className="columns">
       <div className="content-wrapper column is-three-fifths is-offset-one-fifth mt-6 p-2" data-testid="about-page">
-    <DynamicAboutPage metrics={metrics} />
-    </div>
+        <DynamicAboutPage metrics={metrics} />
+      </div>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -12,84 +12,84 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, { FocusEvent } from "react";
+import React, { FocusEvent, useState } from "react";
 import ThematicViewSwitcher from "./ThematicViewSwitcher";
 import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
-import { useAppSelector, useAppDispatch } from "../hooks";
-import { useClearRefinements, useHitsPerPage, usePagination, useSearchBox } from "react-instantsearch";
-import { hitsPerPageItems, getSortByItems } from "../containers/SearchPage";
-import { VirtualSortBy } from "../components/VirtualComponents";
-import { triggerSearchFormReset } from "../reducers/search";
+import { useAppSelector } from "../hooks";
+import { thematicViews, ThematicView } from "../../common/thematicViews";
+import { useResetToThematicView } from "../utilities/thematicView";
+
+
+function toggleClassOnFocusBlur(e: FocusEvent<HTMLElement>, className: string) {
+  e.target.classList.toggle(className);
+}
 
 const Header = () => {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
-  const currentIndex = useAppSelector((state) => state.thematicView.currentIndex);
   const currentThematicView = useAppSelector((state) => state.thematicView.currentThematicView);
+  const [isActive, setisActive] = useState(false);
+  const defaultThematicView = thematicViews.find((v: ThematicView) => v.path === "/") ?? thematicViews[0];
+  const currentCollectionLogo = require("../img/icons/" + currentThematicView.icon);
+  const defaultCollectionLogo = require("../img/icons/" + defaultThematicView.icon);
 
-  const sortByItems = getSortByItems(currentIndex.indexName, t);
-  const virtualSortByItems = [...sortByItems];
-
-  const { clear: clearQuery } = useSearchBox();
-  const { refine: refineFilters } = useClearRefinements();
-  const { refine: refinePagination } = usePagination();
-  const { refine: refineResultsPerPage } = useHitsPerPage({ items: hitsPerPageItems });
-
-  const resetQueries = () => {
-    clearQuery();
-    // Root path requires more resets
-    if (location.pathname === currentThematicView.path) {
-      refineFilters();
-      refinePagination(1);
-      refineResultsPerPage(30);
-    }
+  const buildLogoTarget = (view: ThematicView) => {
+    const isRoot = view.path === "/";
+    const basePath = isRoot ? "/" : `${view.path}/`;
+    const defaultIndexName = view.defaultIndex;
+    const search = isRoot ? "" : `?sortBy=${encodeURIComponent(defaultIndexName)}`;
+    return `${basePath}${search}`;
   };
 
-  const [isActive, setisActive] = React.useState(false);
-  const logoImg = require('../img/icons/' + currentThematicView.icon);
+  const resetToView = useResetToThematicView();
 
-  function toggleClassOnFocusBlur(e: FocusEvent<HTMLElement>, className: string) {
-    e.target.classList.toggle(className);
-  }
+  const logoTarget = buildLogoTarget(currentThematicView);
+  const cdcTarget = buildLogoTarget(defaultThematicView);
 
   return (
     <header>
-      <VirtualSortBy items={virtualSortByItems} />
       <div className="container columns is-mobile is-vcentered">
         <div className="column is-narrow p-1">
-          <Link
-            to={
-              currentThematicView.path !== '/'
-                ? `${currentThematicView.path}/?sortBy=${currentIndex.indexName}`
-                : `/?sortBy=${currentIndex.indexName}`
-            }
-            onClick={() => {
-              resetQueries();
-              dispatch(triggerSearchFormReset());
-            }}
-            style={{ cursor: 'pointer' }}
-          >
-            <div id="home" className="columns is-mobile is-vcentered is-gapless pr-1">
-              <div className="logo column is-narrow">
-                <img src={logoImg} alt="Home" />
+          <div className="columns is-mobile is-vcentered is-gapless">
+            {currentThematicView.path !== defaultThematicView.path && (
+              <Link to={cdcTarget} onClick={(e) => { e.preventDefault(); resetToView(defaultThematicView); }}>
+                <div id="home" className="columns is-mobile is-vcentered is-gapless pr-1">
+                  <div className="logo column is-narrow mr-2">
+                    <img src={defaultCollectionLogo} alt="CDC Home" />
+                  </div>
+                </div>
+              </Link>
+            )}
+
+            <Link to={logoTarget} onClick={(e) => { e.preventDefault(); resetToView(currentThematicView); }}>
+              <div id="home" className="columns is-mobile is-vcentered is-gapless pr-1">
+                <div className="logo column is-narrow">
+                  <img src={currentCollectionLogo} alt="Collection Home" />
+                </div>
+                <div className="logo-title column is-narrow">
+                  <h1>{currentThematicView.title}</h1>
+                </div>
               </div>
-              <div className="logo-title column is-narrow">
-                <h1>{currentThematicView.title}</h1>
-              </div>
-            </div>
-          </Link>
+            </Link>
+          </div>
         </div>
+
         <div className="column is-narrow hidden skip-link-wrapper is-hidden-mobile p-0">
-          <a href="#main" id="skip-to-main" className="link is-sr-only"
-            onFocus={e => toggleClassOnFocusBlur(e, "is-sr-only")}
-            onBlur={e => toggleClassOnFocusBlur(e, "is-sr-only")}>
+          <a
+            href="#main"
+            id="skip-to-main"
+            className="link is-sr-only"
+            onFocus={(e) => toggleClassOnFocusBlur(e, "is-sr-only")}
+            onBlur={(e) => toggleClassOnFocusBlur(e, "is-sr-only")}
+          >
             &nbsp;{t("header.skipToMain")}&nbsp;
           </a>
         </div>
+
         <div className="column is-narrow p-0 mln-5">
           <ThematicViewSwitcher />
         </div>
+
         <div className="column p-0">
           <div className="columns is-vcentered is-justify-content-end p-0">
             <nav className="column navbar is-narrow p-0" aria-label="Main">
@@ -114,23 +114,59 @@ const Header = () => {
                   <span aria-hidden="true"></span>
                 </a>
               </div>
+
               <div className={`navbar-menu ${isActive ? "is-active" : ""}`}>
-                <Link to="/" className="link navbar-item is-hidden-mobile is-sr-only"
-                  onFocus={e => toggleClassOnFocusBlur(e, "is-sr-only")}
-                  onBlur={e => toggleClassOnFocusBlur(e, "is-sr-only")}>{t("header.frontPage")}</Link>
-                <Link to={currentThematicView.path !== '/' ? `${currentThematicView.path}/documentation` : "/documentation"}
-                  className="link navbar-item">
+                <Link
+                  to={logoTarget}
+                  className="link navbar-item is-hidden-mobile is-sr-only"
+                  onClick={(e) => { e.preventDefault(); resetToView(currentThematicView); }}
+                  onFocus={(e) => toggleClassOnFocusBlur(e, "is-sr-only")}
+                  onBlur={(e) => toggleClassOnFocusBlur(e, "is-sr-only")}
+                >
+                  {t("header.frontPage")}
+                </Link>
+
+                <Link
+                  to={
+                    currentThematicView.path !== "/"
+                      ? `${currentThematicView.path}/documentation`
+                      : "/documentation"
+                  }
+                  className="link navbar-item"
+                >
                   {t("documentation.label")}
                 </Link>
-                <Link to={currentThematicView.path !== '/' ? `${currentThematicView.path}/collections` : "/collections"}
-                  className="link navbar-item">
+
+                <Link
+                  to={
+                    currentThematicView.path !== "/"
+                      ? `${currentThematicView.path}/collections`
+                      : "/collections"
+                  }
+                  className="link navbar-item"
+                >
                   {t("collections.label")}
                 </Link>
-                <Link to={currentThematicView.path !== '/' ? `${currentThematicView.path}/about` : "/about"}
-                  className="link navbar-item">
+
+                <Link
+                  to={
+                    currentThematicView.path !== "/"
+                      ? `${currentThematicView.path}/about`
+                      : "/about"
+                  }
+                  className="link navbar-item"
+                >
                   {t("about.label")}
                 </Link>
-                <a href="https://api.tech.cessda.eu/" target="_blank" rel="noreferrer" className="link navbar-item">{t("api.label")}</a>
+
+                <a
+                  href="https://api.tech.cessda.eu/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="link navbar-item"
+                >
+                  {t("api.label")}
+                </a>
               </div>
             </nav>
           </div>

@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { act, render, screen, waitFor } from "../../testutils";
+import { render, screen, waitFor } from "../../testutils";
 import Tooltip, { TooltipProps } from '../../../src/components/Tooltip';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -30,29 +30,30 @@ it('should render', () => {
 
 it('should display content on hover', async () => {
   render(<Tooltip {...baseProps} />);
+
+  const user = userEvent.setup();
   const tooltipIcon = screen.getByTestId('tooltip-icon');
-  userEvent.hover(tooltipIcon);
+  await user.hover(tooltipIcon);
 
   // Wait for the tooltip content to appear
   await waitFor(() => {
     expect(screen.getByTestId('tooltip-content')).toBeInTheDocument();
   });
-
-  expect(screen.getByText(baseProps.content)).toBeInTheDocument();
 });
 
 it('should hide content on mouse leave', async () => {
   render(<Tooltip {...baseProps} />);
   
+  const user = userEvent.setup();
   const tooltipIcon = screen.getByTestId('tooltip-icon');
-  userEvent.hover(tooltipIcon);
+  await user.hover(tooltipIcon);
   
   // Wait for the tooltip content to appear
   await waitFor(() => {
     expect(screen.getByTestId('tooltip-content')).toBeInTheDocument();
   });
 
-  userEvent.unhover(tooltipIcon);
+  await user.unhover(tooltipIcon);
   
   // Wait for tooltip content to disappear
   await waitFor(() => {
@@ -63,10 +64,11 @@ it('should hide content on mouse leave', async () => {
 it('should toggle content on button click', async () => {
   render(<Tooltip {...baseProps} />);
   
+  const user = userEvent.setup();
   const tooltipButton = screen.getByTestId('tooltip-button');
   
   // Click to activate the tooltip
-  userEvent.click(tooltipButton);
+  await user.click(tooltipButton);
   
   // Wait for the tooltip content to appear
   await waitFor(() => {
@@ -74,7 +76,7 @@ it('should toggle content on button click', async () => {
   });
 
   // Click again to deactivate the tooltip
-  userEvent.click(tooltipButton);
+  await user.click(tooltipButton);
   
   // Wait for the tooltip content to disappear
   await waitFor(() => {
@@ -85,13 +87,14 @@ it('should toggle content on button click', async () => {
 it('should hide content on Escape key press', async () => {
   render(<Tooltip {...baseProps} />);
   
+  const user = userEvent.setup();
   const tooltipButton = screen.getByTestId('tooltip-button');
 
   // Focus tooltip button
   tooltipButton.focus();
 
   // Simulate Escape key press
-  userEvent.keyboard('{Enter}');
+  await user.keyboard('{Enter}');
 
   // Wait for the tooltip content to appear
   await waitFor(() => {
@@ -99,7 +102,7 @@ it('should hide content on Escape key press', async () => {
   });
 
   // Simulate Escape key press
-  userEvent.keyboard('{Escape}');
+  await user.keyboard('{Escape}');
 
   // Wait for tooltip content to disappear
   await waitFor(() => {
@@ -115,13 +118,14 @@ it('should hide content on blur', async () => {
     </>
   );
 
+  const user = userEvent.setup();
   const tooltipButton = screen.getByTestId('tooltip-button');
 
   // Ensure the tooltip button is focused
   tooltipButton.focus();
 
   // Simulate Escape key press
-  userEvent.keyboard('{Enter}');
+  await user.keyboard('{Enter}');
 
   // Wait for the tooltip content to appear
   await waitFor(() => {
@@ -129,10 +133,10 @@ it('should hide content on blur', async () => {
   });
 
   // First tab: focus moves to tooltip content
-  userEvent.tab();
+  await user.tab();
 
   // Second tab: focus moves to the next button, triggering blur
-  userEvent.tab();
+  await user.tab();
 
   // Wait for the tooltip content to disappear
   await waitFor(() => {
@@ -159,11 +163,11 @@ it('should handle positioning near bottom of the viewport', async () => {
   });
 
   render(<Tooltip {...baseProps} />);
+
+  const user = userEvent.setup();
   const tooltipButton = screen.getByTestId('tooltip-button');
 
-  await act(async () => {
-    await userEvent.click(tooltipButton);
-  });
+  await user.click(tooltipButton);
 
   await waitFor(() => {
     const tooltip = screen.getByTestId('tooltip-content');

@@ -163,7 +163,7 @@ Example of [RefinementList](https://www.algolia.com/doc/api-reference/widgets/re
                 }}/>
 ```
 
-A high `limit` can be used here because the `ais-CustomRefinementList` class makes the values horizontally scrollable. Usually, a lower `limit` (e.g. 16) is recommended in the absence of the `ais-CustomRefinementList` class, along with setting `showMore` to false. Setting `searchable` is always recommended for any filter that supports it.
+A high `limit` can be used here because the `ais-CustomRefinementList` class makes the values scrollable. Usually, a lower `limit` (e.g. 16) is recommended in the absence of the `ais-CustomRefinementList` class, along with setting `showMore` to false. Setting `searchable` is always recommended for any filter that supports it.
 
 ### Modify sorting fields
 

@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -11,12 +11,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, { useEffect, useRef, useState } from "react";
-import { createBrowserRouter, Outlet, RouterProvider, useLocation, ScrollRestoration, RouteObject } from "react-router";
-import SearchPage, { getSortByItems } from "./containers/SearchPage";
+import React, { useEffect, useMemo, useRef } from "react";
+import {
+  createBrowserRouter,
+  Outlet,
+  RouterProvider,
+  ScrollRestoration,
+  RouteObject,
+  useNavigate
+} from "react-router";
+import SearchPage from "./containers/SearchPage";
 import DetailPage, { studyLoader } from "./containers/DetailPage";
 import AboutPage, { metricsLoader } from "./containers/AboutPage";
-import RestApiPage from "./containers/RestApiPage";
 import UserGuidePage from "./containers/UserGuidePage";
 import AccessibilityStatementPage from "./containers/AccessibilityStatementPage";
 import CollectionsPage from "./containers/CollectionsPage";
@@ -25,16 +31,23 @@ import ErrorPage from "./containers/ErrorPage";
 import { InstantSearch } from "react-instantsearch";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
-import { VirtualRefinementList, VirtualRangeInput, VirtualSortBy } from "./components/VirtualComponents";
+import {
+  VirtualRefinementList,
+  VirtualRangeInput,
+  VirtualSortBy,
+  VirtualPagination,
+  VirtualHitsPerPage,
+  VirtualSearchBox
+} from "./components/VirtualComponents";
 import searchClient from "./utilities/searchkit";
 import { history } from "instantsearch.js/es/lib/routers";
 import { useAppSelector } from "./hooks";
-import { useTranslation } from "react-i18next";
 import { thematicViews } from "../common/thematicViews";
 import { Helmet } from "react-helmet-async";
-import IndexSwitcher from "./components/IndexSwitcher";
-import CustomSearchBox from "./components/CustomSearchBox";
 import { useMatomoTracking, useSearchTracking } from "./hooks";
+import { BASE_INDEX, SORT_OPTIONS } from "../common/constants";
+import { indexBaseFromSortBy, getCollectionPath, isSearchRoute } from "../common/utils";
+import { ThematicViewInitialiser } from "./utilities/thematicView";
 
 
 const MatomoWrapper = () => {
@@ -43,31 +56,51 @@ const MatomoWrapper = () => {
   return null;
 };
 
+function buildGlobalSortByItems() {
+  // Unique base index names across all collections
+  const baseIndexes = Array.from(
+    new Set(thematicViews.flatMap((tv) => tv.esIndexes.map((i) => i.indexName)))
+  );
+
+  // Build items for every base index + every suffix
+  return baseIndexes.flatMap((base) =>
+    SORT_OPTIONS.map((opt) => ({
+      value: `${base}${opt.suffix}`,
+      // Label is irrelevant for virtual widget
+      label: `${base}${opt.suffix || ""}`,
+    }))
+  );
+}
+
 const Root = () => {
-  const { t } = useTranslation();
   const currentThematicView = useAppSelector((state) => state.thematicView.currentThematicView);
-  const currentIndex = useAppSelector((state) => state.thematicView.currentIndex);
-  const [queryError, setQueryError] = useState<string | null>(null);
-
-  const locationHook = useLocation();
-
+  const navigate = useNavigate();
   const faviconFolder = require.context('./img/favicons/', true, /\.(jpe?g|png|gif|svg)$/)
   const faviconImg = faviconFolder(`./${currentThematicView.favicon}`);
 
   // Create an array of all the sortBy options for all the languages
-  let virtualSortByItems: { value: string, label: string }[] = [];
-  currentThematicView.esIndexes.forEach(esIndex => {
-    const sortByItems = getSortByItems(esIndex.indexName, t);
-    virtualSortByItems = virtualSortByItems.concat(sortByItems);
-  });
+  const virtualSortByItems = useMemo(
+    () => buildGlobalSortByItems(), []
+  );
 
-  const onUpdateRef = useRef(() => { });
+  // Update body class to match selected collection
+  useEffect(() => {
+    document.body.className = currentThematicView.rootClass;
+  }, [currentThematicView.rootClass]);
+
+  const onUpdateRef = useRef<() => void>(() => { });
 
   useEffect(() => {
-    onUpdateRef.current();
-  }, [locationHook.search]);
+    // Only notify InstantSearch when on search route
+    if (!isSearchRoute(location.pathname)) return;
 
-  const routing = {
+    onUpdateRef.current?.();
+  }, [location.pathname, location.search, location.hash]);
+
+  const locationRef = useRef(location);
+  useEffect(() => { locationRef.current = location; }, [location]);
+
+  const routing = useMemo(() => ({
     router: history({
       // Synchronize InstantSearch’s router with changes to query params in react-router (location.search)
       start(onUpdate) {
@@ -77,66 +110,87 @@ const Root = () => {
         return qsModule.parse(location.search.slice(1));
       },
       createURL({ qsModule, location, routeState }) {
-        const { origin, pathname, hash } = location;
+        const { origin, pathname, hash, search } = location;
 
-        // Parse existing query parameters from the URL
-        const existingParams = qsModule.parse(location.search.slice(1));
+        const existingParams = qsModule.parse(search.slice(1));
+        const nextParams: Record<string, any> = { ...existingParams };
 
-        // Merge existing query params with the new route state
-        const combinedQueryParams = { ...existingParams, ...routeState };
+        for (const [key, value] of Object.entries(routeState)) {
+          if (value === undefined) {
+            delete nextParams[key]; // Remove stale params
+          } else {
+            nextParams[key] = value;
+          }
+        }
 
-        // Create the query string using qs with proper array formatting
-        const queryString = qsModule.stringify(combinedQueryParams, {
+        const queryString = qsModule.stringify(nextParams, {
           addQueryPrefix: true,
           arrayFormat: 'brackets', // Produces ?key[]=value1&key[]=value2
         });
 
         return `${origin}${pathname}${queryString}${hash}`;
       },
+      push(url) {
+        const u = new URL(url, window.location.origin);
 
+        navigate({ pathname: u.pathname, search: u.search, hash: u.hash }, { replace: false });
+      },
       // Whether the URL is cleaned up from active refinements when the router is disposed of
       cleanUrlOnDispose: true,
       // Number of milliseconds the router waits before writing the new URL to the browser
-      writeDelay: 400
+      writeDelay: 50
     }),
     stateMapping: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       stateToRoute(uiState: any) {
-        const indexUiState = uiState[currentIndex.indexName] || {};
-        const isSearchPage = location.pathname === '/' || location.pathname === `${currentThematicView.path}/`;
+        const pathname = locationRef.current.pathname;
 
-        // Drop sortBy if we are not on the search page or it's the same as default index
-        // Otherwise make sure to always have it
-        let sortBy: string | undefined = undefined;
-        if (isSearchPage) {
-          if (indexUiState.sortBy) {
-            if (indexUiState.sortBy !== 'cmmstudy_en') {
-              sortBy = indexUiState.sortBy;
-            }
-          } else if (currentIndex.indexName !== 'cmmstudy_en') {
-            sortBy = currentIndex.indexName;
-          }
+        // Not active outside of search route
+        if (!isSearchRoute(pathname)) {
+          return {};
         }
+
+        const indexUiState = uiState[BASE_INDEX] ?? {};
+        const currentSortBy: string = indexUiState.sortBy ?? BASE_INDEX;
+
+        const collectionPath = getCollectionPath(pathname);
+
+        const activeCollection =
+          thematicViews.find(tv => tv.path === collectionPath) ??
+          thematicViews.find(tv => tv.path === "/");
+
+        if (!activeCollection) {
+          return {};
+        }
+
+        const indexBase = indexBaseFromSortBy(currentSortBy, BASE_INDEX);
+        const belongsToCollection = activeCollection.esIndexes.some(idx => idx.indexName === indexBase);
+
+        // Only hide base/default index on root
+        const isRootDefault = collectionPath === "/" && currentSortBy === BASE_INDEX;
 
         return {
           query: indexUiState.query,
-          classifications: indexUiState.refinementList?.classifications,
-          keywords: indexUiState.refinementList?.keywords,
-          dataAccess: indexUiState.refinementList?.dataAccess,
-          collectionYear: indexUiState.range?.collectionYear,
-          country: indexUiState.refinementList?.country,
-          publisher: indexUiState.refinementList?.publisher,
-          timeMethod: indexUiState.refinementList?.timeMethod,
-          timeMethodCV: indexUiState.refinementList?.timeMethodCV,
+          classifications: indexUiState.refinementList?.classifications?.length ? indexUiState.refinementList.classifications : undefined,
+          keywords: indexUiState.refinementList?.keywords?.length ? indexUiState.refinementList.keywords : undefined,
+          dataAccess: indexUiState.refinementList?.dataAccess?.length ? indexUiState.refinementList.dataAccess : undefined,
+          collectionYear: indexUiState.range?.collectionYear ?? undefined,
+          country: indexUiState.refinementList?.country?.length ? indexUiState.refinementList.country : undefined,
+          publisher: indexUiState.refinementList?.publisher?.length ? indexUiState.refinementList.publisher : undefined,
+          timeMethod: indexUiState.refinementList?.timeMethod?.length ? indexUiState.refinementList.timeMethod : undefined,
+          timeMethodCV: indexUiState.refinementList?.timeMethodCV?.length ? indexUiState.refinementList.timeMethodCV : undefined,
           resultsPerPage: indexUiState.hitsPerPage,
           page: indexUiState.page,
-          sortBy: sortBy,
+          sortBy:
+            belongsToCollection && !isRootDefault
+              ? currentSortBy // Full value including sort option
+              : undefined,
         };
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       routeToState(routeState: any) {
         return {
-          [currentIndex.indexName]: {
+          [BASE_INDEX]: {
             query: routeState.query,
             refinementList: {
               classifications: routeState.classifications || [],
@@ -158,12 +212,12 @@ const Root = () => {
       }
     },
 
-  };
+  }), [navigate]);
 
   return (
 
     <InstantSearch searchClient={searchClient}
-      indexName={currentIndex.indexName}
+      indexName={BASE_INDEX}
       routing={routing}
       future={{
         // If false, each widget unmounting will also remove its state, even if multiple widgets read that UI state
@@ -182,33 +236,24 @@ const Root = () => {
       <Header />
 
       <main id="main">
-
         <div className="container">
-          <div className="columns mx-4 mt-2">
-            <div className="searchwrapper columns is-flex-direction-column is-mobile is-narrow mx-auto is-gapless mt-4 mb-2 p-2">
-              <div className="columns is-flex-direction-row is-mobile is-narrow mx-auto is-gapless mb-1">
-                <div className="column is-narrow">
-                  <IndexSwitcher />
-                </div>
-                <div className="column is-narrow pb-0">
-                  <CustomSearchBox setQueryError={setQueryError} />
-                </div>
-              </div>
-              {queryError && (
-                <div className="notification is-danger is-light mb-0">
-                  {queryError}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <VirtualRefinementList attribute="virtual" />
-          <VirtualRangeInput attribute="virtual" />
+          <VirtualSearchBox />
+          <VirtualPagination />
+          <VirtualHitsPerPage />
           <VirtualSortBy items={virtualSortByItems} />
-
+          <VirtualRefinementList attribute="classifications" />
+          <VirtualRefinementList attribute="keywords" />
+          <VirtualRefinementList attribute="dataAccess" />
+          <VirtualRefinementList attribute="country" />
+          <VirtualRefinementList attribute="publisher" />
+          <VirtualRefinementList attribute="timeMethod" />
+          <VirtualRefinementList attribute="timeMethodCV" />
+          <VirtualRangeInput attribute="collectionYear" />
+          <ThematicViewInitialiser />
           <Outlet />
         </div>
       </main>
+
       <Footer />
       <ScrollRestoration />
     </InstantSearch>
@@ -217,7 +262,6 @@ const Root = () => {
 
 
 // (OC 11.2024) Build Thematic View routes from paths in src/utilities/thematicViews.ts
-
 const routes: RouteObject[] = thematicViews.map(thematicView => {
   return ({
     path: thematicView.path,
@@ -228,14 +272,12 @@ const routes: RouteObject[] = thematicViews.map(thematicView => {
       { path: "about", element: <AboutPage />, loader: metricsLoader, HydrateFallback: () => null },
       { path: "detail/:id", element: <DetailPage />, loader: studyLoader, HydrateFallback: () => null },
       { path: "documentation", element: <UserGuidePage /> },
-      { path: "rest-api", element: <RestApiPage /> },
       { path: "accessibility-statement", element: <AccessibilityStatementPage /> },
       { path: "collections", element: <CollectionsPage /> },
       { path: "*", element: <NotFoundPage /> }
     ]
   })
-}
-);
+});
 const router = createBrowserRouter(routes);
 const App = () => {
 

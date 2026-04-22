@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2021
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -11,84 +11,118 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
-import { EsIndex } from "../../common/thematicViews";
-import { updateThematicView } from "../reducers/thematicView"
-import Select from 'react-select';
+import React, { useMemo } from "react";
+import Select from "react-select";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { useClearRefinements } from "react-instantsearch";
+import { useInstantSearch } from "react-instantsearch";
 import getPaq from "../utilities/getPaq";
+import { updateThematicView } from "../reducers/thematicView";
+import { BASE_INDEX } from "../../common/constants";
+import { useLocation, useNavigate } from "react-router";
+import { indexBaseFromSortBy, ensureSlash } from "../../common/utils";
 
-
-// No longer using the concept of language selection from a technical standpoint. We are switching the index, not the language in terms of i18n.
-// However, for the UI it makes more sense to present it as a language selector.
-
-type ESIndexOption = {
-  label: string;
-  indexName: string;
+interface SelectOption {
   value: {
     path: string;
-    esIndex: EsIndex;
+    indexName: string;
   };
-};
+  label: string;
+}
 
 const IndexSwitcher = () => {
-
-  const thematicView = useAppSelector((state) => state.thematicView);
-
+  const { currentThematicView: currentView, currentIndex } = useAppSelector((s) => s.thematicView);
   const dispatch = useAppDispatch();
-  const { refine: resetFilters } = useClearRefinements();
+  const navigate = useNavigate();
+  const { uiState, setUiState } = useInstantSearch();
+  const location = useLocation();
+  const isDetail = location.pathname.includes("/detail/");
 
+  const esIndexOptions: SelectOption[] = currentView.esIndexes.map(
+    (esIndex) => ({
+      label: esIndex.language,
+      value: {
+        path: currentView.path,
+        indexName: esIndex.indexName,
+      },
+    })
+  );
 
-  const esIndexOptions: ESIndexOption[] = thematicView.currentThematicView.esIndexes.map((esIndex: EsIndex) => ({
-    label: esIndex.language,
-    indexName: esIndex.indexName,
-    value: { path: thematicView.currentThematicView.path, esIndex: esIndex }
-  }));
+  const effectiveLanguageIndex = isDetail
+    ? currentIndex.indexName
+    : indexBaseFromSortBy(
+      uiState?.[BASE_INDEX]?.sortBy,
+      BASE_INDEX
+    );
 
-  const changeIndex = (value: { path: string; esIndex: EsIndex }) => {
-    // Notify Matomo Analytics of language change
-    const _paq = getPaq();
-    _paq.push(['trackEvent', 'Language', 'Change Language', value.esIndex.languageCode.toUpperCase()]);
-    resetFilters();
-    dispatch(updateThematicView(value));
+  const selectedOption = useMemo(() => {
+    return (
+      esIndexOptions.find((o) => o.value.indexName === effectiveLanguageIndex) ??
+      esIndexOptions.find((o) => o.value.indexName === BASE_INDEX) ??
+      null
+    );
+  }, [esIndexOptions, effectiveLanguageIndex]);
+
+  const changeIndex = (option: SelectOption) => {
+    const nextIndex = option.value.indexName;
+    const isBase = nextIndex === BASE_INDEX;
+
+    // Matomo
+    const esIndex = currentView.esIndexes.find(
+      (i) => i.indexName === nextIndex
+    );
+    if (esIndex) {
+      const _paq = getPaq();
+      _paq.push([
+        "trackEvent",
+        "Language",
+        "Change Language",
+        esIndex.languageCode.toUpperCase(),
+      ]);
+    }
+
+    // Reset InstantSearch state defensively
+    setUiState((prev) => ({
+      ...prev,
+      [BASE_INDEX]: {
+        sortBy: isBase ? undefined : nextIndex,
+        page: 1,
+      },
+    }));
+
+    const search = isBase ? "" : `?sortBy=${nextIndex}`;
+    navigate(`${ensureSlash(currentView.path)}${search}`, {
+      replace: location.search === search,
+    });
+
+    dispatch(
+      updateThematicView({
+        path: currentView.path,
+        indexName: nextIndex,
+      })
+    );
   };
-
-  const currentLabel = (esIndexOptions.find((l) => l.indexName === thematicView.currentIndex.indexName) as ESIndexOption).label;
 
   return (
     <div className="language-picker">
       <Select
+        key={`${currentView.key}-${currentIndex.indexName}`} // Re-init on index/view change
         classNamePrefix="react-select"
-        value={{
-          value: {
-            path: thematicView.currentThematicView.path,
-            esIndex: thematicView.currentIndex
-          },
-          label: currentLabel
-        }}
+        value={selectedOption}
         options={esIndexOptions}
         isSearchable={false}
         aria-label="Search language"
         isClearable={false}
-        onChange={(option) => {
-          if (option) {
-            changeIndex(option.value);
-          }
-        }}
+        onChange={(opt) => opt && changeIndex(opt)}
+        getOptionValue={(o) => o.value.indexName}
         classNames={{
-          control: (state) =>
-            state.isFocused ? 'is-focused' : '',
+          control: (state) => (state.isFocused ? "is-focused" : ""),
         }}
         styles={{
-          menu: (baseStyles) => ({
-            ...baseStyles,
-            marginTop: '0',
-          }),
-          control: (baseStyles) => ({
-            ...baseStyles,
-            boxShadow: 'none',
-            outline: 'none',
+          menu: (base) => ({ ...base, marginTop: "0" }),
+          control: (base) => ({
+            ...base,
+            boxShadow: "none",
+            outline: "none",
           }),
         }}
       />

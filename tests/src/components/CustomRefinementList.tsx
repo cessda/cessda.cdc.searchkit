@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import '../../mocks/reduxHooksMock';
 import React from 'react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import CustomRefinementList from '../../../src/components/CustomRefinementList';
@@ -18,10 +19,6 @@ import { useRefinementList, useCurrentRefinements } from 'react-instantsearch';
 import { useAppSelector } from '../../../src/hooks';
 import userEvent from '@testing-library/user-event';
 
-jest.mock("../../../src/hooks", () => ({
-  useAppDispatch: jest.fn(),
-  useAppSelector: jest.fn(),
-}));
 
 let debouncedFn: jest.MockedFunction<(value: string) => void>;
 

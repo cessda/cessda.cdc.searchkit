@@ -1,3 +1,16 @@
+// Copyright CESSDA ERIC 2017-2026
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not
+// use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import React from "react";
 import { Link } from "react-router";
 import { Organization, WithContext } from "schema-dts";
@@ -39,7 +52,6 @@ const DynamicFooter = () => {
     <footer data-testid="footer" className="footer">
       <div className="container">
         <div className="columns">
-
           <div className="column pt-1">
             <a href="https://www.cessda.eu" target="_blank" rel="noreferrer">
               <svg id="footerlogo" viewBox="0 0 2386 652" xmlns="http://www.w3.org/2000/svg" aria-label="CESSDA Home Page">
@@ -65,7 +77,7 @@ const DynamicFooter = () => {
 
           <div className="column has-text-right-tablet p-0">
             <Link to={currentThematicView.path !== '/' ? `${currentThematicView.path}/collections` : "/collections"}>
-              Collections
+              {t("collections.label")}
             </Link> <br />
             <Link to={currentThematicView.path !== '/' ? `${currentThematicView.path}/documentation` : "/documentation"}>
               {t("documentation.label")}
@@ -86,7 +98,6 @@ const DynamicFooter = () => {
             </div>
           </div>
         </div>
-
       </div>
       <script type="application/ld+json" data-testid="coordinateJson">{organizationCoordinateJSON}</script>
       <script type="application/ld+json" data-testid="cessdaJson">{organizationCessdaJSON}</script>

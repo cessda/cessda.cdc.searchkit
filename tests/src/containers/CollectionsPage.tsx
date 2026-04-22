@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -12,56 +12,40 @@
 // limitations under the License.
 
 import '../../mocks/reacti18nMock';
+import '../../mocks/instantsearchMock';
+import '../../mocks/routerMock';
+import '../../mocks/reduxHooksMock';
 import React from "react";
 import { render } from "../../testutils";
 import CollectionsPage from "../../../src/containers/CollectionsPage";
 import { ThematicView, thematicViews, EsIndex } from "../../../common/thematicViews";
-import { useAppDispatch, useAppSelector } from "../../../src/hooks";
+import { useAppSelector } from "../../../src/hooks";
 import '@testing-library/jest-dom';
 
 
-// Mock react-router module
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useSearchParams: jest.fn(),
-  useLocation: () => ({
-    pathname: "/",
-    key: "mockKey",
+jest.mock('../../../src/img/icons/iconMap', () => ({
+  iconMap: new Proxy({}, {
+    get: () => 'test-icon.svg',
   }),
 }));
 
-// Mock the redux hooks
-jest.mock("../../../src/hooks", () => ({
-  useAppDispatch: jest.fn(),
-  useAppSelector: jest.fn(),
-}));
-
-const mockDispatch = jest.fn();
 const initialView = thematicViews.find((tv) => tv.path === "/") as ThematicView;
-const initialIndex =  initialView.esIndexes.find((i) => i.indexName === initialView.defaultIndex ) as EsIndex;
-
-
-
+const initialIndex = initialView.esIndexes.find((i) => i.indexName === initialView.defaultIndex) as EsIndex;
 
 describe("Collections Page", () => {
   beforeEach(() => {
-    // Mock the necessary Redux state
-     // Mock the necessary Redux state
-     (useAppSelector as jest.Mock).mockImplementation((callback) =>
+    (useAppSelector as jest.Mock).mockImplementation((callback) =>
       callback({
         thematicView: {
           currentThematicView: initialView,
           currentIndex: initialIndex
         },
-        search: { 
+        search: {
           showFilterSummary: false,
-          showMobileFilters: false 
+          showMobileFilters: false
         },
       })
     );
-    (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
-
-
   });
 
   afterEach(() => {
@@ -70,8 +54,5 @@ describe("Collections Page", () => {
 
   it("should render Collections Page correctly", async () => {
     render(<CollectionsPage />);
-
   });
-
-
 });

@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import {
   Creator,
   DataCollectionFreeText,
   DataKindFreeText,
+  Funding,
   getDDI,
   Identifier,
   TermVocabAttributes,
@@ -41,10 +42,10 @@ import SeriesList from './SeriesList';
 import { OrcidLogo, RorLogo } from "./PidLogos";
 import { Helmet } from "react-helmet-async";
 import { toggleAllFields } from "../reducers/detail";
+import { buildSearchLink } from "../../common/utils";
 
 export interface Props {
   item: CMMStudy;
-  headings: HeadingEntry[];
 }
 
 export interface State {
@@ -58,7 +59,6 @@ interface Option {
 }
 
 
-
 const Detail = (props: Props) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -67,7 +67,6 @@ const Detail = (props: Props) => {
   const showAllFields = useAppSelector((state) => state.detail.showAllFields);
 
   const item = props.item;
-  const headings = props.headings;
   const truncatedAbstractLength = 2000;
   const abstractWithoutTags = striptags(item.abstract).trim();
 
@@ -251,6 +250,80 @@ const Detail = (props: Props) => {
     }
   }
 
+  function addFundingEntries(fundingArray: Funding[]): HeadingEntry[] {
+    const fundingHeadings: HeadingEntry[] = [
+      {
+        funding: {
+          id: "funding",
+          level: "title",
+          translation: t("metadata.funding"),
+        },
+      },
+    ];
+    if (fundingArray.length === 0) {
+      // Add one default set of subheadings for all elements view
+      fundingHeadings.push({
+        "funder-0": {
+          id: "funder-0",
+          level: "subtitle",
+          translation: t("metadata.funder"),
+        },
+      });
+      fundingHeadings.push({
+        "grantNumber-0": {
+          id: "grant-number-0",
+          level: "subtitle",
+          translation: t("metadata.grantNumber"),
+        },
+      });
+    } else {
+      fundingArray.forEach((_, index) => {
+        fundingHeadings.push({
+          [`funder-${index}`]: {
+            id: `funder-${index}`,
+            level: "subtitle",
+            translation: t("metadata.funder"),
+          },
+        });
+        fundingHeadings.push({
+          [`grantNumber-${index}`]: {
+            id: `grant-number-${index}`,
+            level: "subtitle",
+            translation: t("metadata.grantNumber"),
+          },
+        });
+      });
+    }
+    return fundingHeadings;
+  }
+
+  const headings: HeadingEntry[] = [
+    { summary: { id: 'summary-information', level: 'title', translation: t("metadata.summaryInformation") } },
+    { title: { id: 'title', level: 'subtitle', translation: t("metadata.studyTitle") } },
+    { creator: { id: 'creator', level: 'subtitle', translation: t("metadata.creator") } },
+    { pid: { id: 'pid', level: 'subtitle', translation: t("metadata.studyPersistentIdentifier") } },
+    { dataAccess: { id: 'data-access', level: 'subtitle', translation: t("metadata.dataAccess") } },
+    { series: { id: 'series', level: 'subtitle', translation: t("metadata.series") } },
+    { abstract: { id: 'abstract', level: 'subtitle', translation: t("metadata.abstract") } },
+    { methodology: { id: 'methodology', level: 'title', translation: t("metadata.methodology.label") } },
+    { collPeriod: { id: 'data-collection-period', level: 'subtitle', translation: t("metadata.dataCollectionPeriod") } },
+    { country: { id: 'country', level: 'subtitle', translation: t("metadata.country") } },
+    { timeDimension: { id: 'time-dimension', level: 'subtitle', translation: t("metadata.timeDimension") } },
+    { analysisUnit: { id: 'analysis-unit', level: 'subtitle', translation: t("metadata.analysisUnit") } },
+    { universe: { id: 'universe', level: 'subtitle', translation: t("metadata.universe") } },
+    { sampProc: { id: 'sampling-procedure', level: 'subtitle', translation: t("metadata.samplingProcedure") } },
+    { dataKind: { id: 'data-kind', level: 'subtitle', translation: t("metadata.dataKind") } },
+    { collMode: { id: 'data-collection-mode', level: 'subtitle', translation: t("metadata.dataCollectionMethod") } },
+    ...addFundingEntries(item.funding ?? []),
+    { access: { id: 'access', level: 'title', translation: t("metadata.access") } },
+    { publisher: { id: 'publisher', level: 'subtitle', translation: t("metadata.publisher") } },
+    { publicationYear: { id: 'publication-year', level: 'subtitle', translation: t("metadata.yearOfPublication") } },
+    { accessTerms: { id: 'terms-of-data-access', level: 'subtitle', translation: t("metadata.termsOfDataAccess") } },
+    { topics: { id: 'topics', level: 'title', translation: t("metadata.topics.label") } },
+    { keywords: { id: 'keywords', level: 'title', translation: t("metadata.keywords.label") } },
+    { relPub: { id: 'related-publications', level: 'title', translation: t("metadata.relatedPublications") } }
+  ]
+
   function generateHeading(headingKey: string, classNames?: string, overrideId?: string) {
     // Find the heading object with the specified key
     const headingObj = headings.find((entry) => entry[headingKey]);
@@ -379,19 +452,12 @@ const Detail = (props: Props) => {
       );
     };
 
-    const identifiers = [
-      ...(creator.identifiers || []),
-      // Could handle updated identifiers with just "creator.identifiers || []"
-      // so this is to make it work with the old format where "identifier" was a single object
-      ...("identifier" in creator && typeof creator.identifier === "object" && creator.identifier !== null
-        ? [creator.identifier as Identifier]
-        : [])
-    ];
+    const identifiers = creator.identifiers || [];
 
     const creatorIdentifiers = identifiers.filter(id =>
       id.role?.toLowerCase() === "pid" ||
       id.type?.toLowerCase() === "orcid" ||
-      // Fallback: no role, and not clearly affiliation pid (e.g. ROR with affiliation defined)
+      // Fallback: no role, and not clearly an affiliation pid (e.g. ROR with affiliation defined)
       (!id.role && (id.type?.toLowerCase() !== "ror" || !creator.affiliation))
     );
 
@@ -787,7 +853,10 @@ const Detail = (props: Props) => {
                 <div className="tags mt-2">
                   {generateElements(item.classifications, "tag",
                     (classifications) => (
-                      <Link to={`/?sortBy=${selectedLangIndex}&classifications%5B0%5D=${encodeURI(classifications.term.toLowerCase())}`}>
+                      <Link to={buildSearchLink(
+                        selectedLangIndex,
+                        `classifications%5B0%5D=${encodeURIComponent(classifications.term.toLowerCase())}`
+                      )}>
                         {upperFirst(classifications.term)}
                       </Link>
                     )
@@ -814,7 +883,7 @@ const Detail = (props: Props) => {
                 ariaLabel={t("metadata.methodology.tooltip.ariaLabel")}
                 classNames={{ container: 'mt-1 ml-1' }} />
 
-              {/*  If hiding the below field group, use "dataCollectionPeriodStartdate" in excludeFields in src/utilities/thematicViews.ts */}
+              {/* If hiding the below field group, use "dataCollectionPeriodStartdate" in excludeFields in src/utilities/thematicViews.ts */}
               {!currentThematicView.excludeFields.includes('dataCollectionPeriodStartdate') &&
                 <>
                   {generateHeading('collPeriod')}

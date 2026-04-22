@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -25,34 +25,30 @@ export interface DetailState {
   showAllFields: boolean;
 }
 
-const initialState: DetailState = {
+export const initialState: DetailState = {
   availableLanguages: [],
   study: undefined,
   similars: [],
   showAllFields: false
 };
 
-export interface UpdateStudyPayload { 
-  study: CMMStudy | undefined; 
-  similars: Similar[]; 
-  availableLanguages: Language[]; 
-}
-
-export const updateStudy = createAsyncThunk('search/updateStudy', async ({ id, lang }: { id: string, lang: string }, { getState }): Promise<UpdateStudyPayload> => {
-
-
-  const { thematicView } = getState() as { thematicView: ThematicViewState };
+export const updateStudy = createAsyncThunk('search/updateStudy', async (
+  { id, lang, forceIndex }: { id: string; lang: string; forceIndex?: string }, { getState }) => {
   let study = undefined;
   let similars: Similar[] = [];
   const availableLanguages: Language[] = [];
-  const currentLang = thematicView.currentIndex.indexName.split("_")[1];
+  let fetchIndex = forceIndex;
 
-  let fetchIndex = thematicView.currentIndex.indexName;
+  if (!fetchIndex) {
+    const { thematicView } = getState() as { thematicView: ThematicViewState };
+    const currentLang = thematicView.currentIndex.indexName.split("_")[1];
+    fetchIndex = thematicView.currentIndex.indexName;
 
-  if (lang && lang != currentLang) {
-    fetchIndex = thematicView.currentIndex.indexName.split("_")[0] + "_" + lang;
+    if (lang && lang !== currentLang) {
+      fetchIndex = fetchIndex.split("_")[0] + "_" + lang;
+    }
   }
-  
+
   const response = await fetch(`${window.location.origin}/api/sk/_get/${fetchIndex}/${encodeURIComponent(id)}`);
 
   if (response.ok) {

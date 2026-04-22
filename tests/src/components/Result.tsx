@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -19,6 +19,18 @@ import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { Hit, HitAttributeHighlightResult } from 'instantsearch.js';
 import { CMMStudy } from '../../../common/metadata';
+import { BASE_INDEX } from '../../../common/constants';
+
+
+jest.mock('react-instantsearch', () => ({
+  useInstantSearch: () => ({
+    uiState: {
+      [BASE_INDEX]: {
+        sortBy: 'coordinate_en',
+      },
+    },
+  }),
+}));
 
 const baseMockHit = {
   objectID: "1",
@@ -139,7 +151,7 @@ it('renders highlighted title', () => {
   render(<Result hit={modifiedHit} />);
 
   // Title
-  expect(screen.getByText((modifiedHit?._highlightResult?.titleStudy as HitAttributeHighlightResult).value )).toBeInTheDocument();
+  expect(screen.getByText((modifiedHit?._highlightResult?.titleStudy as HitAttributeHighlightResult).value)).toBeInTheDocument();
 });
 
 it('renders language buttons', () => {
@@ -209,7 +221,7 @@ it('toggles abstract expansion on Enter or Space key', async () => {
 });
 
 it('should display "Open" when data access is Open', () => {
-  render(<Result hit={baseMockHit}/>);
+  render(<Result hit={baseMockHit} />);
 
   expect(screen.getByText('Open')).toBeInTheDocument();
 });

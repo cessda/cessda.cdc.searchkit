@@ -1,5 +1,5 @@
 /** @jest-environment node */
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { BASE_INDEX } from "../../common/constants";
 import Elasticsearch from "../../server/elasticsearch";
 import { mockStudy } from "../common/mockdata"
 
@@ -48,14 +49,14 @@ describe('elasticsearch utilities', () => {
   describe('getStudy()', () => {
     it('should get a study', async () => {
       const es = new Elasticsearch("test", undefined);
-      await expect(es.getStudy(mockStudy.id, "cmmstudy_en")).resolves.toBe(mockStudy);
+      await expect(es.getStudy(mockStudy.id, BASE_INDEX)).resolves.toBe(mockStudy);
     });
   });
 
   describe('getSimilars()', () => {
     it('should return an array of similars', async () => {
       const es = new Elasticsearch("test");
-      await expect(es.getSimilars(mockStudy.titleStudy, mockStudy.id, "cmmstudy_en"))
+      await expect(es.getSimilars(mockStudy.titleStudy, mockStudy.id, BASE_INDEX))
         .resolves.toStrictEqual([{ 
           id: mockStudy.id, 
           title: mockStudy.titleStudy
@@ -77,7 +78,7 @@ describe('elasticsearch utilities', () => {
             }
           },
         },
-        index: "cmmstudy_en",
+        index: BASE_INDEX,
         size: 5,
       });
     });

@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import { FaAngleDown, FaAngleUp, FaExternalLinkAlt } from "react-icons/fa";
 import { getELSSTTerm } from "../utilities/elsst";
 import { WithTranslation, withTranslation } from "react-i18next";
 import { Link } from "react-router";
+import { buildSearchLink } from "../../common/utils";
 
 export interface Props {
   keywords: TermVocabAttributes[];
@@ -66,7 +67,7 @@ export class Keywords extends React.Component<Props & WithTranslation, State> {
     this.abortController.abort();
   }
 
-  private generateElements<T> (
+  private generateElements<T>(
     field: T[],
     callback: (args: T) => React.JSX.Element | string,
   ) {
@@ -105,7 +106,12 @@ export class Keywords extends React.Component<Props & WithTranslation, State> {
             // If the term is a valid ELSST term, also link to ELSST
             const keywordTerm = upperFirst(keywords.term);
             return (<>
-              <Link to={{ pathname: "/" + location.pathname.split('/')[1].replace("detail", ""), search: `?sortBy=${this.props.currentIndex}&keywords%5B%5D=${encodeURI(keywords.term.toLowerCase())}` }}>{keywordTerm}</Link>
+              <Link to={buildSearchLink(
+                this.props.currentIndex,
+                `keywords%5B%5D=${encodeURIComponent(keywords.term.toLowerCase())}`
+              )}>
+                {keywordTerm}
+              </Link>
               {this.state.elsstURLs[keywords.term] &&
                 <span className="is-inline-flex is-align-items-center">&nbsp;(
                   <a href={this.state.elsstURLs[keywords.term]} rel="noreferrer" target="_blank"
