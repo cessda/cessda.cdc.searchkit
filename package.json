@@ -86,7 +86,7 @@
     "instantsearch.js": "4.93.0",
     "jest": "30.3.0",
     "jest-environment-jsdom": "30.3.0",
-    "jest-junit": "16.0.0",
+    "jest-junit": "17.0.0",
     "jest-mock-fetch": "2.0.5",
     "jest-util": "30.3.0",
     "mini-css-extract-plugin": "2.10.0",
