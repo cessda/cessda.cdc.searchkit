@@ -70,7 +70,7 @@ const CustomSearchBox = ({ setQueryError, ...props }: CustomSearchBoxProps) => {
   const { status } = useInstantSearch();
   const [inputValue, setInputValue] = useState(query);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
 
   const isSearchStalled = status === 'stalled';
 

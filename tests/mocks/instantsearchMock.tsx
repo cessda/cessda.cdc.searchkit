@@ -27,7 +27,10 @@ jest.mock('react-instantsearch', () => ({
       </form>
     </div>
   ),
-  SortBy: ({ items, onChange }: { items: SortByItem[]; onChange: any }) => (
+  SortBy: ({ items, onChange }: {
+    items: SortByItem[];
+    onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  }) => (
     <select onChange={onChange}>
       {items.map(item => (
         <option key={item.value} value={item.value}>

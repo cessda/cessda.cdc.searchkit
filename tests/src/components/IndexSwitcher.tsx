@@ -27,20 +27,36 @@ import { thematicViews } from '../../../common/thematicViews';
 import { BASE_INDEX } from '../../../common/constants';
 
 
+type MockSelectOption = {
+  value: {
+    path: string;
+    indexName: string;
+  };
+  label: string;
+};
+
+type MockSelectProps = {
+  options: MockSelectOption[];
+  value?: MockSelectOption | null;
+  onChange: (option: MockSelectOption | null) => void;
+};
+
 jest.mock('react-select', () => ({
   __esModule: true,
-  default: jest.fn(({ options, value, onChange }) => (
+  default: jest.fn(({ options, value, onChange }: MockSelectProps) => (
     <select
       data-testid="index-switcher"
-      value={value?.value.indexName}
+      value={value?.value.indexName ?? ""}
       onChange={(e) => {
-        const opt = options.find(
-          (o: any) => o.value.indexName === e.target.value
-        );
+        const opt =
+          options.find(
+            (o) => o.value.indexName === e.target.value
+          ) ?? null;
+
         onChange(opt);
       }}
     >
-      {options.map((o: any) => (
+      {options.map((o) => (
         <option
           key={o.value.indexName}
           value={o.value.indexName}

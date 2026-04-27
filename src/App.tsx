@@ -113,7 +113,7 @@ const Root = () => {
         const { origin, pathname, hash, search } = location;
 
         const existingParams = qsModule.parse(search.slice(1));
-        const nextParams: Record<string, any> = { ...existingParams };
+        const nextParams = { ...existingParams };
 
         for (const [key, value] of Object.entries(routeState)) {
           if (value === undefined) {

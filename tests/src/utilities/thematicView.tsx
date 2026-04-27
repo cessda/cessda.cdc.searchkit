@@ -36,7 +36,7 @@ jest.mock('react-instantsearch', () => ({
 }));
 
 jest.mock('../../../src/reducers/thematicView', () => ({
-  updateThematicView: (payload: any) => ({
+  updateThematicView: (payload: { path: string; indexName: string }) => ({
     type: 'updateThematicView',
     payload,
   }),

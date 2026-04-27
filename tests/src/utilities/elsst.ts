@@ -23,7 +23,7 @@ describe('getELSSTTerm (frontend utility)', () => {
 
   it('returns empty object and does not fetch when labels are empty', async () => {
     const fetchSpy = jest.fn();
-    global.fetch = fetchSpy as any;
+    global.fetch = fetchSpy as unknown as typeof fetch;
 
     const controller = new AbortController();
 
@@ -41,7 +41,7 @@ describe('getELSSTTerm (frontend utility)', () => {
       }),
     };
 
-    global.fetch = jest.fn().mockResolvedValue(mockResponse as any);
+    global.fetch = jest.fn().mockResolvedValue(mockResponse) as typeof fetch;
 
     const controller = new AbortController();
 
@@ -68,7 +68,7 @@ describe('getELSSTTerm (frontend utility)', () => {
   it('returns empty object when response is not ok', async () => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,
-    } as any);
+    });
 
     const controller = new AbortController();
 
