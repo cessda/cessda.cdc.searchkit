@@ -314,7 +314,7 @@ const Detail = (props: Props) => {
     { sampProc: { id: 'sampling-procedure', level: 'subtitle', translation: t("metadata.samplingProcedure") } },
     { dataKind: { id: 'data-kind', level: 'subtitle', translation: t("metadata.dataKind") } },
     { collMode: { id: 'data-collection-mode', level: 'subtitle', translation: t("metadata.dataCollectionMethod") } },
-    ...addFundingEntries(item.funding ?? []),
+    ...addFundingEntries(item.funding),
     { access: { id: 'access', level: 'title', translation: t("metadata.access") } },
     { publisher: { id: 'publisher', level: 'subtitle', translation: t("metadata.publisher") } },
     { publicationYear: { id: 'publication-year', level: 'subtitle', translation: t("metadata.yearOfPublication") } },

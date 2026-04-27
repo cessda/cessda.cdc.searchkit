@@ -21,7 +21,15 @@ export function escapeRegex(string: string) {
   return string.replace(regexEscape, "\\$&");
 }
 
-export function indexBaseFromSortBy(sortBy: string | undefined, fallback: string) {
+/**
+ * Derive the base index from a sortBy field using the known suffixes
+ * from {@link SORT_OPTIONS} to strip out sorting parameters.
+ * 
+ * @param sortBy the sortBy field.
+ * @param fallback the fallback index if sortBy is empty or undefined, defaults to {@link BASE_INDEX}.
+ * @returns the stripped sortBy, or {@link BASE_INDEX} if sortBy is empty.
+ */
+export function indexBaseFromSortBy(sortBy: string | undefined, fallback: string = BASE_INDEX) {
   if (!sortBy) return fallback;
 
   // If it ends with any known suffix, strip it
@@ -36,7 +44,12 @@ export function indexBaseFromSortBy(sortBy: string | undefined, fallback: string
 }
 
 export function ensureSlash(p: string) {
-  return p.endsWith("/") ? p : `${p}/`;
+  if (p.endsWith("/")) {
+    return p;
+  } else {
+    return `${p}/`;
+  }
+}
 }
 
 export function isSearchRoute(pathname: string): boolean {
@@ -46,7 +59,9 @@ export function isSearchRoute(pathname: string): boolean {
 export function getCollectionPath(pathname: string): string {
   const path = ensureSlash(pathname);
 
-  if (path === "/") return "/";
+  if (path === "/") {
+    return "/";
+  }
 
   const [, firstSegment] = path.split("/", 3);
   return firstSegment ? `/${firstSegment}` : "/";
