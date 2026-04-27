@@ -37,9 +37,12 @@ export const updateStudy = createAsyncThunk('search/updateStudy', async (
   let study = undefined;
   let similars: Similar[] = [];
   const availableLanguages: Language[] = [];
-  let fetchIndex = forceIndex;
+  let fetchIndex;
 
-  if (!fetchIndex) {
+  if (forceIndex) {
+    // If index is specified, use that index
+    fetchIndex = forceIndex;
+  } else {
     const { thematicView } = getState() as { thematicView: ThematicViewState };
     const currentLang = thematicView.currentIndex.indexName.split("_")[1];
     fetchIndex = thematicView.currentIndex.indexName;
