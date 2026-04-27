@@ -15,10 +15,8 @@ import { BASE_INDEX, SORT_OPTIONS } from "./constants";
 import { thematicViews } from "./thematicViews";
 
 /** Escape all characters in a regex */
-const regexEscape = /[/\-\\^$*+?.()|[\]{}]/g;
-
 export function escapeRegex(string: string) {
-  return string.replace(regexEscape, "\\$&");
+  return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, "\\$&");
 }
 
 /**
@@ -49,7 +47,6 @@ export function ensureSlash(p: string) {
   } else {
     return `${p}/`;
   }
-}
 }
 
 export function isSearchRoute(pathname: string): boolean {
