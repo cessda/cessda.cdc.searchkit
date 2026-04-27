@@ -25,16 +25,14 @@ const mockNavigate = jest.fn();
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useLoaderData: () => ({
-    data: {
-      payload: {
-        study: mockStudy,
-        similars: [
-          { id: '123', title: 'Study 1' },
-          { id: '456', title: 'Study 2' },
-          { id: '789', title: 'Study 3' }
-        ],
-        availableLanguages: ['en', 'fi'],
-      },
+    payload: {
+      study: mockStudy,
+      similars: [
+        { id: '123', title: 'Study 1' },
+        { id: '456', title: 'Study 2' },
+        { id: '789', title: 'Study 3' },
+      ],
+      availableLanguages: ['en', 'fi'],
     },
   }),
   useLocation: () => ({
@@ -113,12 +111,12 @@ it("renders available languages if no study found with selected language", async
 
   // Mock the return value for this test
   useLoaderDataSpy.mockReturnValueOnce({
-    data: {
-      payload: {
-        study: undefined,
-        similars: undefined,
-        availableLanguages: ['fi'],
-      },
+    payload: {
+      study: undefined,
+      similars: [],
+      availableLanguages: [
+        { code: 'fi', label: 'Finnish' },
+      ],
     },
   });
 

@@ -32,8 +32,17 @@ export const initialState: DetailState = {
   showAllFields: false
 };
 
-export const updateStudy = createAsyncThunk('search/updateStudy', async (
-  { id, lang, forceIndex }: { id: string; lang: string; forceIndex?: string }, { getState }) => {
+export interface UpdateStudyResult {
+  study?: CMMStudy;
+  similars: Similar[];
+  availableLanguages: Language[];
+}
+
+export const updateStudy = createAsyncThunk<
+  UpdateStudyResult,
+  { id: string; lang: string; forceIndex?: string },
+  { state: { thematicView: ThematicViewState } }
+>('search/updateStudy', async ({ id, lang, forceIndex }, { getState }) => {
   let study = undefined;
   let similars: Similar[] = [];
   const availableLanguages: Language[] = [];

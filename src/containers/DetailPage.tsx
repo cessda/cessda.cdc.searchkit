@@ -14,8 +14,8 @@
 import React, { useEffect } from "react";
 import Detail from "../components/Detail"
 import { useTranslation } from "react-i18next";
-import { updateStudy } from "../reducers/detail";
-import { Await, Link, LoaderFunctionArgs, useLoaderData, useLocation, useNavigate, useSearchParams } from "react-router";
+import { UpdateStudyResult, updateStudy } from "../reducers/detail";
+import { Link, LoaderFunctionArgs, useLoaderData, useLocation, useNavigate, useSearchParams } from "react-router";
 import { store } from "../store";
 import { getJsonLd } from '../../common/metadata';
 import Similars from "../components/Similars";
@@ -36,7 +36,11 @@ export type HeadingEntry = {
   [key: string]: Heading
 };
 
-export const studyLoader = async ({ request, params }: LoaderFunctionArgs) => {
+export interface StudyLoaderData {
+  payload: UpdateStudyResult
+}
+
+export const studyLoader = async ({ request, params }: LoaderFunctionArgs): Promise<StudyLoaderData> => {
   const url = new URL(request.url);
   const lang = url.searchParams.get("lang");
 
@@ -51,16 +55,16 @@ export const studyLoader = async ({ request, params }: LoaderFunctionArgs) => {
     indexName = indexName.split("_")[0] + "_" + lang;
   }
 
-  const data = await store.dispatch(
+  const payload = await store.dispatch(
     updateStudy({
       id: params.id as string,
       lang: lang as string,
       // Explicitly provide index
       forceIndex: indexName,
     })
-  );
+  ).unwrap();
 
-  return { data };
+  return { payload };
 };
 
 const DetailPage = () => {
@@ -70,7 +74,7 @@ const DetailPage = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { data } = useLoaderData<typeof studyLoader>();
+  const { payload } = useLoaderData<StudyLoaderData>();
 
   useEffect(() => {
     return () => {
@@ -82,11 +86,11 @@ const DetailPage = () => {
     // Update the JSON-LD representation
     const jsonLDElement = document.getElementById("json-ld");
 
-    if (data?.payload?.study) {
+    if (payload.study) {
       const script = document.createElement("script");
       script.id = "json-ld";
       script.type = "application/ld+json";
-      script.textContent = JSON.stringify(getJsonLd(data.payload.study));
+      script.textContent = JSON.stringify(getJsonLd(payload.study));
 
       if (jsonLDElement) {
         jsonLDElement.replaceWith(script);
@@ -98,7 +102,7 @@ const DetailPage = () => {
         jsonLDElement.remove();
       }
     }
-  }, [data]);
+  }, [payload]);
 
   function handleKeyDown(event: React.KeyboardEvent) {
     if ((event.key === 'Enter' || event.key === ' ') && backToSearchUrl) {
@@ -135,58 +139,35 @@ const DetailPage = () => {
           </div>
           <div className="columns is-mobile is-flex-wrap-wrap m-0 p-0">
             <div className="column pt-0 is-one-third-desktop is-full-tablet is-full-mobile side-column">
-              <React.Suspense fallback={<p>{t("loader.loading")}</p>}>
-                <Await resolve={data} errorElement={<p>{t("loader.error")}</p>}>
-                  {(resolvedData) => {
-                    return <Similars similars={resolvedData?.payload?.similars ? resolvedData.payload.similars : []} />
-                  }}
-                </Await>
-              </React.Suspense>
+              <Similars similars={payload.similars} />
             </div>
 
             <div className="column pt-0 is-two-thirds-desktop is-full-tablet is-full-mobile main-column mb-6">
-              <React.Suspense fallback={<p data-testid="loading">{t("loader.loading")}</p>}>
-                <Await resolve={data} errorElement={<p>{t("loader.error")}</p>}>
-                  {(resolvedData) => {
-                    if (resolvedData?.payload?.study) {
-                      return <Detail item={resolvedData.payload.study} />
-                    }
-                    else {
-                      const languageLinks: React.JSX.Element[] = [];
-
-                      if (resolvedData.payload) {
-                        for (let i = 0; i < resolvedData.payload.availableLanguages.length; i++) {
-                          const lang = resolvedData.payload.availableLanguages[i];
-                          languageLinks.push(
-                            <Link key={lang.code} to={`${location.pathname}?lang=${lang.code}`}>
-                              {lang.label}
-                            </Link>
-                          );
-                        }
-                      }
-
-                      return (
-                        <div className="pt-15" data-testid="available-languages">
-                          <p className="fs-14 mb-15">
-                            <strong>{t("language.notAvailable.heading")}</strong>
-                          </p>
-                          <p className="fs-14 mb-15">{t("language.notAvailable.content")}</p>
-                          {languageLinks.length > 0 &&
-                            <p className="fs-14 mb-15">{t("language.notAvailable.alternateLanguage")}:{" "}
-                              {languageLinks.map((link, index) => (
-                                <React.Fragment key={index}>
-                                  {link}
-                                  {index < languageLinks.length - 1 && ", "}
-                                </React.Fragment>
-                              ))}
-                            </p>
-                          }
-                        </div>
-                      )
-                    }
-                  }}
-                </Await>
-              </React.Suspense>
+              {payload.study ? (
+                <Detail item={payload.study} />
+              ) : (
+                <div className="pt-15" data-testid="available-languages">
+                  <p className="fs-14 mb-15">
+                    <strong>{t("language.notAvailable.heading")}</strong>
+                  </p>
+                  <p className="fs-14 mb-15">
+                    {t("language.notAvailable.content")}
+                  </p>
+                  {payload.availableLanguages.length > 0 && (
+                    <p className="fs-14 mb-15">
+                      {t("language.notAvailable.alternateLanguage")}:{" "}
+                      {payload.availableLanguages.map((lang, index) => (
+                        <React.Fragment key={lang.code}>
+                          <Link to={`${location.pathname}?lang=${lang.code}`}>
+                            {lang.label}
+                          </Link>
+                          {index < payload.availableLanguages.length - 1 && ", "}
+                        </React.Fragment>
+                      ))}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

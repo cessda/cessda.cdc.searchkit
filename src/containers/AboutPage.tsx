@@ -18,6 +18,7 @@ import { store } from "../store";
 import { updateMetrics } from "../reducers/search";
 import { useAppSelector } from "../hooks";
 import { thematicViews } from "../../common/thematicViews";
+import { Metrics } from "../../common/metadata";
 
 const aboutPages = {
   cdc: require('../components/dynamic/pages/aboutPages/CdcAboutPage.tsx').default,
@@ -26,7 +27,11 @@ const aboutPages = {
   hummingbird: require('../components/dynamic/pages/aboutPages/HummingbirdAboutPage.tsx').default,
 };
 
-export const metricsLoader = async ({ request }: LoaderFunctionArgs) => {
+export interface MetricsLoaderData {
+  metrics: Metrics;
+}
+
+export const metricsLoader = async ({ request }: LoaderFunctionArgs): Promise<MetricsLoaderData> => {
   const url = new URL(request.url);
   const pathname = url.pathname;
 
@@ -37,14 +42,16 @@ export const metricsLoader = async ({ request }: LoaderFunctionArgs) => {
 
   const indexWithoutLang = view.defaultIndex.split("_")[0];
 
-  return await store.dispatch(
+  const metrics = await store.dispatch(
     updateMetrics({ indexBase: indexWithoutLang })
-  );
+  ).unwrap();
+
+  return { metrics };
 };
 
 const AboutPage = () => {
   const currentThematicView = useAppSelector((state) => state.thematicView.currentThematicView);
-  const metrics = useLoaderData();
+  const { metrics } = useLoaderData<MetricsLoaderData>();
   const DynamicAboutPage = aboutPages[currentThematicView.key as keyof typeof aboutPages];
 
   return (
