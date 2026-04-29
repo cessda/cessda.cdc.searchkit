@@ -13,10 +13,12 @@
 // limitations under the License.
 
 import React from "react";
-import { useLoaderData } from "react-router";
+import { LoaderFunctionArgs, useLoaderData } from "react-router";
 import { store } from "../store";
 import { updateMetrics } from "../reducers/search";
 import { useAppSelector } from "../hooks";
+import { thematicViews } from "../../common/thematicViews";
+import { Metrics } from "../../common/metadata";
 
 const aboutPages = {
   cdc: require('../components/dynamic/pages/aboutPages/CdcAboutPage.tsx').default,
@@ -25,20 +27,38 @@ const aboutPages = {
   hummingbird: require('../components/dynamic/pages/aboutPages/HummingbirdAboutPage.tsx').default,
 };
 
-export const metricsLoader = async () => {
-  return await store.dispatch(updateMetrics());
+export interface MetricsLoaderData {
+  metrics: Metrics;
+}
+
+export const metricsLoader = async ({ request }: LoaderFunctionArgs): Promise<MetricsLoaderData> => {
+  const url = new URL(request.url);
+  const pathname = url.pathname;
+
+  const segment = pathname.split("/")[1];
+  const path = segment ? `/${segment}` : "/";
+
+  const view = thematicViews.find(v => v.path === path) ?? thematicViews.find(v => v.path === "/")!;
+
+  const indexWithoutLang = view.defaultIndex.split("_")[0];
+
+  const metrics = await store.dispatch(
+    updateMetrics({ indexBase: indexWithoutLang })
+  ).unwrap();
+
+  return { metrics };
 };
 
 const AboutPage = () => {
   const currentThematicView = useAppSelector((state) => state.thematicView.currentThematicView);
-  const metrics = useLoaderData();
+  const { metrics } = useLoaderData<MetricsLoaderData>();
   const DynamicAboutPage = aboutPages[currentThematicView.key as keyof typeof aboutPages];
 
   return (
     <div className="columns">
       <div className="content-wrapper column is-three-fifths is-offset-one-fifth mt-6 p-2" data-testid="about-page">
-    <DynamicAboutPage metrics={metrics} />
-    </div>
+        <DynamicAboutPage metrics={metrics} />
+      </div>
     </div>
   );
 };

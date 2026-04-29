@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -12,65 +12,78 @@
 // limitations under the License.
 
 import '../../mocks/reacti18nMock';
-import React from "react";
-import { render } from "../../testutils";
-import UserGuidePage from "../../../src/containers/UserGuidePage";
-import { thematicViews, EsIndex } from "../../../common/thematicViews";
-import { useAppDispatch, useAppSelector } from "../../../src/hooks";
+import '../../mocks/routerMock'
+import '../../mocks/reduxHooksMock';
+import React from 'react';
+import { render } from '../../testutils';
+import UserGuidePage from '../../../src/containers/UserGuidePage';
+import { thematicViews, EsIndex } from '../../../common/thematicViews';
 import '@testing-library/jest-dom';
+import { useAppSelector } from '../../../src/hooks';
 
 
-// Mock react-router module
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useSearchParams: jest.fn(),
-  useLocation: () => ({
-    pathname: "/",
-    key: "mockKey",
-  }),
-}));
+function renderUserGuideFor(view: typeof thematicViews[number]) {
+  const index = view.esIndexes.find(
+    i => i.indexName === view.defaultIndex
+  ) as EsIndex;
 
-// Mock the redux hooks
-jest.mock("../../../src/hooks", () => ({
-  useAppDispatch: jest.fn(),
-  useAppSelector: jest.fn(),
-}));
+  (useAppSelector as jest.Mock).mockImplementation(selector =>
+    selector({
+      thematicView: {
+        currentThematicView: view,
+        currentIndex: index,
+      },
+      search: {
+        showFilterSummary: false,
+        showMobileFilters: false,
+      },
+    })
+  );
 
-const mockDispatch = jest.fn();
-const initialView = thematicViews[0];
-const initialIndex =  initialView.esIndexes.find((i) => i.indexName === initialView.defaultIndex ) as EsIndex;
+  return render(<UserGuidePage />);
+}
 
-
-
-
-describe("User Guide Page", () => {
-  beforeEach(() => {
-    // Mock the necessary Redux state
-     (useAppSelector as jest.Mock).mockImplementation((callback) =>
-      callback({
-        thematicView: {
-          currentThematicView: initialView,
-          currentIndex: initialIndex
-        },
-        search: { 
-          showFilterSummary: false,
-          showMobileFilters: false 
-        },
-      })
-    );
-    (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
-
-
-  });
-
+describe('UserGuidePage (dynamic selection)', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it("should render User Guide Page correctly", async () => {
-    render(<UserGuidePage />);
+  thematicViews.forEach(view => {
+    it(`renders user guide page for "${view.key}"`, () => {
+      const { container } = renderUserGuideFor(view);
 
+      expect(container.querySelector('h1')).toBeInTheDocument();
+    });
+  });
+});
+
+describe('UserGuidePage (CDC)', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
+  it('renders CDC user guide content', () => {
+    const cdcView = thematicViews.find(v => v.key === 'cdc');
+    if (!cdcView) {
+      throw new Error('CDC thematic view not found');
+    }
 
+    const { getByText } = renderUserGuideFor(cdcView);
+
+    expect(
+      getByText('User Guide - CESSDA Data Catalogue')
+    ).toBeInTheDocument();
+
+    expect(
+      getByText('Searching')
+    ).toBeInTheDocument();
+
+    expect(
+      getByText('Filtering')
+    ).toBeInTheDocument();
+
+    expect(
+      getByText('Study details')
+    ).toBeInTheDocument();
+  });
 });

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -29,8 +29,9 @@ const UserGuidePage = () => {
   return (
     <div className="columns">
       <div className="content-wrapper column is-three-fifths is-offset-one-fifth mt-6 p-2">
-    <DynamicUserGuidePage />
-    </div></div>
+        <DynamicUserGuidePage />
+      </div>
+    </div>
   );
 };
 

@@ -1,5 +1,5 @@
 /** @jest-environment node */
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import { errors } from '@elastic/elasticsearch';
 import Elasticsearch from '../../server/elasticsearch';
 import { mockStudy } from '../common/mockdata';
 import { getJsonLd, MetadataUtils } from '../../common/metadata';
+import { BASE_INDEX } from '../../common/constants';
 
 // Constants
 const ejsTemplate = "server/views/index.ejs";
@@ -106,7 +107,7 @@ describe('helper utilities', () => {
 
       // Status code should be 200
       expect(response.statusCode).toBe(200);
-      expect(mockedGetStudy).toHaveBeenCalledWith("test", "cmmstudy_en");
+      expect(mockedGetStudy).toHaveBeenCalledWith("test", BASE_INDEX);
 
       // Assert fields of renderData are as expected
       const renderData = response._getRenderData() as Metadata;
@@ -134,7 +135,7 @@ describe('helper utilities', () => {
 
       // Status code should be 503
       expect(response.statusCode).toBe(503);
-      expect(mockedGetStudy).toHaveBeenCalledWith("test", "cmmstudy_en");
+      expect(mockedGetStudy).toHaveBeenCalledWith("test", BASE_INDEX);
       expect(response._getRenderData()).toEqual({ metadata: {} });
     });
 
@@ -150,7 +151,7 @@ describe('helper utilities', () => {
 
       // Status code should be 404
       expect(response.statusCode).toBe(404);
-      expect(mockedGetStudy).toHaveBeenCalledWith("test", "cmmstudy_en");
+      expect(mockedGetStudy).toHaveBeenCalledWith("test", BASE_INDEX);
       expect(response._getRenderData()).toEqual({ metadata: {} });
     });
 
@@ -165,7 +166,7 @@ describe('helper utilities', () => {
 
       // Status code should be 404
       expect(response.statusCode).toBe(404);
-      expect(mockedGetStudy).toHaveBeenCalledWith("test", "cmmstudy_en");
+      expect(mockedGetStudy).toHaveBeenCalledWith("test", BASE_INDEX);
       expect(response._getRenderData()).toEqual({ metadata: {}});
     });
 

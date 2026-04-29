@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -28,9 +28,10 @@ export interface SearchState {
   totalStudies: number;
   metrics: Metrics | undefined;
   shouldResetSearchForm: boolean;
+  backToSearchUrl: string | null;
 }
 
-const initialState: SearchState = {
+export const initialState: SearchState = {
   loading: true,
   showMobileFilters: false,
   showAdvancedSearch: false,
@@ -42,20 +43,21 @@ const initialState: SearchState = {
   displayed: [],
   totalStudies: 0,
   metrics: undefined,
-  shouldResetSearchForm: false
+  shouldResetSearchForm: false,
+  backToSearchUrl: null
 };
 
-export const updateMetrics = createAsyncThunk('search/updateMetrics', async (_, { getState }) => {
-  const state = getState() as RootState;
-  const indexWithoutLang = state.thematicView.currentIndex.indexName.split('_')[0];
-  const response = await fetch(`${window.location.origin}/api/sk/_about_metrics/${indexWithoutLang}_*`);
+export const updateMetrics = createAsyncThunk('search/updateMetrics', async (
+  { indexBase }: { indexBase: string }, { getState }) => {
+  const base = indexBase ?? (getState() as RootState).thematicView.currentIndex.indexName.split('_')[0];
 
-  if (response.ok) {
-    const source = await response.json() as Metrics;
-    return source;
-  } else {
-    throw new TypeError("Fetching metrics failed: Response not ok");
+  const response = await fetch(`${window.location.origin}/api/sk/_about_metrics/${base}_*`);
+
+  if (!response.ok) {
+    throw new TypeError("Fetching metrics failed");
   }
+
+  return await response.json() as Metrics;
 });
 
 export const updateTotalStudies = createAsyncThunk('search/updateTotalStudies', async () => {
@@ -102,7 +104,13 @@ export const searchSlice = createSlice({
     },
     clearSearchFormReset: (state) => {
       state.shouldResetSearchForm = false;
-    }
+    },
+    setBackToSearchUrl: (state, action: PayloadAction<string>) => {
+      state.backToSearchUrl = action.payload;
+    },
+    clearBackToSearchUrl: (state) => {
+      state.backToSearchUrl = null;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(updateMetrics.fulfilled, (state, action) => {
@@ -114,7 +122,18 @@ export const searchSlice = createSlice({
   },
 });
 
-export const { setMetrics, toggleLoading, toggleSummary, toggleAdvancedSearch, toggleMobileFilters, toggleAbstract, toggleKeywords, triggerSearchFormReset, clearSearchFormReset } =
-  searchSlice.actions;
+export const {
+  setMetrics,
+  toggleLoading,
+  toggleSummary,
+  toggleAdvancedSearch,
+  toggleMobileFilters,
+  toggleAbstract,
+  toggleKeywords,
+  triggerSearchFormReset,
+  clearSearchFormReset,
+  setBackToSearchUrl,
+  clearBackToSearchUrl,
+} = searchSlice.actions;
 
 export default searchSlice.reducer;

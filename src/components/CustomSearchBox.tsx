@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -18,11 +18,13 @@ import { useNavigate, useSearchParams } from 'react-router';
 import { useAppSelector, useAppDispatch } from "../hooks";
 import { Helmet } from "react-helmet-async";
 import { clearSearchFormReset } from "../reducers/search";
+import { ensureSlash } from '../../common/utils';
 
 interface CustomSearchBoxProps extends UseSearchBoxProps {
   setQueryError: (msg: string | null) => void;
 }
 
+// Some basic validation before actually executing the search
 const getQueryValidationError = (query: string): string | null => {
   const MAX_QUERY_LENGTH = 500;
   const trimmed = query.trim();
@@ -51,6 +53,12 @@ const getQueryValidationError = (query: string): string | null => {
   return null;
 };
 
+/**
+ * Search box element with main functionality from InstantSearch.
+ *
+ * @param setQueryError message to explain error with search
+ * @returns search box element
+ */
 const CustomSearchBox = ({ setQueryError, ...props }: CustomSearchBoxProps) => {
   const currentThematicView = useAppSelector((state) => state.thematicView.currentThematicView);
   const shouldReset = useAppSelector((state) => state.search.shouldResetSearchForm);
@@ -62,14 +70,16 @@ const CustomSearchBox = ({ setQueryError, ...props }: CustomSearchBoxProps) => {
   const { status } = useInstantSearch();
   const [inputValue, setInputValue] = useState(query);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
 
   const isSearchStalled = status === 'stalled';
 
   function setNewQuery(newQuery: string) {
-    if (location.pathname !== currentThematicView.path) {
-      navigate(`${currentThematicView.path}?query=${newQuery}`);
+    // Ensure we are on the search page of the current collection before refining
+    if (location.pathname !== ensureSlash(currentThematicView.path)) {
+      navigate(ensureSlash(currentThematicView.path), { replace: false });
     }
+
     refine(newQuery);
   }
 
@@ -79,6 +89,10 @@ const CustomSearchBox = ({ setQueryError, ...props }: CustomSearchBoxProps) => {
       dispatch(clearSearchFormReset());
     }
   }, [shouldReset]);
+
+  useEffect(() => {
+    setInputValue(query);
+  }, [query]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.currentTarget.value);
@@ -108,8 +122,8 @@ const CustomSearchBox = ({ setQueryError, ...props }: CustomSearchBoxProps) => {
     inputRef.current?.blur();
   };
 
-  const pageTitle = searchParams.get("query")
-    ? `${currentThematicView.longTitle} - search results for "${searchParams.get("query")}"`
+  const pageTitle = query
+    ? `${currentThematicView.longTitle} - search results for "${query}"`
     : currentThematicView.longTitle;
 
   return (

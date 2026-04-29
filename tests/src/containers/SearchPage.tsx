@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -12,76 +12,24 @@
 // limitations under the License.
 
 import '../../mocks/reacti18nMock';
+import '../../mocks/instantsearchMock';
+import '../../mocks/routerMock';
+import '../../mocks/reduxHooksMock';
+import { mockDispatch } from '../../mocks/reduxHooksMock';
 import React from "react";
 import { render, screen } from "../../testutils";
 import userEvent from '@testing-library/user-event';
 import { useSearchParams } from "react-router";
 import SearchPage from "../../../src/containers/SearchPage";
 import { thematicViews, EsIndex } from "../../../common/thematicViews";
-import { useAppDispatch, useAppSelector } from "../../../src/hooks";
+import { useAppSelector } from "../../../src/hooks";
 import '@testing-library/jest-dom';
-import { SortByItem } from 'instantsearch.js/es/connectors/sort-by/connectSortBy';
-import reducer from "../../../src/reducers/thematicView";
+import reducer, { updateThematicView } from "../../../src/reducers/thematicView";
 import { useCurrentRefinements } from "react-instantsearch";
 
-// Mock the react-instantsearch components
-jest.mock("react-instantsearch", () => ({
-  Hits: jest.fn(() => <div>Mocked Hits</div>),
-  RefinementList: jest.fn(() => <div>Mocked RefinementList</div>),
-  ClearRefinements: jest.fn(() => <button>Mocked Clear Refinements</button>),
-  CurrentRefinements: jest.fn(() => <button>Mocked Current Refinements</button>),
-  Stats: jest.fn(() => <div>Mocked Stats</div>),
-  HitsPerPage: jest.fn(() => <div>Mocked HitsPerPage</div>),
-  SortBy: jest.fn(({ items, ...props }) => (
-    <select onChange={props.onChange}>
-      {items.map((item: SortByItem) => (
-        <option key={item.value} value={item.value}>
-          {item.label}
-        </option>
-      ))}
-    </select>
-  )),
-  Pagination: jest.fn(() => <div>Mocked Pagination</div>),
-  RangeInput: jest.fn(() => <div>Mocked RangeInput</div>),
 
-  useRefinementList: jest.fn(() => ({
-    refine: jest.fn(),
-    items: [],
-    isShowingMore: false,
-    toggleShowMore: jest.fn(),
-    canToggleShowMore: false,
-  })),
-  useCurrentRefinements: jest.fn(() => ({
-    items: [],
-  })),
-  useClearRefinements: jest.fn(() => ({})),
-  usePagination: jest.fn(() => ({})),
-  useSearchBox: jest.fn(() => ({})),
-  useInstantSearch: jest.fn(() => ({})),
-}));
-
-// Mock react-router module
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useSearchParams: jest.fn(),
-  useLocation: () => ({
-    pathname: "/",
-    key: "mockKey",
-  }),
-}));
-
-// Mock the redux hooks
-jest.mock("../../../src/hooks", () => ({
-  useAppDispatch: jest.fn(),
-  useAppSelector: jest.fn(),
-}));
-
-const mockDispatch = jest.fn();
 const initialView = thematicViews[0];
 const initialIndex = initialView.esIndexes.find((i) => i.indexName === initialView.defaultIndex) as EsIndex;
-//const newView = thematicViews.find((tv) => tv.path === "/coordinate") as ThematicView;
-//const newIndex = newView.esIndexes.find((i) => i.indexName === newView.defaultIndex ) as EsIndex;
-
 
 describe("SearchPage", () => {
   beforeEach(() => {
@@ -98,7 +46,6 @@ describe("SearchPage", () => {
         },
       })
     );
-    (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
     const mockSetSearchParams = jest.fn();
     (useSearchParams as jest.Mock).mockReturnValue([
@@ -125,8 +72,9 @@ describe("SearchPage", () => {
     expect(screen.getByText("Mocked Hits")).toBeInTheDocument();
     expect(screen.getByText("Mocked Clear Refinements")).toBeInTheDocument();
     expect(screen.getByText("Mocked Stats")).toBeInTheDocument();
-    expect(screen.getByText("Mocked HitsPerPage")).toBeInTheDocument();
-    expect(screen.getByText("Mocked RangeInput")).toBeInTheDocument();
+    expect(document.querySelector('.ais-HitsPerPage-select')).toBeInTheDocument();
+    expect(document.querySelector('.ais-SortBy-select')).toBeInTheDocument();
+    expect(document.querySelector('.ais-RangeInput')).toBeInTheDocument();
     const paginations = screen.getAllByText(/Mocked Pagination/i);
     // Check that the correct number of Pagination is rendered
     expect(paginations).toHaveLength(2);
@@ -144,18 +92,29 @@ describe("SearchPage", () => {
       }
     )
   });
-  /*
-  it('should return updated Thematic View state', () => {
 
-    expect(reducer(undefined, { type: 'unknown', path: "/coordinate", EsIndex: newIndex })).toEqual(
-        {
-            currentIndex: newIndex,
-            list: thematicViews,
-            currentThematicView: newView,
-             }
-      )
+  it('should return updated Thematic View state', () => {
+    const initialState = reducer(undefined, { type: 'unknown' });
+    const newView = thematicViews.find(tv => tv.path === "/coordinate")!;
+
+    const nextState = reducer(
+      initialState,
+      updateThematicView({
+        path: newView.path,
+        indexName: newView.defaultIndex,
+      })
+    );
+
+    const expectedIndex =
+      newView.esIndexes.find(i => i.indexName === newView.defaultIndex)!;
+
+    expect(nextState).toEqual({
+      currentThematicView: newView,
+      currentIndex: expectedIndex,
+      list: thematicViews,
+    });
   });
-  */
+
   it("should handle mobile filter toggle", async () => {
     render(<SearchPage />);
 

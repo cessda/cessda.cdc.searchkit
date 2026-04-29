@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import 'isomorphic-unfetch';
 import { getELSSTRouter } from "./elsst";
 import QueryString from "qs";
 import { JSDOM } from "jsdom";
+import { BASE_INDEX } from "../common/constants"
 
 const { ConnectionError, ResponseError } = errors;
 
@@ -310,7 +311,7 @@ function getSearchkitRouter() {
   router.post("/_search", responseTime(uiResponseTimeHandler), async (req, res) => {
     res.setHeader("Cache-Control", "no-cache, max-age=0");
 
-    const fullUrl = `${host}/${req.body.index || "cmmstudy_en"}${req.url}`;
+    const fullUrl = `${host}/${req.body.index || BASE_INDEX}${req.url}`;
     logger.debug("Start Elasticsearch Request: %s", fullUrl);
 
     const userQuery = req.body?.[0]?.params?.query || "";

@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -32,11 +32,29 @@ interface CustomRefinementListProps extends UseRefinementListProps {
   limit?: number;
   showMore?: boolean;
   showMoreLimit?: number;
+  searchAriaLabelledBy?: string;
 }
 
-const cx = (...classes: (string | undefined | false)[]) =>
-  classes.filter(Boolean).join(' ');
+// Utility to combine predefined classes with possible extra classes from variables
+const cx = (...classes: (string | undefined | false)[]) => classes.filter(Boolean).join(' ');
 
+/**
+ * Filter element based on RefinementList. Main improvement over the original is being able to
+ * see selected options at the top of the options list, making it easy to unselect options.
+ * Also fixes some accessibility issues.
+ * Selected options from the top results will also be moved to the top of the list in a separate section
+ * which means that the top results will have less unselected options visible than set limit, e.g. selecting 'age'
+ * and 'gender' in keywords, while limit is set to 10, will then only show 8 other top options to select from.
+ *
+ * @param classnames can contain classnames for various parts of the filter
+ * @param attribute metadata to filter by, e.g. keywords
+ * @param disableTags if false, shows the selected options at the top of the list instead of their original spot
+ * @param limit how many options to show
+ * @param showMore if true, 'Show more' button will be available to increase the limit of options
+ * @param showMore how many options to show when 'Show more' button has been clicked
+ * @param searchable if true, search bar is available for the filter
+ * @returns filter/facet element
+ */
 const CustomRefinementList = ({
   classNames = {},
   attribute,
@@ -127,6 +145,7 @@ const CustomRefinementList = ({
                 className="ais-SearchBox-input"
                 placeholder=""
                 value={query}
+                aria-labelledby={props.searchAriaLabelledBy}
                 onChange={(e) => handleQueryChange(e.currentTarget.value.toLowerCase())}
               />
               {query && (

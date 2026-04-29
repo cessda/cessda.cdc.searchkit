@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-// Copyright CESSDA ERIC 2017-2021
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -17,21 +17,20 @@ import { useAppSelector } from "../hooks";
 import ThematicViewDropdownMenu, { ThematicViewMenuItem } from "./ThematicViewDropdownMenu";
 
 function ThematicViewSwitcher() {
-
   const thematicView = useAppSelector((state) => state.thematicView);
   const currentKey = thematicView.currentThematicView.key;
 
-  const navItems: ThematicViewMenuItem[] = [];
-  for (const view of thematicView.list) {
-    navItems.push({
-      title: view.title,
-      icon: require('../img/icons/' + view.icon),
-      url: view.path,
-      key: view.key
-    });
-  }
+  const items: ThematicViewMenuItem[] = thematicView.list.map(view => ({
+    view,
+    icon: require(`../img/icons/${view.icon}`)
+  }));
 
-  return <ThematicViewDropdownMenu currentKey={currentKey} items={navItems} />;
+  return (
+    <ThematicViewDropdownMenu
+      currentKey={currentKey}
+      items={items}
+    />
+  );
 }
 
 export default ThematicViewSwitcher;

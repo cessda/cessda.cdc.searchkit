@@ -33,11 +33,6 @@
     "clear": "Clear all",
     "showMore": "Show more",
     "showLess": "Show less",
-    "view": {
-      "more": "Add {{facetsPerPage}} more {{name}} to searchable {{name}} list",
-      "less": "Keep only {{defaultSize}} most common {{name}} in searchable {{name}} list",
-      "all": "Add all {{name}} to searchable {{name}} list"
-    },
     "topic": {
       "label": "Topic",
       "placeholder": "Search topics",
@@ -127,17 +122,11 @@
     "collectionYear": {
       "separator": "to",
       "submitButton": "Apply"
+    },
+    "range": {
+      "from": "from",
+      "to": "to"
     }
-  },
-  "numberOfResults": {
-    "zero": "{{count}} studies found in {{label}} from a total of {{total}}",
-    "one": "{{count}} study found in {{label}} from a total of {{total}}",
-    "other": "{{count}} studies found in {{label}} from a total of {{total}}"
-  },
-  "numberOfResultsWithTime": {
-    "zero": "{{count}} studies found in {{time}}ms",
-    "one": "{{count}} study found in {{time}}ms",
-    "other": "{{count}} studies found in {{time}}ms"
   },
   "sorting": {
     "relevance": "Relevance",
@@ -190,7 +179,8 @@
   "resultsPerPage": "Results per page",
   "showAbstract": "Show abstract",
   "showKeywords": "Show keywords",
-  "sortBy": "Sort by",
+  "sortBy": "Sort results by",
+  "hitsPerPage": "Results per page",
   "showFilters": "Show filters",
   "hideFilters": "Hide filters",
   "more": "more",
@@ -288,13 +278,10 @@
     "label": "Collections"
   },
   "api": {
-    "label": "REST API",
-    "content": "<p>Details about the API endpoint are documented in <a href=\"swagger/api/DataSets/v2\">Swagger JSON</a>.</p><br /><p>Example link for searching datasets in English with the keyword 'smoking' from API:</p>"
+    "label": "REST API"
   },
   "loader": {
     "loading": "Loading data...",
-    "error": "Error loading data",
-    "noMetadata": "No study metadata found with given ID"
-  },
-  "datacatalogue": "CESSDA Data Catalogue"
+    "error": "Error loading data"
+  }
 }

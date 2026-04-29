@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -16,6 +16,8 @@ import Keywords, { Props } from '../../../src/components/Keywords';
 import { TermURIResult, TermVocabAttributes } from '../../../common/metadata';
 import { getELSSTTerm } from '../../../src/utilities/elsst';
 import { act, render } from '../../testutils';
+import { BASE_INDEX } from '../../../common/constants';
+import type { RenderResult } from '@testing-library/react';
 
 const promise = Promise.resolve({});
 
@@ -31,19 +33,28 @@ const initialProps: Props = {
   keywords: [],
   lang: "en",
   keywordLimit: 12,
-  currentIndex: 'cmmstudy_en'
+  currentIndex: BASE_INDEX
 }
 
 // Mock props and shallow render component for test.
-function setup(providedProps: Partial<Props> = {}) {
+async function setup(providedProps: Partial<Props> = {}) {
   const props: Props = {
     ...initialProps,
     ...providedProps
   };
-  const renderResult = render(<Keywords {...props} />);
+
+  let renderResult: RenderResult;
+  // Await the promise - needed because otherwise setState() could be called on the unmounted component
+  // See https://github.com/enzymejs/enzyme/issues/2278 for a description of the issue
+  await act(async () => {
+    renderResult = render(<Keywords {...props} />);
+    // Wait for async effects triggered by render
+    await promise;
+  });
+
   return {
     props,
-    renderResult: renderResult
+    renderResult: renderResult!
   };
 }
 
@@ -57,16 +68,16 @@ function getKeyword(term: string): TermVocabAttributes {
 }
 
 describe('Keywords component', () => {
-  it('should render', () => {
-    const { renderResult: renderResult } = setup();
+  it('should render', async () => {
+    const { renderResult: renderResult } = await setup();
     const tagContainer = renderResult.getByTestId("tags");
     expect(tagContainer).toBeInTheDocument();
   });
 
-  it('should render keywords', () => {
+  it('should render keywords', async () => {
     const keywords = ["1", "2", "3", "4"];
 
-    const { renderResult: renderResult, props } = setup({
+    const { renderResult: renderResult, props } = await setup({
       keywords: keywords.map(t => getKeyword(t))
     });
 
@@ -99,7 +110,7 @@ describe('Keywords component', () => {
 
     const keywords = ["1", "2", "3", "4", "5", "6", "7"];
 
-    const { renderResult: renderResult, props } = setup({
+    const { renderResult: renderResult, props } = await setup({
       keywords: keywords.map(t => getKeyword(t)),
       keywordLimit: 4,
       isExpandDisabled: true
@@ -119,10 +130,10 @@ describe('Keywords component', () => {
     expect(tagsELSSTFound).toEqual([true, true, true]);
   });
 
-  it('should toggle between showing limited number of keywords and showing all keywords', () => {
+  it('should toggle between showing limited number of keywords and showing all keywords', async () => {
     const keywords = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"];
 
-    const { renderResult: renderResult } = setup({
+    const { renderResult: renderResult } = await setup({
       keywords: keywords.map(t => getKeyword(t))
     });
 
@@ -139,15 +150,11 @@ describe('Keywords component', () => {
 
     const abortSpy = jest.spyOn(AbortController.prototype, 'abort');
 
-    const { renderResult: renderResult } = setup({
+    const { renderResult: renderResult } = await setup({
       keywords: keywords.map(t => getKeyword(t))
     });
 
     expect(abortSpy).toHaveBeenCalledTimes(0);
-
-    // Await the promise - needed because otherwise setState() could be called on the unmounted component
-    // See https://github.com/enzymejs/enzyme/issues/2278 for a description of the issue
-    await promise;
 
     // Unmount the component
     renderResult.unmount();

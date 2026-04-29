@@ -1,3 +1,16 @@
+// Copyright CESSDA ERIC 2017-2026
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not
+// use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import React from "react";
 import { Link } from "react-router";
 import { Organization, WithContext } from "schema-dts";
@@ -29,7 +42,6 @@ const DynamicFooter = () => {
       <div className="container">
         <div className="columns">
           <div className="column pt-1">
-         
             <a href="https://www.cessda.eu" target="_blank" rel="noreferrer">
               <svg id="footerlogo" viewBox="0 0 2386 652" xmlns="http://www.w3.org/2000/svg" aria-label="CESSDA Home Page">
                 <path d="M993.333 498.333h-92.5c-52.5 0-95-42.5-95-94.583V249.167c0-52.084 42.5-94.584 95-94.584l92.5-.416c9.584 0 17.5 7.916 17.5 17.5 0 9.583-7.916 17.5-17.5 17.916l-92.5.417c-32.916 0-59.583 26.667-59.583 59.583v154.584c0 32.916 26.667 59.583 59.583 59.583h92.5c9.584 0 17.5 7.917 17.5 17.5.417 9.167-7.5 17.083-17.5 17.083" fill="#3E4C59"></path>
@@ -44,31 +56,28 @@ const DynamicFooter = () => {
               Consortium of European<br />Social Science Data Archives
             </p>
           </div>
-          <div className="column has-text-centered pt-0 pb-2">
 
+          <div className="column has-text-centered pt-0 pb-2">
             <a href="https://www.cessda.eu/Privacy-policy" target="_blank" rel="noreferrer" className="is-inline-block">{t("footer.privacy")}</a> <br />
-            <a href="https://www.cessda.eu/Acceptable-Use-Policy" target="_blank" rel="noreferrer" className="is-inline-block">{t("footer.aup")}</a> <br /> 
+            <a href="https://www.cessda.eu/Acceptable-Use-Policy" target="_blank" rel="noreferrer" className="is-inline-block">{t("footer.aup")}</a> <br />
             <Link to={currentThematicView.path !== '/' ? `${currentThematicView.path}/accessibility-statement` : "/accessibility-statement"}
               className="is-inline-block">{t("footer.accessibility")}</Link>
           </div>
-          
+
           <div className="column has-text-right-tablet p-0">
-
-          <Link to={currentThematicView.path !== '/' ? `${currentThematicView.path}/collections` : "/collections"}>
-                       Collections
-                      </Link> <br />
+            <Link to={currentThematicView.path !== '/' ? `${currentThematicView.path}/collections` : "/collections"}>
+              {t("collections.label")}
+            </Link> <br />
             <Link to={currentThematicView.path !== '/' ? `${currentThematicView.path}/documentation` : "/documentation"}>
-                        {t("documentation.label")}
-                      </Link> <br />
-                      <Link to={currentThematicView.path !== '/' ? `${currentThematicView.path}/about` : "/about"}>
-                        {t("about.label")}
-                      </Link> <br />
-
+              {t("documentation.label")}
+            </Link> <br />
+            <Link to={currentThematicView.path !== '/' ? `${currentThematicView.path}/about` : "/about"}>
+              {t("about.label")}
+            </Link> <br />
           </div>
-          
         </div>
       </div>
-   
+
       <script type="application/ld+json" data-testid="cessdaJson">{organizationCessdaJSON}</script>
     </footer>
   )

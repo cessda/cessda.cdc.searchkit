@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2024
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -12,61 +12,59 @@
 // limitations under the License.
 
 import React from "react";
-import { Await } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { Metrics } from "../../../../../common/metadata";
 import { useAppSelector } from "../../../../hooks";
-import { metricsLoader } from "../../../../containers/AboutPage";
 
 type DynamicAboutPageProps = {
-  metrics: Awaited<ReturnType<typeof metricsLoader>>;
+  metrics: Metrics;
 };
 
 const DynamicAboutPage: React.FC<DynamicAboutPageProps> = ({ metrics }) => {
   const { t } = useTranslation();
+  const currentThematicView = useAppSelector((state) => state.thematicView.currentThematicView);
 
   type MetricsCircleProps = {
     amount: number;
     description: string;
   };
-  const currentThematicView = useAppSelector((state) => state.thematicView.currentThematicView);
-  const MetricsCircle: React.FC<MetricsCircleProps> = ({ amount, description }) => {
-    return (
-      <div className="columns is-flex is-flex-direction-column is-vcentered mt-15 mb-0">
-        <Helmet>
-          <title>{currentThematicView.title} - About</title>
-        </Helmet>
-        <div className="metrics-circle m-2">
-          <span className="metrics-circle-text">{amount}</span>
-        </div>
-        <div className="metrics-description">{description}</div>
+
+  const MetricsCircle: React.FC<MetricsCircleProps> = ({ amount, description }) => (
+    <div className="columns is-flex is-flex-direction-column is-vcentered mt-15 mb-0">
+      <div className="metrics-circle m-2">
+        <span className="metrics-circle-text">{amount}</span>
       </div>
-    );
-  };
+      <div className="metrics-description">{description}</div>
+    </div>
+  );
 
   return (
-    <div className="columns is-flex is-flex-direction-column is-vcentered">
-      <div className="column is-flex is-flex-wrap-wrap is-justify-content-space-around is-8">
-        <React.Suspense fallback={<></>}>
-          <Await resolve={metrics} errorElement={<></>}>
-            {(metrics: Awaited<ReturnType<typeof metricsLoader>>) => {
-              if (metrics.meta.requestStatus === "fulfilled") {
-                const payload = metrics.payload as Metrics;
-                return (
-                  <>
-                    {payload.studies > 0 && <MetricsCircle amount={payload.studies} description={t("about.metrics.studies")} />}
-                    {payload.creators > 0 && <MetricsCircle amount={payload.creators} description={t("about.metrics.creators")} />}
-                    {payload.countries > 0 && <MetricsCircle amount={payload.countries} description={t("about.metrics.countries")} />}
-                  </>
-                );
-              }
-              else {
-                return <></>
-              }
-            }}
-          </Await>
-        </React.Suspense>
+    <div className="columns is-flex is-flex-direction-column is-vcentered pb-6">
+      <Helmet>
+        <title>{currentThematicView.title} - About</title>
+      </Helmet>
+      <div className="column is-flex is-flex-wrap-wrap is-justify-content-space-around">
+        <>
+          {metrics.studies > 0 && (
+            <MetricsCircle
+              amount={metrics.studies}
+              description={t("about.metrics.studies")}
+            />
+          )}
+          {metrics.creators > 0 && (
+            <MetricsCircle
+              amount={metrics.creators}
+              description={t("about.metrics.creators")}
+            />
+          )}
+          {metrics.countries > 0 && (
+            <MetricsCircle
+              amount={metrics.countries}
+              description={t("about.metrics.countries")}
+            />
+          )}
+        </>
       </div>
       <div className="column p-6">
         <h1 className="main-title mb-4">About HumMingBird</h1>

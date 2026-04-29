@@ -1,4 +1,4 @@
-// Copyright CESSDA ERIC 2017-2025
+// Copyright CESSDA ERIC 2017-2026
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
 // use this file except in compliance with the License.
@@ -20,6 +20,7 @@ const DynamicUserGuidePage = () => {
         <div className="text-container">
           <h1 className="main-title mb-4">User Guide - CESSDA Data Catalogue</h1>
           <p>Brief usage instructions follow below. For detailed documentation and examples, see the complete <a href="/documentation/" target="_blank" rel="noreferrer"><strong>user documentation</strong></a>.</p>
+
           <h2>Searching</h2>
           <p>Use the search bar at the top to find studies with descriptions in the selected language (English is the default). Use the dropdown beside the search field to select another language.</p>
 
@@ -30,18 +31,19 @@ const DynamicUserGuidePage = () => {
           <p>
             If filters have been selected, you can click &quot;Summary&quot; to view the currently applied filters and &quot;Reset&quot; to remove all filters.
           </p>
+
           <h2>Study details</h2>
           <p>
-          Clicking on a study title (highlighted in blue) within the results list will take you to the study view with more detailed information and links.
+            Clicking on a study title (highlighted in blue) within the results list will take you to the study view with more detailed information and links.
           </p>
-<p>
-          Below the abstract section, you will often find associated topics and keywords. Selecting one of these will perform a search on that particular term.
-          </p>
-          <h2>Collections</h2>
           <p>
-           Beside the logo at top left there is a dropdown for selecting a specific collection of studies. These are a subset of the studies available in the CDC, selected according to a thematic set of criteria. See the <a href="collections">Collections</a> page for a description of available thematic views.
+            Below the abstract section, you will often find associated topics and keywords. Selecting one of these will perform a search on that particular term.
           </p>
 
+          <h2>Collections</h2>
+          <p>
+            Beside the logo at top left there is a dropdown for selecting a specific collection of studies. These are a subset of the studies available in the CDC, selected according to a thematic set of criteria. See the <a href="collections">Collections</a> page for a description of available thematic views.
+          </p>
         </div>
       </div>
     </div>
