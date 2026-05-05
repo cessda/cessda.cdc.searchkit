@@ -2,6 +2,7 @@
   "extends": "../tsconfig.node.json",
   "compilerOptions": {
     "composite": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "lib": ["es2023", "DOM"]
   }
 }
