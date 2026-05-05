@@ -96,10 +96,6 @@ export const mockStudy: CMMStudy = {
       publicationDate: "2001"
     }
   ],
-  samplingProcedureFreeTexts: [
-    "Sampling Procedure 1",
-    "Sampling Procedure 2"
-  ],
   series: [
     { names: ['Series 1'], uris: ['http://example.com/1'], descriptions: ["Series 1 Description"] },
     { names: ['Series 2'], uris: ['http://example.com/2'], descriptions: ["Series 2 Description"] },
@@ -133,6 +129,7 @@ export const mockStudy: CMMStudy = {
   typeOfSamplingProcedures: [
     {
       id: 'UKDS1234',
+      term: 'Term',
       vocab: 'Vocab',
       vocabUri: 'http://example.com'
     }

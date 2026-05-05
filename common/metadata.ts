@@ -42,8 +42,6 @@ export interface CMMStudy {
   typeOfModeOfCollections: TermVocabAttributes[];
   /** Keywords */
   keywords: TermVocabAttributes[];
-  /** Sampling procedure free text */
-  samplingProcedureFreeTexts: string[];
   /** Topic classifications */
   classifications: TermVocabAttributes[];
   /** Abstract */
@@ -64,7 +62,7 @@ export interface CMMStudy {
   /** Language of data files */
   fileLanguages: string[];
   /** Sampling procedure */
-  typeOfSamplingProcedures: VocabAttributes[];
+  typeOfSamplingProcedures: TermVocabAttributes[];
   /** Publisher */
   publisher: Publisher;
   /** Country */
@@ -201,7 +199,6 @@ export class MetadataUtils {
       typeOfTimeMethods: source.typeOfTimeMethods || [],
       unitTypes: source.unitTypes || [],
       typeOfSamplingProcedures: source.typeOfSamplingProcedures || [],
-      samplingProcedureFreeTexts: (source.samplingProcedureFreeTexts || []).map(text => this.stripHTMLElements(text)),
       typeOfModeOfCollections: source.typeOfModeOfCollections || [],
       dataCollectionPeriodStartdate: source.dataCollectionPeriodStartdate || '',
       dataCollectionPeriodEnddate: source.dataCollectionPeriodEnddate || '',

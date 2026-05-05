@@ -89,9 +89,6 @@ describe('Metadata utilities', () => {
             abbr: "UKDS",
             publisher: 'UK Data Service'
           },
-          samplingProcedureFreeTexts: [
-            'Sampling Procedure<script></script>'
-          ],
           series: [],
           studyAreaCountries: [
             {
@@ -119,7 +116,14 @@ describe('Metadata utilities', () => {
               vocabUri: 'http://example.com'
             }
           ],
-          typeOfSamplingProcedures: [],
+          typeOfSamplingProcedures: [
+            {
+              id: 'UKDS1234',
+              term: 'Term',
+              vocab: 'Vocab',
+              vocabUri: 'http://example.com'
+            }
+          ],
           unitTypes: [
             {
               id: 'UKDS1234',
@@ -202,9 +206,6 @@ describe('Metadata utilities', () => {
           publisher: 'UK Data Service'
         },
         relatedPublications: [],
-        samplingProcedureFreeTexts: [
-          'Sampling Procedure'
-        ],
         series: [],
         studyAreaCountries: [
           {
@@ -224,7 +225,14 @@ describe('Metadata utilities', () => {
             vocabUri: 'http://example.com'
           }
         ],
-        typeOfSamplingProcedures: [],
+        typeOfSamplingProcedures: [
+          {
+            id: 'UKDS1234',
+            term: 'Term',
+            vocab: 'Vocab',
+            vocabUri: 'http://example.com'
+          }
+        ],
         typeOfTimeMethods: [
           {
             id: 'UKDS1234',
@@ -279,7 +287,6 @@ describe('Metadata utilities', () => {
         publicationYear: '',
         publisher: undefined,
         relatedPublications: [],
-        samplingProcedureFreeTexts: [],
         series: [],
         studyAreaCountries: [],
         studyNumber: '',
@@ -362,7 +369,6 @@ describe('Metadata utilities', () => {
             publisher:'UK Data Service'
           },
           relatedPublications: [],
-          samplingProcedureFreeTexts: [],
           series: [],
           studyAreaCountries: [
             {
@@ -390,7 +396,14 @@ describe('Metadata utilities', () => {
               vocabUri: 'http://example.com'
             }
           ],
-          typeOfSamplingProcedures: [],
+          typeOfSamplingProcedures: [
+            {
+              id: 'UKDS1234',
+              term: 'Term',
+              vocab: 'Vocab',
+              vocabUri: 'http://example.com'
+            }
+          ],
           unitTypes: [
             {
               id: 'UKDS1234',
@@ -494,7 +507,6 @@ describe('Metadata utilities', () => {
             publisher: 'UK Data Service',
           },
           relatedPublications: [],
-          samplingProcedureFreeTexts: [],
           series: [],
           studyAreaCountries: [
             {
@@ -522,7 +534,14 @@ describe('Metadata utilities', () => {
               vocabUri: 'http://example.com'
             }
           ],
-          typeOfSamplingProcedures: [],
+          typeOfSamplingProcedures: [
+            {
+              id: 'UKDS1234',
+              term: 'Term',
+              vocab: 'Vocab',
+              vocabUri: 'http://example.com'
+            }
+          ],
           unitTypes: [
             {
               id: 'UKDS1234',

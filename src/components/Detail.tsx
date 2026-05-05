@@ -929,17 +929,11 @@ const Detail = (props: Props) => {
                 </>
               }
 
-              {!currentThematicView.excludeFields.includes('samplingProcedureFreeTexts') &&
-                (showAllFields || item.samplingProcedureFreeTexts.length > 0) &&
+              {!currentThematicView.excludeFields.includes('typeOfSamplingProcedures') &&
+                (showAllFields || item.typeOfSamplingProcedures.length > 0) &&
                 <>
                   {generateHeading('sampProc')}
-                  {generateElements(item.samplingProcedureFreeTexts, "div",
-                    (text) => (
-                      <div
-                        dangerouslySetInnerHTML={{ __html: text }}
-                      />
-                    )
-                  )}
+                  {generateElements(item.typeOfSamplingProcedures, "div", (sampProc) => sampProc.term)}
                 </>
               }
 

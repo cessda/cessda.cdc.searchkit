@@ -393,13 +393,6 @@ export default async (client: Elasticsearch) => ({
               }
             }
           },
-          "samplingProcedureFreeTexts": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "example": "Purposive selection/case studies"
-            }
-          },
           "studyAreaCountries": {
             "type": "array",
             "items": {
@@ -472,6 +465,10 @@ export default async (client: Elasticsearch) => ({
                 },
                 "id": {
                   "type": "string"
+                },
+                "term": {
+                  "type": "string",
+                  "example": "Purposive selection/case studies"
                 }
               }
             }
