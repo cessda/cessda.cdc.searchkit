@@ -49,29 +49,31 @@ const CustomSortBy = () => {
   const selectValue = currentSortBy === indexBase || currentSortBy.startsWith(`${indexBase}_`) ? currentSortBy : indexBase;
 
   return (
-    <select
-      className="ais-SortBy-select focus-visible"
-      aria-label={t('sortBy')}
-      value={selectValue}
-      onChange={(e) => {
-        const next = e.target.value;
+    <div className="ais-SortBy">
+      <select
+        className="ais-SortBy-select focus-visible"
+        aria-label={t('sortBy')}
+        value={selectValue}
+        onChange={(e) => {
+          const next = e.target.value;
 
-        setUiState((prev) => ({
-          ...prev,
-          [BASE_INDEX]: {
-            ...(prev[BASE_INDEX] ?? {}),
-            sortBy: next === BASE_INDEX ? undefined : next,
-            page: 1, // Reset page on sort change
-          },
-        }));
-      }}
-    >
-      {options.map((o) => (
-        <option key={o.value} value={o.value} className="ais-SortBy-option">
-          {o.label}
-        </option>
-      ))}
-    </select>
+          setUiState((prev) => ({
+            ...prev,
+            [BASE_INDEX]: {
+              ...(prev[BASE_INDEX] ?? {}),
+              sortBy: next === BASE_INDEX ? undefined : next,
+              page: 1, // Reset page on sort change
+            },
+          }));
+        }}
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value} className="ais-SortBy-option">
+            {o.label}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 };
 
