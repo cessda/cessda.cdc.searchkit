@@ -523,7 +523,7 @@ it("should show hidden fields when 'All elements' is clicked", async () => {
     series: [],
     unitTypes: [],
     universe: undefined,
-    samplingProcedureFreeTexts: [],
+    typeOfSamplingProcedures: [],
     dataKindFreeTexts: [],
     generalDataFormats: [],
     typeOfModeOfCollections: [],
