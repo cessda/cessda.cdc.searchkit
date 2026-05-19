@@ -129,14 +129,11 @@ export interface Publisher {
   publisher: string;
 }
 
-export interface VocabAttributes {
+export interface TermVocabAttributes {
+  id: string;
+  term: string;
   vocab: string;
   vocabUri: string;
-  id: string;
-}
-
-export interface TermVocabAttributes extends VocabAttributes {
-  term: string;
 }
 
 export interface Similar {
@@ -418,34 +415,19 @@ export function getDDI(metadata: CMMStudy, lang: string): string {
     abstract, studyUrl, funding, series, unitTypes, dataKindFreeTexts
   } = metadata;
 
-  const createElement = (tag: string, content: string | undefined, attributes = {}) =>
-  `<${tag}${Object.entries(attributes).map(([key, value]) => value ? ` ${key}="${value}"` : '').join('')}${content !== undefined ? `>${content}</${tag}>` : ' />'}`;
-
-  function createElementWithConcept<T>(
-    tag: string,
-    items: T[],
-    getContent: (item: T) => string
-  ): string {
-    return items
-      .map(getContent)
-      .filter(Boolean)
-      .map(content => `<${tag} xml:lang="${lang}">${content}</${tag}>`)
-      .join('');
-  }
-
-  const modeXML = createElementWithConcept('collMode', typeOfModeOfCollections, collMode =>
+  const modeXML = createElementWithConcept('collMode', lang, typeOfModeOfCollections, collMode =>
     `${collMode.term || collMode.id}${collMode.id ? `<concept vocab="${collMode.vocab}" vocabURI="${collMode.vocabUri}">${collMode.id}</concept>` : ''}`
   );
 
-  const timeMethodXML = createElementWithConcept('timeMeth', typeOfTimeMethods, timeMeth =>
+  const timeMethodXML = createElementWithConcept('timeMeth', lang, typeOfTimeMethods, timeMeth =>
     `${timeMeth.term || timeMeth.id}${timeMeth.id ? `<concept vocab="${timeMeth.vocab}" vocabURI="${timeMeth.vocabUri}">${timeMeth.id}</concept>` : ''}`
   );
 
-  const sampProcXML = createElementWithConcept('sampProc', typeOfSamplingProcedures, sampProc =>
+  const sampProcXML = createElementWithConcept('sampProc', lang, typeOfSamplingProcedures, sampProc =>
     `${sampProc.id}${sampProc.id ? `<concept vocab="${sampProc.vocab}" vocabURI="${sampProc.vocabUri}">${sampProc.id}</concept>` : ''}`
   );
 
-  const anlyUnitXML = createElementWithConcept('anlyUnit', unitTypes, anlyUnit =>
+  const anlyUnitXML = createElementWithConcept('anlyUnit', lang, unitTypes, anlyUnit =>
     `${anlyUnit.term || anlyUnit.id}${anlyUnit.id ? `<concept vocab="${anlyUnit.vocab}" vocabURI="${anlyUnit.vocabUri}">${anlyUnit.id}</concept>` : ''}`
   );
 
@@ -587,6 +569,23 @@ function escapeTextInXml(text: string): string {
              .replace(/>/g, '&gt;')
              .replace(/"/g, '&quot;')
              .replace(/'/g, '&apos;');
+}
+
+function createElement(tag: string, content: string | undefined, attributes = {}) {
+  return `<${tag}${Object.entries(attributes).map(([key, value]) => value ? ` ${key}="${value}"` : '').join('')}${content !== undefined ? `>${content}</${tag}>` : ' />'}`;
+}
+
+function createElementWithConcept<T>(
+  tag: string,
+  lang: string,
+  items: T[],
+  getContent: (item: T) => string
+): string {
+  return items
+    .map(getContent)
+    .filter(Boolean)
+    .map(content => `<${tag} xml:lang="${lang}">${content}</${tag}>`)
+    .join('');
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
