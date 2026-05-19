@@ -14,6 +14,31 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - *Fixed (for any bug fixes)*
 - *Security (in case of vulnerabilities)*
 
+## [4.2.0] - 2026-05-26
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20282192.svg)](https://doi.org/10.5281/zenodo.20282192)
+
+### Added
+
+- Added the ability to switch collections without resetting the entire web application ([#752](https://github.com/cessda/cessda.cdc.versions/issues/752))
+- Added `target="blank"` attribute to tooltip links, causing these links to open in a new tab/window ([#746](https://github.com/cessda/cessda.cdc.versions/issues/746))
+
+### Changed
+
+- Updated the default ELSST version to ELSST 6 ([#747](https://github.com/cessda/cessda.cdc.versions/issues/747))
+- Updated data access tooltip to link to the COAR Access Rights Vocabulary, due to the OpenAIRE vocabulary no longer being available ([#746](https://github.com/cessda/cessda.cdc.versions/issues/746))
+- Modified `typeOfSamplingProcedures` to contain the term previously held by `samplingProcedureFreeTexts` ([#756](https://github.com/cessda/cessda.cdc.versions/issues/756))
+- Improved test coverage throughout the application ([#753](https://github.com/cessda/cessda.cdc.versions/issues/753))
+
+### Fixed
+
+- Fixed background issue with instantsearch `select` elements ([#759](https://github.com/cessda/cessda.cdc.versions/issues/759))
+
+### Removed
+
+- Removed the `samplingProcedureFreeTexts` field ([#756](https://github.com/cessda/cessda.cdc.versions/issues/756))
+- Removed the `VocabAttributes` interface, this was only used by `typeOfSamplingProcedures` ([#756](https://github.com/cessda/cessda.cdc.versions/issues/756))
+
 ## [4.1.1] - 2025-10-29
 
 ### Fixed
@@ -560,6 +585,7 @@ Searchkit - [10.5281/zenodo.3786300](https://zenodo.org/record/3786300)
 
 - N/A
 
+[4.2.0]: https://github.com/cessda/cessda.cdc.searchkit/releases/tag/4.2.0
 [4.1.1]: https://github.com/cessda/cessda.cdc.searchkit/releases/tag/4.1.1
 [4.1.0]: https://github.com/cessda/cessda.cdc.searchkit/releases/tag/4.1.0
 [4.0.0]: https://github.com/cessda/cessda.cdc.searchkit/releases/tag/4.0.0
