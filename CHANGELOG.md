@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20282192.svg)](https://doi.org/10.5281/zenodo.20282192)
 
+The minimum supported version of Node is now version 20.
+
 ### Added
 
 - Added the ability to switch collections without resetting the entire web application ([#752](https://github.com/cessda/cessda.cdc.versions/issues/752))
