@@ -302,7 +302,7 @@ fieldset[disabled] .button.is-info {
 }
 
 .panel-container {
-  &>.dropdown .dropdown-trigger button {
+  .dropdown .dropdown-trigger button {
     color: hsl(201, 21%, 75%);
   }
 }

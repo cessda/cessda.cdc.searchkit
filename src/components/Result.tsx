@@ -11,10 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { FaAngleDown, FaAngleUp, FaExternalLinkAlt, FaLock, FaLockOpen } from 'react-icons/fa';
 import { Link, useLocation } from "react-router";
-import { CMMStudy, TermVocabAttributes } from "../../common/metadata";
+import { CMMStudy } from "../../common/metadata";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import Keywords from "./Keywords";
@@ -70,12 +70,15 @@ const Result: React.FC<ResultProps> = ({ hit }) => {
   const showKeywords = useAppSelector((state) => state.search.showKeywords);
 
   const [abstractExpanded, setAbstractExpanded] = useState(false);
-  const [sortedKeywords, setSortedKeywords] = useState<TermVocabAttributes[]>([]);
 
-  useEffect(() => {
-    if (hit.keywords && hit.keywords.length > 0) {
-      setSortedKeywords(hit.keywords.sort((a, b) => a.term.localeCompare(b.term)));
+  const sortedKeywords = useMemo(() => {
+    if (!hit.keywords || hit.keywords.length === 0) {
+      return [];
     }
+
+    return [...hit.keywords].sort((a, b) =>
+      a.term.localeCompare(b.term)
+    );
   }, [hit.keywords]);
 
   const truncatedAbstractLength = 500;

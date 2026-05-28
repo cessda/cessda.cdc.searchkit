@@ -40,7 +40,7 @@ Views are defined in the configuration file `/src/utilities/thematicViews.ts` in
         },
      ],
       excludeFields: ['publisher'], // Fields that should be hidden on the detail page. Use (almost) any field names as specified in the return statement of getStudyModel() in common/metadata.ts. See also src/components/Detail.tsx.
-      excludeFilters: ['publisher']  // Filters that should be hidden on the search page. Use any of the following:  "topic", "keywords", "publisher", "country", "collectionYear", "timeMethod", "timeMethodCV". See also src/containers/SearchPage.tsx.
+      excludeFilters: ['publisher']  // Filters that should be hidden on the search page. Use any of the following:  "topic", "keywords", "publisher", "country", "collectionYear", "timeMethod". See also src/containers/SearchPage.tsx.
   },
 ```
 

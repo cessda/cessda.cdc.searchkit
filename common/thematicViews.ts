@@ -15,7 +15,7 @@ export interface EsIndex {
   indexName: string;
   languageCode: string;
   language: string;
-  excludeFilters: string[]; // Use any of the following:  "topic", "keywords", "publisher", "country", "collectionYear", "timeMethod", "timeMethodCV". See also src/containers/SearchPage.tsx.
+  excludeFilters: string[]; // Use any of the following:  "topic", "keywords", "publisher", "country", "collectionYear", "timeMethod". See also src/containers/SearchPage.tsx.
 }
 
 export interface ThematicView {
@@ -30,7 +30,7 @@ export interface ThematicView {
   favicon: string | "cdc-favicon.png";
   esIndexes: EsIndex[];
   excludeFields: string[];  // Use (almost) any field names as specified in the return statement of getStudyModel() in common/metadata.ts. See also src/components/Detail.tsx.
-  excludeFilters: string[]; // Use any of the following:  "topic", "keywords", "publisher", "country", "collectionYear", "timeMethod", "timeMethodCV". See also src/containers/SearchPage.tsx.
+  excludeFilters: string[]; // Use any of the following:  "topic", "keywords", "publisher", "country", "collectionYear", "timeMethod". See also src/containers/SearchPage.tsx.
 }
 
 export const thematicViews: readonly ThematicView[] = [

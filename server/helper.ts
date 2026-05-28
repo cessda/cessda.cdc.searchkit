@@ -134,10 +134,9 @@ const apiClient = Client({
         nestedPath: "typeOfTimeMethods"
       },
       {
-        attribute: "timeMethodCV",
-        field: "id",
-        type: "string",
-        nestedPath: "typeOfTimeMethods"
+        attribute: "timeMethodCategory",
+        field: "typeOfTimeMethodCategory",
+        type: "string"
       },
     ],
     sorting: {

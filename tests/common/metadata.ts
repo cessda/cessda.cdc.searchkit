@@ -111,11 +111,12 @@ describe('Metadata utilities', () => {
           typeOfTimeMethods: [
             {
               id: 'UKDS1234',
-              term: 'Term',
+              term: 'Longitudinal',
               vocab: 'Vocab',
               vocabUri: 'http://example.com'
             }
           ],
+          typeOfTimeMethodCategory: 'Longitudinal',
           typeOfSamplingProcedures: [
             {
               id: 'UKDS1234',
@@ -236,11 +237,12 @@ describe('Metadata utilities', () => {
         typeOfTimeMethods: [
           {
             id: 'UKDS1234',
-            term: 'Term',
+            term: 'Longitudinal',
             vocab: 'Vocab',
             vocabUri: 'http://example.com'
           }
         ],
+        typeOfTimeMethodCategory: 'Longitudinal',
         unitTypes: [
           {
             id: 'UKDS1234',
@@ -295,6 +297,7 @@ describe('Metadata utilities', () => {
         typeOfModeOfCollections: [],
         typeOfSamplingProcedures: [],
         typeOfTimeMethods: [],
+        typeOfTimeMethodCategory: undefined,
         unitTypes: [],
         universe: undefined
       });
@@ -391,11 +394,12 @@ describe('Metadata utilities', () => {
           typeOfTimeMethods: [
             {
               id: 'UKDS1234',
-              term: 'Term',
+              term: 'Longitudinal',
               vocab: 'Vocab',
               vocabUri: 'http://example.com'
             }
           ],
+          typeOfTimeMethodCategory: 'Longitudinal',
           typeOfSamplingProcedures: [
             {
               id: 'UKDS1234',
@@ -529,11 +533,12 @@ describe('Metadata utilities', () => {
           typeOfTimeMethods: [
             {
               id: 'UKDS1234',
-              term: 'Term',
+              term: 'Longitudinal',
               vocab: 'Vocab',
               vocabUri: 'http://example.com'
             }
           ],
+          typeOfTimeMethodCategory: 'Longitudinal',
           typeOfSamplingProcedures: [
             {
               id: 'UKDS1234',
