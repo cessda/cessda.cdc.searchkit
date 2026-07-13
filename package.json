@@ -71,7 +71,7 @@
     "@typescript-eslint/parser": "8.63.0",
     "autoprefixer": "10.5.0",
     "babel-jest": "30.4.1",
-    "babel-loader": "10.0.0",
+    "babel-loader": "10.1.1",
     "bulma": "0.9.4",
     "bulma-switch": "2.0.4",
     "clean-webpack-plugin": "4.0.0",
