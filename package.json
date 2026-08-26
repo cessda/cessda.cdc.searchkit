@@ -59,7 +59,7 @@
     "@types/jest": "30.0.0",
     "@types/lodash": "4.17.24",
     "@types/method-override": "3.0.0",
-    "@types/node": "20.19.41",
+    "@types/node": "20.19.43",
     "@types/node-fetch": "2.6.11",
     "@types/react": "18.2.55",
     "@types/react-dom": "18.2.19",
