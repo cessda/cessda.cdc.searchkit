@@ -18,6 +18,8 @@ updates:
         versions: [">=8.0.0"]
       - dependency-name: "bulma"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "jsdom"
+        versions: [">=28.0.0"]
       - dependency-name: "react"
         update-types: ["version-update:semver-major"]
       - dependency-name: "react-dom"
