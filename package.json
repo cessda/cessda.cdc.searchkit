@@ -112,7 +112,7 @@
     "ts-node": "10.9.2",
     "typescript": "6.0.3",
     "util": "0.12.5",
-    "webpack": "5.110.3",
+    "webpack": "5.111.1",
     "webpack-cli": "7.2.3",
     "webpack-dev-middleware": "8.3.0",
     "webpack-dev-server": "6.0.0",
