@@ -46,6 +46,11 @@ jest.mock('../../../src/reducers/search', () => ({
   triggerSearchFormReset: () => ({
     type: 'triggerSearchFormReset',
   }),
+
+  setSortManuallySelected: (payload: boolean) => ({
+    type: 'setSortManuallySelected',
+    payload,
+  }),
 }));
 
 describe('useResetToThematicView', () => {
@@ -80,6 +85,11 @@ describe('useResetToThematicView', () => {
 
     expect(mockDispatch).toHaveBeenCalledWith({
       type: 'triggerSearchFormReset',
+    });
+
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: 'setSortManuallySelected',
+      payload: false,
     });
 
     // InstantSearch updater function

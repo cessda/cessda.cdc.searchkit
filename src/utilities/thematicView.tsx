@@ -15,7 +15,7 @@ import { useNavigate, useLocation } from "react-router";
 import { useInstantSearch } from "react-instantsearch";
 import { useAppDispatch } from "../hooks";
 import { updateThematicView } from "../reducers/thematicView";
-import { triggerSearchFormReset } from "../reducers/search";
+import { setSortManuallySelected, triggerSearchFormReset } from "../reducers/search";
 import { BASE_INDEX, DEFAULT_HITS_PER_PAGE } from "../../common/constants";
 import { ThematicView, thematicViews } from "../../common/thematicViews";
 import { useEffect } from "react";
@@ -41,6 +41,7 @@ export function useResetToThematicView() {
     );
 
     dispatch(triggerSearchFormReset());
+    dispatch(setSortManuallySelected(false));
 
     // InstantSearch reset
     setUiState((prev) => ({
@@ -95,6 +96,11 @@ export function ThematicViewInitialiser() {
     const hasAnyParams = location.search.length > 1;
     const params = new URLSearchParams(location.search);
     const sortBy = params.get("sortBy");
+
+    // Treat existing sortBy param the same as manually selecting sort
+    const hasExplicitManualSort = sortBy !== null && sortBy !== view.defaultIndex && !sortBy.endsWith("_relevance");
+
+    dispatch(setSortManuallySelected(hasExplicitManualSort));
 
     if (view.path !== "/" && !sortBy && !hasAnyParams) {
       params.set("sortBy", view.defaultIndex);
