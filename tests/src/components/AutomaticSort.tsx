@@ -44,6 +44,7 @@ describe('AutomaticSort', () => {
         },
         search: {
           isSortManuallySelected: false,
+          isSortModeInitialised: true,
         },
       })
     );
@@ -141,6 +142,7 @@ describe('AutomaticSort', () => {
         },
         search: {
           isSortManuallySelected: true,
+          isSortModeInitialised: true,
         },
       })
     );
@@ -163,6 +165,39 @@ describe('AutomaticSort', () => {
       uiState: {
         cmmstudy_en: {
           sortBy: 'coordinate_en_relevance',
+        },
+      },
+      setUiState: mockSetUiState,
+    });
+
+    render(<AutomaticSort />);
+
+    expect(mockSetUiState).not.toHaveBeenCalled();
+  });
+
+  it('waits until the sort mode has been initialised', () => {
+    (useAppSelector as jest.Mock).mockImplementation(selector =>
+      selector({
+        thematicView: {
+          currentThematicView: {
+            defaultIndex: 'cmmstudy_en',
+          },
+        },
+        search: {
+          isSortManuallySelected: false,
+          isSortModeInitialised: false,
+        },
+      })
+    );
+
+    (useSearchBox as jest.Mock).mockReturnValue({
+      query: 'climate',
+    });
+
+    (useInstantSearch as jest.Mock).mockReturnValue({
+      uiState: {
+        cmmstudy_en: {
+          sortBy: 'cmmstudy_en_title_asc',
         },
       },
       setUiState: mockSetUiState,

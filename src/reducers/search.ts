@@ -30,6 +30,7 @@ export interface SearchState {
   shouldResetSearchForm: boolean;
   backToSearchUrl: string | null;
   isSortManuallySelected: boolean;
+  isSortModeInitialised: boolean;
 }
 
 export const initialState: SearchState = {
@@ -47,6 +48,7 @@ export const initialState: SearchState = {
   shouldResetSearchForm: false,
   backToSearchUrl: null,
   isSortManuallySelected: false,
+  isSortModeInitialised: false,
 };
 
 export const updateMetrics = createAsyncThunk('search/updateMetrics', async (
@@ -115,6 +117,7 @@ export const searchSlice = createSlice({
     },
     setSortManuallySelected: (state: SearchState, action: PayloadAction<boolean>) => {
       state.isSortManuallySelected = action.payload;
+      state.isSortModeInitialised = true;
     },
   },
   extraReducers: (builder) => {

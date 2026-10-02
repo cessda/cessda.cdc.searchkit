@@ -33,6 +33,7 @@ const RELEVANCE_ATTRIBUTES = new Set([
 const AutomaticSort = () => {
   const currentThematicView = useAppSelector(state => state.thematicView.currentThematicView);
   const isSortManuallySelected = useAppSelector(state => state.search.isSortManuallySelected);
+  const isSortModeInitialised = useAppSelector(state => state.search.isSortModeInitialised);
   const { query } = useSearchBox();
   const { items: currentRefinements } = useCurrentRefinements();
   const { uiState, setUiState } = useInstantSearch();
@@ -40,13 +41,6 @@ const AutomaticSort = () => {
   const fallbackBase = currentThematicView.defaultIndex ?? BASE_INDEX;
 
   const currentSortBy = (uiState?.[BASE_INDEX]?.sortBy as string | undefined) ?? fallbackBase;
-
-  // Everything but default sort and relevance sort is treated as manually selected even if
-  // 'isSortManuallySelected' hasn't been set to true, e.g. following a link with a manually selected sort
-  const hasExplicitManualSort =
-    currentSortBy !== fallbackBase &&
-    currentSortBy !== BASE_INDEX &&
-    !currentSortBy.endsWith("_relevance");
 
   // Extract the underlying index from sort variants such, e.g. cmmstudy_en_relevance -> cmmstudy_en
   const indexBase = indexBaseFromSortBy(currentSortBy, fallbackBase);
@@ -59,9 +53,9 @@ const AutomaticSort = () => {
   const automaticSortBy = shouldUseRelevance ? `${indexBase}_relevance` : indexBase;
 
   useEffect(() => {
-    // Do not override an explicit sort selection made by the user and
-    // avoid unnecessary uiState updates if the correct sort is already active
-    if (isSortManuallySelected || hasExplicitManualSort || currentSortBy === automaticSortBy) {
+    // Do not run if sort mode hasn't been initialised, do not override an explicit sort selection made
+    // by the user and avoid unnecessary uiState updates if the correct sort is already active
+    if (!isSortModeInitialised || isSortManuallySelected || currentSortBy === automaticSortBy) {
       return;
     }
 
@@ -77,6 +71,7 @@ const AutomaticSort = () => {
     automaticSortBy,
     currentSortBy,
     isSortManuallySelected,
+    isSortModeInitialised,
     setUiState,
   ]);
 
