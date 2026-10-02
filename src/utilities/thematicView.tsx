@@ -97,7 +97,7 @@ export function ThematicViewInitialiser() {
     const params = new URLSearchParams(location.search);
     const sortBy = params.get("sortBy");
 
-    // Treat existing sortBy param the same as manually selecting sort
+    // Treat existing sortBy param the same as manually selecting sort when it's not default sort or relevance sort
     const hasExplicitManualSort = sortBy !== null && sortBy !== view.defaultIndex && !sortBy.endsWith("_relevance");
 
     dispatch(setSortManuallySelected(hasExplicitManualSort));

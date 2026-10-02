@@ -24,7 +24,6 @@ import { indexBaseFromSortBy } from "../../common/utils";
 const RELEVANCE_ATTRIBUTES = new Set([
   "classifications",
   "keywords",
-  "timeMethod",
 ]);
 
 /**
