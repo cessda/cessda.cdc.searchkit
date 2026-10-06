@@ -29,6 +29,8 @@ export interface SearchState {
   metrics: Metrics | undefined;
   shouldResetSearchForm: boolean;
   backToSearchUrl: string | null;
+  isSortManuallySelected: boolean;
+  isSortModeInitialised: boolean;
 }
 
 export const initialState: SearchState = {
@@ -44,7 +46,9 @@ export const initialState: SearchState = {
   totalStudies: 0,
   metrics: undefined,
   shouldResetSearchForm: false,
-  backToSearchUrl: null
+  backToSearchUrl: null,
+  isSortManuallySelected: false,
+  isSortModeInitialised: false,
 };
 
 export const updateMetrics = createAsyncThunk('search/updateMetrics', async (
@@ -111,6 +115,10 @@ export const searchSlice = createSlice({
     clearBackToSearchUrl: (state) => {
       state.backToSearchUrl = null;
     },
+    setSortManuallySelected: (state: SearchState, action: PayloadAction<boolean>) => {
+      state.isSortManuallySelected = action.payload;
+      state.isSortModeInitialised = true;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(updateMetrics.fulfilled, (state, action) => {
@@ -134,6 +142,7 @@ export const {
   clearSearchFormReset,
   setBackToSearchUrl,
   clearBackToSearchUrl,
+  setSortManuallySelected,
 } = searchSlice.actions;
 
 export default searchSlice.reducer;

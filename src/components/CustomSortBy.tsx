@@ -14,9 +14,10 @@
 import { useTranslation } from "react-i18next";
 import React from "react";
 import { useInstantSearch } from "react-instantsearch";
-import { useAppSelector } from "../hooks";
+import { useAppDispatch, useAppSelector } from "../hooks";
 import { BASE_INDEX, SORT_OPTIONS } from "../../common/constants"
 import { indexBaseFromSortBy } from "../../common/utils";
+import { setSortManuallySelected } from "../reducers/search";
 
 /**
  * Sort by element with main functionality from React InstantSearch.
@@ -25,6 +26,7 @@ import { indexBaseFromSortBy } from "../../common/utils";
  */
 const CustomSortBy = () => {
   const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const reduxView = useAppSelector((state) => state.thematicView.currentThematicView);
   const { uiState, setUiState } = useInstantSearch();
 
@@ -56,6 +58,8 @@ const CustomSortBy = () => {
         value={selectValue}
         onChange={(e) => {
           const next = e.target.value;
+
+          dispatch(setSortManuallySelected(true));
 
           setUiState((prev) => ({
             ...prev,

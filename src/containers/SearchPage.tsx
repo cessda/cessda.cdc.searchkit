@@ -37,6 +37,7 @@ import { FaRegCheckSquare } from "react-icons/fa";
 import { HITS_OPTIONS } from "../../common/constants";
 import IndexSwitcher from "../components/IndexSwitcher";
 import CustomSearchBox from "../components/CustomSearchBox";
+import AutomaticSort from "../components/AutomaticSort";
 
 
 const SearchPage = () => {
@@ -104,6 +105,8 @@ const SearchPage = () => {
 
   return (
     <>
+      <AutomaticSort />
+
       <div className="columns mx-4 mt-2">
         <div className="searchwrapper columns is-flex-direction-column is-mobile is-narrow mx-auto is-gapless mt-4 mb-2 p-2">
           <div className="columns is-flex-direction-row is-mobile is-narrow mx-auto is-gapless mb-1">

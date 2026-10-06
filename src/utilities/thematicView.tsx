@@ -13,9 +13,9 @@
 
 import { useNavigate, useLocation } from "react-router";
 import { useInstantSearch } from "react-instantsearch";
-import { useAppDispatch } from "../hooks";
+import { useAppDispatch, useAppSelector } from "../hooks";
 import { updateThematicView } from "../reducers/thematicView";
-import { triggerSearchFormReset } from "../reducers/search";
+import { setSortManuallySelected, triggerSearchFormReset } from "../reducers/search";
 import { BASE_INDEX, DEFAULT_HITS_PER_PAGE } from "../../common/constants";
 import { ThematicView, thematicViews } from "../../common/thematicViews";
 import { useEffect } from "react";
@@ -41,6 +41,7 @@ export function useResetToThematicView() {
     );
 
     dispatch(triggerSearchFormReset());
+    dispatch(setSortManuallySelected(false));
 
     // InstantSearch reset
     setUiState((prev) => ({
@@ -72,6 +73,7 @@ export function ThematicViewInitialiser() {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const isSortModeInitialised = useAppSelector(state => state.search.isSortModeInitialised);
   const { setUiState } = useInstantSearch();
 
   useEffect(() => {
@@ -95,6 +97,21 @@ export function ThematicViewInitialiser() {
     const hasAnyParams = location.search.length > 1;
     const params = new URLSearchParams(location.search);
     const sortBy = params.get("sortBy");
+
+    // On startup, reconstruct manual sorting intent from the URL.
+    // Explicit non-relevance sorts are treated as manual.
+    // Root collection URLs with query parameters but no sortBy are treated as manually
+    // selected default sorting because the root default sort is omitted from the URL.
+    if (!isSortModeInitialised) {
+      let hasExplicitManualSort = sortBy !== null && !sortBy.endsWith("_relevance");
+
+      if (view.path === "/" && sortBy === null && hasAnyParams) {
+        hasExplicitManualSort = true;
+      }
+
+      // Initialises sort mode also
+      dispatch(setSortManuallySelected(hasExplicitManualSort));
+    }
 
     if (view.path !== "/" && !sortBy && !hasAnyParams) {
       params.set("sortBy", view.defaultIndex);

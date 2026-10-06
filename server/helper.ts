@@ -142,8 +142,12 @@ const apiClient = Client({
     ],
     sorting: {
       default: {
-        field: '_score',
+        field: 'publicationYear',
         order: 'desc'
+      },
+      _publication_year_asc: {
+        field: 'publicationYear',
+        order: 'asc'
       },
       _title_desc: {
         field: 'titleStudy.normalized',
@@ -161,13 +165,9 @@ const apiClient = Client({
         field: 'dataCollectionYear',
         order: 'asc'
       },
-      _publication_year_desc: {
-        field: 'publicationYear',
+      _relevance: {
+        field: '_score',
         order: 'desc'
-      },
-      _publication_year_asc: {
-        field: 'publicationYear',
-        order: 'asc'
       },
     }
   },

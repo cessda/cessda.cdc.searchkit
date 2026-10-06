@@ -23,11 +23,11 @@ export const HITS_OPTIONS = [
 ];
 
 export const SORT_OPTIONS = [
-  { suffix: "", i18nKey: "sorting.relevance" },
+  { suffix: "", i18nKey: "sorting.publicationDateDescending" },
+  { suffix: "_publication_year_asc", i18nKey: "sorting.publicationDateAscending" },
   { suffix: "_title_asc", i18nKey: "sorting.titleAscending" },
   { suffix: "_title_desc", i18nKey: "sorting.titleDescending" },
   { suffix: "_collection_date_desc", i18nKey: "sorting.dateDescending" },
   { suffix: "_collection_date_asc", i18nKey: "sorting.dateAscending" },
-  { suffix: "_publication_year_desc", i18nKey: "sorting.publicationDateDescending" },
-  { suffix: "_publication_year_asc", i18nKey: "sorting.publicationDateAscending" },
+  { suffix: "_relevance", i18nKey: "sorting.relevance" },
 ] as const;
