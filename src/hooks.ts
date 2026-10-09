@@ -16,7 +16,6 @@ import type { RootState, AppDispatch } from "./store";
 import { useEffect } from "react";
 import { useLocation } from "react-router";
 import { useInstantSearch } from "react-instantsearch";
-import getPaq from "./utilities/getPaq";
 
 // Redux hooks
 type DispatchFunc = () => AppDispatch;
@@ -26,27 +25,29 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 // Matomo tracking hook
 export const useMatomoTracking = () => {
   const location = useLocation();
-  const _paq = getPaq();
 
   useEffect(() => {
-    // Notify Matomo Analytics of page change
-    const path = location.pathname + location.search;
-    _paq.push(["setReferrerUrl", path]);
-    _paq.push(["setCustomUrl", path]);
-    _paq.push(["setDocumentTitle", "CESSDA Data Catalogue"]);
+    const _paq = window._paq;
+    if (_paq) {
+      // Notify Matomo Analytics of page change
+      const path = location.pathname + location.search;
+      _paq.push(["setReferrerUrl", path]);
+      _paq.push(["setCustomUrl", path]);
+      _paq.push(["setDocumentTitle", "CESSDA Data Catalogue"]);
 
-    // Remove all previously assigned custom variables, requires Matomo (formerly Piwik) 3.0.2
-    _paq.push(["deleteCustomVariables", "page"]);
-    _paq.push(["trackPageView"]);
+      // Remove all previously assigned custom variables, requires Matomo (formerly Piwik) 3.0.2
+      _paq.push(["deleteCustomVariables", "page"]);
+      _paq.push(["trackPageView"]);
 
-    // Make Matomo aware of newly added content
-    const content = document.getElementById("root");
-    if (content) {
-      _paq.push(["MediaAnalytics::scanForMedia", content]);
-      _paq.push(["FormAnalytics::scanForForms", content]);
-      _paq.push(["trackContentImpressionsWithinNode", content]);
+      // Make Matomo aware of newly added content
+      const content = document.getElementById("root");
+      if (content) {
+        _paq.push(["MediaAnalytics::scanForMedia", content]);
+        _paq.push(["FormAnalytics::scanForForms", content]);
+        _paq.push(["trackContentImpressionsWithinNode", content]);
+      }
+      _paq.push(["enableLinkTracking"]);
     }
-    _paq.push(["enableLinkTracking"]);
   }, [location]);
 };
 
@@ -56,8 +57,7 @@ export const useSearchTracking = () => {
 
   useEffect(() => {
     if (status === "idle" && results?.query) {
-      const _paq = getPaq();
-      _paq.push(["trackEvent", "Search", "Query", results.query]);
+      window._paq?.push(["trackEvent", "Search", "Query", results.query]);
     }
   }, [results?.query, status]);
 };
