@@ -15,7 +15,6 @@ import React, { useMemo } from "react";
 import Select from "react-select";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { useInstantSearch } from "react-instantsearch";
-import getPaq from "../utilities/getPaq";
 import { updateThematicView } from "../reducers/thematicView";
 import { BASE_INDEX } from "../../common/constants";
 import { useLocation, useNavigate } from "react-router";
@@ -71,8 +70,7 @@ const IndexSwitcher = () => {
       (i) => i.indexName === nextIndex
     );
     if (esIndex) {
-      const _paq = getPaq();
-      _paq.push([
+      window._paq?.push([
         "trackEvent",
         "Language",
         "Change Language",

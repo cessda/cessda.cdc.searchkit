@@ -20,14 +20,19 @@ import './i18n/config';
 import "./styles/design.scss";
 import { HelmetProvider } from 'react-helmet-async';
 import App from "./App";
-import getPaq from "./utilities/getPaq";
+
 
 // Import images used by Open Graph
 require('./img/cessda_logo_dc.png')
 
 // Initialise Matomo Analytics.
-const _paq = getPaq();
-const url = 'https://cessda.matomo.cloud/';
+const _paq = window._paq = window._paq || [];
+
+/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+
+const url = 'https://analytics.cessda.eu/';
 const siteId = '2';
 
 _paq.push(['setTrackerUrl', url + 'matomo.php']);
