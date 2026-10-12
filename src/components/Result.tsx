@@ -19,7 +19,6 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import Keywords from "./Keywords";
 import { Hit, HitAttributeHighlightResult } from "instantsearch.js";
-import getPaq from "../utilities/getPaq";
 import MetadataUtils from "../utilities/metadata";
 import { indexBaseFromSortBy, escapeRegex } from "../../common/utils";
 import { setBackToSearchUrl } from "../reducers/search";
@@ -111,8 +110,7 @@ const Result: React.FC<ResultProps> = ({ hit }) => {
 
   const handleAbstractExpansion = (titleStudy: string) => {
     // Notify Matomo Analytics of toggling "Read more" for a study
-    const _paq = getPaq();
-    _paq.push(['trackEvent', 'Search', 'Read more', titleStudy]);
+    window._paq?.push(['trackEvent', 'Search', 'Read more', titleStudy]);
 
     setAbstractExpanded(!abstractExpanded)
   }
