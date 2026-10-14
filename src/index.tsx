@@ -28,10 +28,6 @@ require('./img/cessda_logo_dc.png')
 // Initialise Matomo Analytics.
 const _paq = window._paq = window._paq || [];
 
-/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-_paq.push(['trackPageView']);
-_paq.push(['enableLinkTracking']);
-
 const url = 'https://analytics.cessda.eu/';
 const siteId = '2';
 

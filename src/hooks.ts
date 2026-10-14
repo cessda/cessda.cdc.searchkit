@@ -30,9 +30,7 @@ export const useMatomoTracking = () => {
     const _paq = window._paq;
     if (_paq) {
       // Notify Matomo Analytics of page change
-      const path = location.pathname + location.search;
-      _paq.push(["setReferrerUrl", path]);
-      _paq.push(["setCustomUrl", path]);
+      _paq.push(["setCustomUrl", window.location.origin + location.pathname + location.search + location.hash]);
       _paq.push(["setDocumentTitle", "CESSDA Data Catalogue"]);
 
       // Remove all previously assigned custom variables, requires Matomo (formerly Piwik) 3.0.2
@@ -46,6 +44,7 @@ export const useMatomoTracking = () => {
         _paq.push(["FormAnalytics::scanForForms", content]);
         _paq.push(["trackContentImpressionsWithinNode", content]);
       }
+      
       _paq.push(["enableLinkTracking"]);
     }
   }, [location]);
