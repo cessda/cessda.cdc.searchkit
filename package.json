@@ -22,7 +22,7 @@
     "body-parser": "2.3.0",
     "compression": "1.8.2",
     "cors": "2.8.6",
-    "ejs": "5.0.1",
+    "ejs": "7.0.1",
     "express": "5.2.1",
     "isomorphic-unfetch": "4.0.2",
     "jest-transformer-svg": "2.1.0",
