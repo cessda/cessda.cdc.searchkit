@@ -40,6 +40,7 @@ import { getELSSTRouter } from "./elsst";
 import QueryString from "qs";
 import { JSDOM } from "jsdom";
 import { BASE_INDEX } from "../common/constants"
+import { caseInsensitiveRegex } from "../common/utils";
 
 const { ConnectionError, ResponseError } = errors;
 
@@ -73,6 +74,23 @@ if (elasticsearchUsername && elasticsearchPassword) {
 
 const elasticsearch: Elasticsearch = new Elasticsearch(elasticsearchUrl, elasticsearchAuth);
 
+const containsFacetQuery =
+  (field: string, size: number, query?: string) => {
+    const trimmedQuery = query?.trim();
+
+    return {
+      terms: {
+        field,
+        size,
+        ...(trimmedQuery
+          ? {
+            include: `.*${caseInsensitiveRegex(trimmedQuery)}.*`,
+          }
+          : {}),
+      },
+    };
+  };
+
 // Proxy client for Searchkit
 // See https://www.searchkit.co/docs/proxy-elasticsearch/with-express-js
 const apiClient = Client({
@@ -97,13 +115,15 @@ const apiClient = Client({
         attribute: "keywords",
         field: "term.normalized",
         type: "string",
-        nestedPath: "keywords"
+        nestedPath: "keywords",
+        facetQuery: containsFacetQuery,
       },
       {
         attribute: "classifications",
         field: "term.normalized",
         type: "string",
-        nestedPath: "classifications"
+        nestedPath: "classifications",
+        facetQuery: containsFacetQuery,
       },
       {
         attribute: "dataAccess",
@@ -119,25 +139,29 @@ const apiClient = Client({
         attribute: "country",
         field: "searchField",
         type: "string",
-        nestedPath: "studyAreaCountries"
+        nestedPath: "studyAreaCountries",
+        facetQuery: containsFacetQuery,
       },
       {
         attribute: "publisher",
         field: "publisher",
         type: "string",
-        nestedPath: "publisherFilter"
+        nestedPath: "publisherFilter",
+        facetQuery: containsFacetQuery,
       },
       {
         attribute: "timeMethod",
         field: "term.normalized",
         type: "string",
-        nestedPath: "typeOfTimeMethods"
+        nestedPath: "typeOfTimeMethods",
+        facetQuery: containsFacetQuery,
       },
       {
         attribute: "timeMethodCV",
         field: "id",
         type: "string",
-        nestedPath: "typeOfTimeMethods"
+        nestedPath: "typeOfTimeMethods",
+        facetQuery: containsFacetQuery,
       },
     ],
     sorting: {
@@ -813,7 +837,7 @@ export async function renderResponse(
 
       // Match static pages
       if ( normalisedPath === "/"
-        || normalisedPath === "/about" 
+        || normalisedPath === "/about"
         || normalisedPath === "/accessibility-statement"
         || normalisedPath === "/documentation"
         || normalisedPath === "/collections"
