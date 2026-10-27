@@ -19,7 +19,7 @@
   "dependencies": {
     "@elastic/elasticsearch": "8.19.1",
     "@searchkit/api": "4.14.0",
-    "body-parser": "2.3.0",
+    "body-parser": "2.4.0",
     "compression": "1.8.2",
     "cors": "2.8.6",
     "ejs": "7.0.1",
