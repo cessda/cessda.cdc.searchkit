@@ -14,9 +14,23 @@
 import { BASE_INDEX, SORT_OPTIONS } from "./constants";
 import { thematicViews } from "./thematicViews";
 
-/** Escape all characters in a regex */
-export function escapeRegex(string: string) {
-  return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, "\\$&");
+/** Escape characters with special meaning in regex patterns used by the application */
+export function escapeRegex(value: string) {
+  return value.replace(/[/\-\\^$*+?.()|[\]{}"]/g, "\\$&");
+}
+
+/** Build a case-insensitive regex fragment without using regex flags */
+export function caseInsensitiveRegex(value: string): string {
+  return Array.from(value, (c) => {
+    const lower = c.toLocaleLowerCase();
+    const upper = c.toLocaleUpperCase();
+
+    if (lower === upper || Array.from(lower).length !== 1 || Array.from(upper).length !== 1) {
+      return c;
+    }
+
+    return `[${lower}${upper}]`;
+  }).join('');
 }
 
 /**

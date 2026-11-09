@@ -24,11 +24,18 @@ let debouncedFn: jest.MockedFunction<(value: string) => void>;
 
 jest.mock('lodash', () => {
   const original = jest.requireActual('lodash');
+
   return {
     ...original,
     debounce: (fn: (value: string) => void) => {
       debouncedFn = fn as jest.MockedFunction<(value: string) => void>;
-      return fn;
+
+      const debounced = ((value: string) => fn(value)) as typeof fn & {
+        cancel: jest.Mock;
+      };
+      debounced.cancel = jest.fn();
+
+      return debounced;
     },
   };
 });
@@ -209,5 +216,17 @@ describe('CustomRefinementList', () => {
     });
 
     expect(mockRefine).toHaveBeenCalledWith('option a');
+  });
+
+  it('escapes special characters when searching facet values', async () => {
+    render(<CustomRefinementList attribute="category" searchable />);
+    const input = screen.getByRole('searchbox');
+
+    await userEvent.type(input, 'Test ("value")');
+
+    expect(input).toHaveValue('test ("value")');
+    expect(mockSearchForItems).toHaveBeenLastCalledWith(
+      'test \\(\\"value\\"\\)'
+    );
   });
 });

@@ -16,14 +16,6 @@ import { render } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { useMatomoTracking, useSearchTracking } from "../../src/hooks";
 import { useInstantSearch } from "react-instantsearch";
-import getPaq from "../../src/utilities/getPaq";
-
-// Mock getPaq
-jest.mock("../../src/utilities/getPaq", () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mockPaq: any[][] = [];
-  return () => mockPaq;
-});
 
 // Mock useInstantSearch
 jest.mock("react-instantsearch", () => {
@@ -34,6 +26,12 @@ jest.mock("react-instantsearch", () => {
   };
 });
 
+function setupPaq() {
+  const _paq = window._paq = window._paq || []
+  _paq.length = 0;
+  return _paq;
+}
+
 describe("useMatomoTracking", () => {
   const TestComponent = () => {
     useMatomoTracking();
@@ -41,8 +39,7 @@ describe("useMatomoTracking", () => {
   };
 
   it("pushes page view events to Matomo", () => {
-    const _paq = getPaq();
-    _paq.length = 0;
+    const _paq = setupPaq();
 
     render(
       <MemoryRouter initialEntries={["/test?query=1"]}>
@@ -55,8 +52,7 @@ describe("useMatomoTracking", () => {
   });
 
   it("scans for media and forms if #root exists", () => {
-    const _paq = getPaq();
-    _paq.length = 0;
+    const _paq = setupPaq();
 
     const root = document.createElement("div");
     root.id = "root";
@@ -83,8 +79,7 @@ describe("useSearchTracking", () => {
   };
 
   it("tracks search query when status is idle", () => {
-    const _paq = getPaq();
-    _paq.length = 0;
+    const _paq = setupPaq();
 
     (useInstantSearch as jest.Mock).mockImplementation(() => ({
       results: { query: "climate" },
@@ -97,8 +92,7 @@ describe("useSearchTracking", () => {
   });
 
   it("does not track if status is not idle", () => {
-    const _paq = getPaq();
-    _paq.length = 0;
+    const _paq = setupPaq();
 
     (useInstantSearch as jest.Mock).mockImplementation(() => ({
       results: { query: "climate" },
@@ -111,8 +105,7 @@ describe("useSearchTracking", () => {
   });
 
   it("does not track if query is empty", () => {
-    const _paq = getPaq();
-    _paq.length = 0;
+    const _paq = setupPaq();
 
     (useInstantSearch as jest.Mock).mockImplementation(() => ({
       results: { query: "" },

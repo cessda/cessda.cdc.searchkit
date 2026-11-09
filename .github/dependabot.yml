@@ -14,13 +14,19 @@ updates:
     schedule:
       interval: "weekly"
     ignore:
+      - dependency-name: "@babel/*"
+        versions: [">=8.0.0"]
       - dependency-name: "bulma"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "jsdom"
+        versions: [">=28.0.0"]
       - dependency-name: "react"
         update-types: ["version-update:semver-major"]
       - dependency-name: "react-dom"
         update-types: ["version-update:semver-major"]
-      - dependency-name: "react-test-renderer"
+      - dependency-name: "react-router"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]

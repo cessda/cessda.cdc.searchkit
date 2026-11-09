@@ -26,6 +26,7 @@ import { useAppSelector } from "../../../src/hooks";
 import '@testing-library/jest-dom';
 import reducer, { updateThematicView } from "../../../src/reducers/thematicView";
 import { useCurrentRefinements } from "react-instantsearch";
+import CustomSortBy from '../../../src/components/CustomSortBy';
 
 
 const initialView = thematicViews[0];
@@ -185,5 +186,23 @@ describe("SearchPage", () => {
     // Modal should be gone
     expect(screen.queryByTestId('filter-summary')).toBeNull();
     expect(screen.queryByText("Mocked Current Refinements")).toBeNull();
+  });
+
+  it('marks sorting as manually selected when sort changes', async () => {
+    render(<CustomSortBy />);
+
+    const select = screen.getByRole('combobox');
+
+    await userEvent.selectOptions(
+      select,
+      'coordinate_en_title_asc'
+    );
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'search/setSortManuallySelected',
+        payload: true,
+      })
+    );
   });
 });

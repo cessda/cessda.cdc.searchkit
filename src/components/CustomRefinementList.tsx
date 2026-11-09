@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useRef, useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   useRefinementList,
@@ -19,6 +19,7 @@ import {
   UseRefinementListProps
 } from 'react-instantsearch';
 import { debounce } from 'lodash';
+import { escapeRegex } from '../../common/utils';
 
 interface CustomRefinementListProps extends UseRefinementListProps {
   classNames?: {
@@ -100,9 +101,13 @@ const CustomRefinementList = ({
 
   const debouncedSearch = useRef(
     debounce((value: string) => {
-      searchForItems(value);
+      searchForItems(escapeRegex(value));
     }, 200)
   ).current;
+
+  useEffect(() => {
+    return () => debouncedSearch.cancel();
+  }, [debouncedSearch]);
 
   const handleQueryChange = (value: string) => {
     setQuery(value);

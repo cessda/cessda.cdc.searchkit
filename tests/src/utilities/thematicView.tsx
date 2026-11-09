@@ -14,6 +14,7 @@
 import React from 'react';
 import '../../mocks/reduxHooksMock';
 import { mockDispatch } from '../../mocks/reduxHooksMock';
+import { useAppSelector } from '../../../src/hooks';
 import { useLocation } from 'react-router';
 import { renderHook, act, render } from '@testing-library/react';
 import { ThematicViewInitialiser, useResetToThematicView } from '../../../src/utilities/thematicView';
@@ -46,6 +47,11 @@ jest.mock('../../../src/reducers/search', () => ({
   triggerSearchFormReset: () => ({
     type: 'triggerSearchFormReset',
   }),
+
+  setSortManuallySelected: (payload: boolean) => ({
+    type: 'setSortManuallySelected',
+    payload,
+  }),
 }));
 
 describe('useResetToThematicView', () => {
@@ -54,6 +60,15 @@ describe('useResetToThematicView', () => {
       pathname: '/',
       search: '',
     });
+
+    (useAppSelector as jest.Mock).mockImplementation(selector =>
+      selector({
+        search: {
+          isSortManuallySelected: false,
+          isSortModeInitialised: false,
+        },
+      })
+    );
   });
 
   afterEach(() => {
@@ -80,6 +95,11 @@ describe('useResetToThematicView', () => {
 
     expect(mockDispatch).toHaveBeenCalledWith({
       type: 'triggerSearchFormReset',
+    });
+
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: 'setSortManuallySelected',
+      payload: false,
     });
 
     // InstantSearch updater function
@@ -132,6 +152,11 @@ describe('useResetToThematicView', () => {
       `${view.path}/?sortBy=${view.defaultIndex}`,
       { replace: false }
     );
+
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: 'setSortManuallySelected',
+      payload: false,
+    });
   });
 
   it('initialises Redux but does not navigate or touch InstantSearch on non-search routes', () => {
@@ -156,5 +181,83 @@ describe('useResetToThematicView', () => {
 
     // No InstantSearch initialisation
     expect(mockSetUiState).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    {
+      pathname: '/',
+      search: '?query=test',
+      expectedManual: true,
+      description: 'root default sorting omitted from the URL',
+    },
+    {
+      pathname: '/',
+      search: '?query=test&sortBy=cmmstudy_en_relevance',
+      expectedManual: false,
+      description: 'automatic relevance sorting in the root collection',
+    },
+    {
+      pathname: '/',
+      search: '?query=test&sortBy=cmmstudy_en_title_asc',
+      expectedManual: true,
+      description: 'explicit title sorting in the root collection',
+    },
+    {
+      pathname: '/coordinate/',
+      search: '?query=test&sortBy=coordinate_en',
+      expectedManual: true,
+      description: 'explicit default sorting in a thematic collection',
+    },
+    {
+      pathname: '/coordinate/',
+      search: '?query=test&sortBy=coordinate_en_relevance',
+      expectedManual: false,
+      description: 'automatic relevance sorting in a thematic collection',
+    },
+    {
+      pathname: '/coordinate/',
+      search: '?query=test&sortBy=coordinate_en_title_asc',
+      expectedManual: true,
+      description: 'explicit title sorting in a thematic collection',
+    },
+  ])(
+    'initialises each described case correctly',
+    ({ pathname, search, expectedManual }) => {
+      (useLocation as jest.Mock).mockReturnValue({
+        pathname,
+        search,
+      });
+
+      render(<ThematicViewInitialiser />);
+
+      expect(mockDispatch).toHaveBeenCalledWith({
+        type: 'setSortManuallySelected',
+        payload: expectedManual,
+      });
+    }
+  );
+
+  it('does not reinitialise sort mode after it has already been initialised', () => {
+    (useLocation as jest.Mock).mockReturnValue({
+      pathname: '/',
+      search: '?query=test&sortBy=cmmstudy_en_relevance',
+    });
+
+    (useAppSelector as jest.Mock).mockImplementation(selector =>
+      selector({
+        search: {
+          isSortManuallySelected: true,
+          isSortModeInitialised: true,
+        },
+      })
+    );
+
+    render(<ThematicViewInitialiser />);
+
+    expect(mockDispatch).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'setSortManuallySelected',
+      })
+    );
   });
 });

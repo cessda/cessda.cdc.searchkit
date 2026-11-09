@@ -49,6 +49,15 @@ jest.mock('react-instantsearch', () => ({
   useCurrentRefinements: jest.fn(() => ({ items: [] })),
   useClearRefinements: () => ({}),
   usePagination: () => ({}),
-  useSearchBox: () => ({}),
-  useInstantSearch: jest.fn(() => ({})),
+  useSearchBox: jest.fn(() => ({
+    query: '',
+  })),
+  useInstantSearch: jest.fn(() => ({
+    uiState: {
+      cmmstudy_en: {
+        sortBy: 'coordinate_en',
+      },
+    },
+    setUiState: jest.fn(),
+  })),
 }));
