@@ -154,36 +154,37 @@ const CustomSearchBox = ({ setQueryError, ...props }: CustomSearchBoxProps) => {
         inputRef.current?.focus();
       }}
     >
-      <div className="columns is-narrow is-gapless">
+      <div className="search-form-controls">
         <Helmet>
           <title>{pageTitle}</title>
         </Helmet>
-        <div className="column is-narrow is-narrow-mobile">
-          <input
-            className="input searchbox"
-            id="searchbox"
-            aria-label="Search field"
-            ref={inputRef}
-            autoComplete="off"
-            autoCorrect="off"
-            autoCapitalize="off"
-            placeholder="Search in selected language"
-            spellCheck={false}
-            maxLength={512}
-            type="search"
-            value={inputValue}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            autoFocus
-          />
+
+        <input
+          className="input searchbox"
+          id="searchbox"
+          aria-label="Search field"
+          ref={inputRef}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          placeholder="Search in selected language"
+          spellCheck={false}
+          maxLength={512}
+          type="search"
+          value={inputValue}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          autoFocus
+        />
+
+        <div className="search-form-buttons">
           <button
             className={`button ${isSearchStalled ? 'is-loading' : ''}`}
             type="submit"
           >
             {t("search.label")}
           </button>
-        </div>
-        <div className="column is-narrow is-flex-grow-0 ml-1 is-hidden-mobile">
+
           <button
             className="button"
             disabled={inputValue === '' || isSearchStalled}

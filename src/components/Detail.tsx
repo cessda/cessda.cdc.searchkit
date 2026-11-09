@@ -321,7 +321,7 @@ const Detail = (props: Props) => {
     { accessTerms: { id: 'terms-of-data-access', level: 'subtitle', translation: t("metadata.termsOfDataAccess") } },
     { topics: { id: 'topics', level: 'title', translation: t("metadata.topics.label") } },
     { keywords: { id: 'keywords', level: 'title', translation: t("metadata.keywords.label") } },
-    { relPub: { id: 'related-publications', level: 'title', translation: t("metadata.relatedPublications") } }
+    { relPub: { id: 'related-publications', level: 'title', translation: `${t("metadata.relatedPublications")} (${item.relatedPublications.length})` } }
   ]
 
   function generateHeading(headingKey: string, classNames?: string, overrideId?: string) {
@@ -632,7 +632,7 @@ const Detail = (props: Props) => {
                 </div>
 
                 <div className="column is-narrow">
-                  <div className="columns is-mobile is-gapless">
+                  <div className="columns is-mobile is-gapless is-flex-wrap-wrap">
                     <div className="column is-narrow mt-2">
                       <Select options={exportMetadataOptions}
                         defaultValue={exportMetadataOptions[0]}
@@ -669,11 +669,11 @@ const Detail = (props: Props) => {
                 </div>
               </div>
 
-              <div className="columns is-mobile is-gapless">
-                <div className="column is-one-third is-flex">
+              <div className="columns is-mobile is-gapless is-flex-wrap-wrap">
+                <div className="column is-one-third is-flex detail-languages">
                   {languageLinks}
                 </div>
-                <div className="column is-flex is-flex-wrap-wrap is-align-self-flex-end is-justify-content-end">
+                <div className="column is-flex is-flex-wrap-wrap is-align-self-flex-end is-justify-content-end detail-view-buttons">
                   <button
                     className={`button is-small mt-3 mr-1 ${!showAllFields ? "is-static" : ""}`}
                     disabled={!showAllFields}
@@ -1018,7 +1018,7 @@ const Detail = (props: Props) => {
               }
             </section>
 
-            <section className="metadata-section">
+            <section className="metadata-section related-publications">
               {!currentThematicView.excludeFields.includes('relatedPublications') &&
                 (showAllFields || item.relatedPublications.length > 0) &&
                 <>

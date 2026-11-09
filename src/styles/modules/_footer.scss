@@ -3,3 +3,19 @@
     text-align: center;
   }
 }
+
+#footerlogo {
+  width: 136px;
+  height: auto;
+}
+
+#horizonlogo {
+  width:112px;
+  height: auto;
+}
+
+footer a:hover {
+  background-color: inherit;
+  color: inherit;
+  text-decoration: underline;
+}

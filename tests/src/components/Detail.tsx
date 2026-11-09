@@ -167,6 +167,9 @@ it("should render related publications sorted by publication date", () => {
     ]
   });
 
+  // Check that the title includes the correct number of related publications
+  expect(screen.getByText("metadata.relatedPublications (3)")).toBeInTheDocument();
+
   const newest = screen.getByText("Newest related publication");
   const oldest = screen.getByText("Oldest related publication");
   const undated = screen.getByText("Undated related publication");
@@ -563,8 +566,8 @@ it("should show hidden fields when 'All elements' is clicked", async () => {
     checkValueAfterHeading("metadata.dataKind", "language.notAvailable.field");
     expect(screen.getByText("metadata.dataCollectionMethod")).toBeInTheDocument();
     checkValueAfterHeading("metadata.dataCollectionMethod", "language.notAvailable.field");
-    expect(screen.getByText("metadata.relatedPublications")).toBeInTheDocument();
-    checkValueAfterHeading("metadata.relatedPublications", "language.notAvailable.field");
+    expect(screen.getByText("metadata.relatedPublications (0)")).toBeInTheDocument();
+    checkValueAfterHeading("metadata.relatedPublications (0)", "language.notAvailable.field");
     expect(screen.getByText("metadata.funding")).toBeInTheDocument();
     expect(screen.getByText("Finnish Agency")).toBeInTheDocument();
     expect(screen.getByText("metadata.grantNumber")).toBeInTheDocument();
