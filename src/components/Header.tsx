@@ -48,7 +48,7 @@ const Header = () => {
 
   return (
     <header>
-      <div className="container columns is-mobile is-vcentered">
+      <div className="container columns is-mobile is-vcentered header-columns">
         <div className="column is-narrow p-1">
           <div className="columns is-mobile is-vcentered is-gapless">
             {currentThematicView.path !== defaultThematicView.path && (
@@ -90,29 +90,21 @@ const Header = () => {
           <ThematicViewSwitcher />
         </div>
 
-        <div className="column p-0">
+        <div className="column p-0 header-navigation">
           <div className="columns is-vcentered is-justify-content-end p-0">
             <nav className="column navbar is-narrow p-0" aria-label="Main">
               <div className="navbar-brand">
-                <a
-                  role="button"
-                  className={`navbar-burger burger${isActive ? " is-active" : ""}`}
-                  data-target="navMenu"
+                <button
+                  type="button"
+                  className={`navbar-burger${isActive ? " is-active" : ""}`}
                   onClick={() => setisActive(!isActive)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setisActive(!isActive);
-                    }
-                  }}
                   aria-label="menu"
                   aria-expanded={isActive}
-                  tabIndex={0}
                 >
                   <span aria-hidden="true"></span>
                   <span aria-hidden="true"></span>
                   <span aria-hidden="true"></span>
-                </a>
+                </button>
               </div>
 
               <div className={`navbar-menu ${isActive ? "is-active" : ""}`}>

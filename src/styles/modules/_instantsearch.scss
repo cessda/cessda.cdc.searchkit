@@ -1,3 +1,11 @@
+.ais-RefinementList-count::before {
+  content: "~";
+}
+
+.ais-Pagination {
+  background-color: white;
+}
+
 .ais-Pagination-list {
   justify-content: center;
 }
@@ -14,6 +22,20 @@
 .ais-CurrentRefinements-item {
   flex-direction: column;
   flex-wrap: wrap;
+}
+
+.ais-Hits {
+  padding: 0;
+}
+
+.ais-Hits-list .ais-Hits-item .list-hit .result-actions .button {
+  font-size: 14px;
+}
+
+.ais-Hits-item {
+  box-shadow: none;
+  padding: 0 0 25px 0;
+  border-bottom: 1px solid hsl(201, 20%, 85%);
 }
 
 .ais-Hits-item .list-hit h2 .button {
@@ -85,14 +107,6 @@
   width: 97%;
 }
 
-@media screen and (max-width: 1020px) {
-  .ais-CustomRefinementList-item {
-    margin-left: 1%;
-    margin-right: 2%;
-    width: 97%;
-  }
-}
-
 .ais-RangeInput-input,
 .ais-SearchBox-input {
   outline-offset: 1px;
@@ -111,4 +125,10 @@
 .ais-HitsPerPage-select:focus-visible,
 .ais-SortBy-select:focus-visible {
   color: #23263b;
+}
+
+.ais-HitsPerPage-select,
+.ais-SortBy-select,
+.ais-Stats-text {
+  font-size: 14px;
 }
