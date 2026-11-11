@@ -92,14 +92,14 @@
       "label": "Time Method",
       "placeholder": "Search time method",
       "tooltip": {
-        "content": "Describes the time dimension of the data collection. The categories are based on the DDI Alliance Time Method vocabulary, but simplified for easier filtering. Studies are included based on their described time method, even if they do not explicitly use the controlled vocabulary. More information: <a href=\"https://vocabularies.cessda.eu/urn/urn:ddi:int.ddi.cv:TimeMethod:1.2.3\" target=\"_blank\">CESSDA Vocabulary Service</a>.",
+        "content": "Describes the time dimension of the data collection. Values are grouped into categories based on the DDI Alliance Time Method vocabulary. Values that cannot be mapped to a specific category are grouped under \"Other\". More information: <a href=\"https://vocabularies.cessda.eu/urn/urn:ddi:int.ddi.cv:TimeMethod:1.2.3\" target=\"_blank\">CESSDA Vocabulary Service</a>.",
         "ariaLabel": "Tooltip button for Time method filter"
       }
     },
     "timeMethodToggle": {
-      "label": "Simplified categories",
+      "label": "Use time method categories",
       "tooltip": {
-        "content": "Switch between simplified categories and detailed time method values. \"Simplified categories\" groups different time method descriptions into a few common types. Toggling between the modes is disabled when any value is selected.",
+        "content": "Groups time method values into five categories for easier filtering. Turn off to show the original metadata values.",
         "ariaLabel": "Tooltip button for Time method toggle"
       }
     },
