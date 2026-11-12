@@ -1,9 +1,9 @@
 :root {
---primary_highlight: hsl(204, 87%, 32%);
---secondary_highlight: hsl(204, 87%, 40%);
---text: hsl(201, 21%, 36%);
---bg: hsl(201, 20%, 96%);
---footer: hsl(201, 20%, 100%);
+  --primary_highlight: hsl(204, 87%, 32%);
+  --secondary_highlight: hsl(204, 87%, 40%);
+  --text: hsl(201, 21%, 36%);
+  --bg: hsl(201, 20%, 96%);
+  --footer: hsl(201, 20%, 100%);
 }
 
 
@@ -43,13 +43,8 @@ body {
   a, a.navbar-item, .ais-ClearRefinements-button, .button.is-ghost, .metadata-section .metadata-title  {
     color: var(--primary_highlight);
   }
+}
 
-  
-}
-.searchwrapper {
-  background-color: rgba(0,0,0,0.02); 
-    border-radius: 6px;
-}
 main {
   color: var(--text);
   background-color: var(--bg);
@@ -59,10 +54,10 @@ main {
 .switch[type=checkbox].is-info:checked+label:before {
   background-color:var(--secondary_highlight);
 }
-.logo-title h1 {
-color: var(--text);
-}
 
+.logo-title h1 {
+  color: var(--text);
+}
 
 footer {
   background-color: var(--footer);
@@ -71,4 +66,3 @@ footer {
 h2, .panel-title {
   color: var(--text);
 }
-

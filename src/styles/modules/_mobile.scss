@@ -1,4 +1,50 @@
+@media screen and (min-width: 1024px) {
+  .navbar-brand {
+    display: none;
+  }
+
+  header h1 {
+    font-size: 20px;
+  }
+
+  .logo img {
+    height: 66px;
+    margin-right: 10px;
+    margin-left: 15px;
+  }
+
+  .ais-Hits-item {
+    margin: 25px 40px;
+  }
+
+  .ais-Hits-item:first-of-type {
+    margin-top: 10px;
+  }
+
+  .language-picker {
+    width: 120px;
+    font-size: 14px;
+  }
+
+  .servicelogo {
+    max-width: 400px;
+    height: auto;
+  }
+
+  .hits-wrapper {
+    margin-right: 0;
+  }
+}
+
 @media screen and (max-width: 1023px) {
+  .main-column {
+    order: 1;
+  }
+
+  .side-column {
+    order: 2;
+  }
+
   .button.is-small {
     font-size: 0.8rem;
   }
@@ -9,6 +55,73 @@
     &:after {
       display: none;
     }
+  }
+
+  .header-columns {
+    flex-wrap: wrap;
+  }
+
+  .header-navigation {
+    flex: 0 0 auto;
+    margin-left: auto;
+  }
+
+  .navbar-menu.is-active {
+    position: absolute;
+    top: 60px;
+    right: 5px;
+  }
+
+  header .navbar .link {
+    display: block;
+  }
+
+  .navbar-burger span {
+    height: 2px;
+  }
+
+  .navbar-item {
+    white-space: nowrap;
+  }
+
+  .language-picker {
+    width: 110px;
+    font-size: 13px;
+  }
+
+  input.searchbox {
+    font-size: 13px;
+    line-height: 36px;
+  }
+
+  .filters {
+    padding-top: 0;
+  }
+
+  .is-hidden-tablet + .filters {
+    padding-bottom: 0;
+  }
+
+  .layout > .is-hidden-tablet {
+    padding-bottom: 0;
+  }
+
+  .ais-Hits-item {
+    margin: 15px;
+  }
+
+  header h1 {
+    font-size: 16px;
+  }
+
+  .logo img {
+    height: 40px;
+    margin-right: 4px;
+    margin-left: 4px;
+  }
+
+  .hits-wrapper {
+    padding-top: 15px;
   }
 }
 
@@ -40,5 +153,11 @@
   .result-actions {
     display: block;
     opacity: 1;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .search-box-column {
+    flex-basis: 100%;
   }
 }

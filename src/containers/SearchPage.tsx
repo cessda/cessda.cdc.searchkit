@@ -110,12 +110,12 @@ const SearchPage = () => {
       <AutomaticSort />
 
       <div className="columns mx-4 mt-2">
-        <div className="searchwrapper columns is-flex-direction-column is-mobile is-narrow mx-auto is-gapless mt-4 mb-2 p-2">
-          <div className="columns is-flex-direction-row is-mobile is-narrow mx-auto is-gapless mb-1">
-            <div className="column is-narrow">
+        <div className="searchwrapper columns is-flex-direction-column is-mobile mx-auto is-gapless mt-4 mb-2 p-2">
+          <div className="columns is-mobile mx-auto is-gapless mb-1 search-controls">
+            <div className="column is-narrow search-index-column">
               <IndexSwitcher />
             </div>
-            <div className="column is-narrow pb-0">
+            <div className="column pb-0 search-box-column">
               <CustomSearchBox setQueryError={setQueryError} />
             </div>
           </div>
