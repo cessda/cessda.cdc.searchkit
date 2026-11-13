@@ -59,6 +59,7 @@ export interface CMMStudy {
   studyNumber: string;
   /** Time dimension */
   typeOfTimeMethods: TermVocabAttributes[];
+  typeOfTimeMethodCategory?: string;
   /** Language of data files */
   fileLanguages: string[];
   /** Sampling procedure */
@@ -194,6 +195,7 @@ export class MetadataUtils {
       abstractHighlightLong: highlight?.abstract ? this.truncateText(striptags(highlight.abstract.join()), 2000) : '',
       studyAreaCountries: source.studyAreaCountries || [],
       typeOfTimeMethods: source.typeOfTimeMethods || [],
+      typeOfTimeMethodCategory: source.typeOfTimeMethodCategory,
       unitTypes: source.unitTypes || [],
       typeOfSamplingProcedures: source.typeOfSamplingProcedures || [],
       typeOfModeOfCollections: source.typeOfModeOfCollections || [],

@@ -26,7 +26,7 @@ import ToggleButtons from "../components/ToggleButtons";
 import Pagination from "../components/Pagination";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { toggleMobileFilters, toggleSummary } from "../reducers/search";
+import { toggleMobileFilters, toggleSummary, toggleTimeMethodFilter } from "../reducers/search";
 import Panel from "../components/Panel";
 import Tooltip from "../components/Tooltip";
 import { Hit } from "instantsearch.js";
@@ -49,10 +49,12 @@ const SearchPage = () => {
   const toggleSummaryRef = React.createRef() as React.RefObject<HTMLButtonElement>;
   const showFilterSummary = useAppSelector((state) => state.search.showFilterSummary);
   const showMobileFilters = useAppSelector((state) => state.search.showMobileFilters);
+  const showSimplifiedTimeMethod = useAppSelector((state) => state.search.showSimplifiedTimeMethod);
   const { items } = useCurrentRefinements();
   const hasRefinements = items.length > 0;
   const refinedAttributes = items.map(item => item.attribute);
   const isRefined = (attribute: string) => refinedAttributes.includes(attribute);
+  const attributeTimeMethod = showSimplifiedTimeMethod ? "timeMethodCategory" : "timeMethod";
 
   // Assumes that collection year is the only filter with range inputs
   useEffect(() => {
@@ -332,23 +334,33 @@ const SearchPage = () => {
                 </Panel>
               }
 
-              {/* Add switch to toggle between values from CV (id) and non-CV (term)? */}
-
               {(!currentThematicView.excludeFilters.includes('timeMethod') && !currentIndex.excludeFilters.includes('timeMethod')) &&
                 <Panel
                   title={
                     <h2 id="filters-timemethod-title">
                       {t("metadata.timeMethod")}
-                      {isRefined("timeMethod") && <span className="icon is-small ml-1"><FaRegCheckSquare /></span>}
+                      {(isRefined("timeMethod") || isRefined("timeMethodCategory")) && <span className="icon is-small ml-1"><FaRegCheckSquare /></span>}
                     </h2>
                   }
                   tooltip={<Tooltip id="filters-timemethod-tooltip"
-                    content={t("filters.timeMethod.tooltip.content")}
-                    ariaLabel={t("filters.timeMethod.tooltip.ariaLabel")} />}
+                    content={t(`filters.${attributeTimeMethod}.tooltip.content`)}
+                    ariaLabel={t(`filters.${attributeTimeMethod}.tooltip.ariaLabel`)} />}
                   collapsable={true}
                   defaultCollapsed={true}>
-                  <CustomRefinementList attribute="timeMethod"
-                    searchable searchAriaLabelledBy="filters-timemethod-title"
+                  <div className="columns is-flex is-narrow mb-0">
+                    <div className="column field is-narrow toggle-button p-0">
+                      <input id="toggle-time-method" type="checkbox" name="toggle-time-method" className="switch is-rounded is-info"
+                            checked={showSimplifiedTimeMethod} disabled={(isRefined("timeMethod") || isRefined("timeMethodCategory"))}
+                            onChange={() => dispatch(toggleTimeMethodFilter(showSimplifiedTimeMethod))} />
+                      <label htmlFor="toggle-time-method" className="pr-2 mr-2">{t("filters.timeMethodToggle.label")}</label>
+                      <Tooltip id="filters-timemethod-tooltip"
+                        content={t(`filters.timeMethodToggle.tooltip.content`)}
+                        ariaLabel={t(`filters.timeMethodToggle.tooltip.ariaLabel`)} />
+                    </div>
+                  </div>
+                  <CustomRefinementList attribute={attributeTimeMethod}
+                    key={attributeTimeMethod}
+                    searchable={!showSimplifiedTimeMethod} searchAriaLabelledBy="filters-timemethod-title"
                     limit={16} showMore showMoreLimit={100}
                     classNames={{
                       list: 'ais-CustomRefinementList',

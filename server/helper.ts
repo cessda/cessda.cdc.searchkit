@@ -157,10 +157,9 @@ const apiClient = Client({
         facetQuery: containsFacetQuery,
       },
       {
-        attribute: "timeMethodCV",
-        field: "id",
+        attribute: "timeMethodCategory",
+        field: "typeOfTimeMethodCategory",
         type: "string",
-        nestedPath: "typeOfTimeMethods",
         facetQuery: containsFacetQuery,
       },
     ],

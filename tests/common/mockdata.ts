@@ -121,11 +121,12 @@ export const mockStudy: CMMStudy = {
   typeOfTimeMethods: [
     {
       id: 'UKDS1234',
-      term: 'Term',
+      term: 'Longitudinal',
       vocab: 'Vocab',
       vocabUri: 'http://example.com'
     }
   ],
+  typeOfTimeMethodCategory: 'Longitudinal',
   typeOfSamplingProcedures: [
     {
       id: 'UKDS1234',

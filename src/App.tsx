@@ -178,7 +178,7 @@ const Root = () => {
           country: indexUiState.refinementList?.country?.length ? indexUiState.refinementList.country : undefined,
           publisher: indexUiState.refinementList?.publisher?.length ? indexUiState.refinementList.publisher : undefined,
           timeMethod: indexUiState.refinementList?.timeMethod?.length ? indexUiState.refinementList.timeMethod : undefined,
-          timeMethodCV: indexUiState.refinementList?.timeMethodCV?.length ? indexUiState.refinementList.timeMethodCV : undefined,
+          timeMethodCategory: indexUiState.refinementList?.timeMethodCategory?.length ? indexUiState.refinementList.timeMethodCategory : undefined,
           resultsPerPage: indexUiState.hitsPerPage,
           page: indexUiState.page,
           sortBy:
@@ -199,7 +199,7 @@ const Root = () => {
               country: routeState.country || [],
               publisher: routeState.publisher || [],
               timeMethod: routeState.timeMethod || [],
-              timeMethodCV: routeState.timeMethodCV || []
+              timeMethodCategory: routeState.timeMethodCategory || []
             },
             range: routeState.collectionYear ? {
               collectionYear: routeState.collectionYear,
@@ -247,7 +247,7 @@ const Root = () => {
           <VirtualRefinementList attribute="country" />
           <VirtualRefinementList attribute="publisher" />
           <VirtualRefinementList attribute="timeMethod" />
-          <VirtualRefinementList attribute="timeMethodCV" />
+          <VirtualRefinementList attribute="timeMethodCategory" />
           <VirtualRangeInput attribute="collectionYear" />
           <ThematicViewInitialiser />
           <Outlet />

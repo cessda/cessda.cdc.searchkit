@@ -22,6 +22,7 @@ export interface SearchState {
   showFilterSummary: boolean;
   showAbstract: boolean;
   showKeywords: boolean;
+  showSimplifiedTimeMethod: boolean;
   expandMetadataPanels: boolean;
   displayed: CMMStudy[];
   study: CMMStudy | undefined;
@@ -40,6 +41,7 @@ export const initialState: SearchState = {
   showFilterSummary: false,
   showAbstract: true,
   showKeywords: true,
+  showSimplifiedTimeMethod: true,
   study: undefined,
   expandMetadataPanels: false,
   displayed: [],
@@ -103,6 +105,9 @@ export const searchSlice = createSlice({
     toggleKeywords: (state: SearchState, action: PayloadAction<boolean>) => {
       state.showKeywords = !action.payload;
     },
+    toggleTimeMethodFilter: (state: SearchState, action: PayloadAction<boolean>) => {
+      state.showSimplifiedTimeMethod = !action.payload;
+    },
     triggerSearchFormReset: (state) => {
       state.shouldResetSearchForm = true;
     },
@@ -138,6 +143,7 @@ export const {
   toggleMobileFilters,
   toggleAbstract,
   toggleKeywords,
+  toggleTimeMethodFilter,
   triggerSearchFormReset,
   clearSearchFormReset,
   setBackToSearchUrl,
