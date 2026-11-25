@@ -48,7 +48,7 @@
     "@redux-devtools/extension": "4.0.1",
     "@reduxjs/toolkit": "2.15.0",
     "@searchkit/instantsearch-client": "4.16.0",
-    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/jest-dom": "8.0.0",
     "@testing-library/react": "16.3.3",
     "@testing-library/user-event": "14.6.1",
     "@tsconfig/node20": "20.1.10",
